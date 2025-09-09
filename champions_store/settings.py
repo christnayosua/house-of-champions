@@ -35,7 +35,7 @@ PRODUCTION = os.getenv('PRODUCTION', 'False').lower() == 'true'
 DEBUG = True
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", 
-                 "christna-yosua-championsStore.pbp.cs.ui.ac.id"]
+                 "christna-yosua-houseofchampions.pbp.cs.ui.ac.id"]
 
 
 # Application definition
