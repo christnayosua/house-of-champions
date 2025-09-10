@@ -10,6 +10,9 @@ class News(models.Model):
         ('match', 'Match'),
         ('rumor', 'Rumor'),
         ('analysis', 'Analysis'),
+        ('training', 'Training'),
+        ('special', 'Special'),
+        ('national', 'National'),
     ]
     
     # Item wajib
