@@ -33,12 +33,12 @@
 </ol>
 <p><strong>Pembuatan Akun dan Deployment melalui PWS (Pacil <em>Web Service</em>)</strong></p>
 <ol start="12">
-<li>Pacil Web Service adalah salah satu bentuk layanan <strong>PaaS</strong>, yaitu Platform as a Service, yang disediakan untuk membantu mahasiswa, termasuk saya, dalam melakukan pengembangan, pengelolaan, dan peluncuran aplikasi tanpa perlu mengkhawatirkan infrastruktur dasarnya. Untuk membuat project tersebut, saya perlu membuat akun sesuai dengan <em>SSO UI</em> milik saya. Lalu, saya membuat project baru bernama <em>houseofchampions</em> sesuai dengan tema aplikasi yang saya pilih. Setelah itu, saya perlu menyimpan kredensial yang diberikan sebelum menjalankan instruksi <em><strong>Project Command</strong></em>.  Setelah menyimpan kredensial tersebut, saya pergi ke tab Environs untuk mengkonfigurasi <em>environment variables</em> yang telah saya konfigurasi di file <code>.env.prod</code>. Lalu, saya kembali ke proyek Django saya untuk menambahkan URL <em>deployment</em> pada <code>ALLOWED_HOSTS</code> sehingga proyek saya dapat diakses melalui URL <em>deployment</em> PWS dan dapat dilihat oleh user lain.</li>
+<li>Pacil Web Service adalah salah satu bentuk layanan <strong>PaaS</strong>, yaitu Platform as a Service, yang disediakan untuk membantu mahasiswa, termasuk saya, dalam melakukan pengembangan, pengelolaan, dan peluncuran aplikasi tanpa perlu mengkhawatirkan infrastruktur dasarnya. Untuk membuat project tersebut, saya perlu membuat akun sesuai dengan <em>SSO UI</em> milik saya. Lalu, saya membuat project baru bernama <em>houseofchampions</em> sesuai dengan tema aplikasi yang saya pilih. Setelah itu, saya perlu menyimpan kredensial yang diberikan sebelum menjalankan instruksi <em><strong>Project Command</strong></em>.  Setelah menyimpan kredensial tersebut, saya pergi ke tab Environs untuk mengonfigurasi <em>environment variables</em> yang telah saya konfigurasi di file <code>.env.prod</code>. Lalu, saya kembali ke proyek Django saya untuk menambahkan URL <em>deployment</em> pada <code>ALLOWED_HOSTS</code> sehingga proyek saya dapat diakses melalui URL <em>deployment</em> PWS dan dapat dilihat oleh user lain.</li>
 <li>Setelah menambahkan <em>URL deployment</em>, saya melakukan <em>push</em> ke repositori GitHub saya dan mulai menjalankan perintah yang terdapat di <em>Project Command</em> pada halaman PWS. Lalu, akan muncul <em>pop-up</em> baru untuk memasukkan kredensial yang telah saya simpan tadi dan perlu menunggu beberapa detik hingga status deployment <em>Running</em>.</li>
 </ol>
 <p><strong>Membuat Aplikasi Django beserta Konfigurasi Model</strong></p>
 <ol start="14">
-<li>Untuk mengkonfigurasi model, saya perlu mengaktifkan kembali <em>virtual environment</em>. Setelah itu, saya membuat aplikasi baru bernama <code>main</code> dalam proyek <em>house-of-champions</em> melalui perintah <code>python manage.py startapp main</code> yang nantinya akan membuat folder baru bernama <code>main</code>. Lalu, saya menambahkan <code>'main'</code> ke dalam daftar aplikasi pada <code>INSTALLED_APPS</code> di <code>settings.py</code>.</li>
+<li>Untuk mengonfigurasi model, saya perlu mengaktifkan kembali <em>virtual environment</em>. Setelah itu, saya membuat aplikasi baru bernama <code>main</code> dalam proyek <em>house-of-champions</em> melalui perintah <code>python manage.py startapp main</code> yang nantinya akan membuat folder baru bernama <code>main</code>. Lalu, saya menambahkan <code>'main'</code> ke dalam daftar aplikasi pada <code>INSTALLED_APPS</code> di <code>settings.py</code>.</li>
 </ol>
 <p><strong>Implementasi Template Dasar</strong></p>
 <ol start="15">
@@ -46,7 +46,7 @@
 </ol>
 <p><strong>Implementasi Model Dasar</strong></p>
 <ol start="16">
-<li>Setelah itu, saya mengkonfigurasi <code>models.py</code> pada direktori <code>main</code> untuk mendefinisikan model baru sesuai kebutuhan saya. Attribute-attribute yang saya gunakan untuk proyek saya di antaranya, <code>id</code>, <code>name</code>, <code>price</code>, <code>description</code>, <code>thumbnail</code>, <code>category</code>, <code>is_featured</code>, <code>stock</code>, <code>rating</code>, <code>brand</code>, dan <code>created_at</code>.</li>
+<li>Setelah itu, saya mengonfigurasi <code>models.py</code> pada direktori <code>main</code> untuk mendefinisikan model baru sesuai kebutuhan saya. Attribute-attribute yang saya gunakan untuk proyek saya di antaranya, <code>id</code>, <code>name</code>, <code>price</code>, <code>description</code>, <code>thumbnail</code>, <code>category</code>, <code>is_featured</code>, <code>stock</code>, <code>rating</code>, <code>brand</code>, dan <code>created_at</code>.</li>
 </ol>
 <p><strong>Migrasi Model</strong></p>
 <ol start="17">
@@ -54,6 +54,18 @@
 </ol>
 <p><strong>Menghubungkan <em>View</em> dengan <em>Template</em></strong></p>
 <ol start="18">
-<li>Untuk menghubungkan komponen <em>view</em> dengan komponen <em>template</em>, saya perlu mengkonfigurasi file <code>views.py</code> dengan mengimpor <code>render</code> dari modul <code>django.shortcuts</code>. Di dalam file ini juga, saya membuat fungsi <code>show_main</code> yang menerima parameter <code>request</code> untuk mengatur permintaan HTTP dari user dan mengembalikan tampilan yang sesuai. Oleh karena itu, <code>render</code> diperlukan agar dapat <code>render</code> tampilan HTML dengan menggunakan data yang saya berikan.</li>
+<li>Untuk menghubungkan komponen <em>view</em> dengan komponen <em>template</em>, saya perlu mengonfigurasi file <code>views.py</code> dengan mengimpor <code>render</code> dari modul <code>django.shortcuts</code>. Di dalam file ini juga, saya membuat fungsi <code>show_main</code> yang menerima parameter <code>request</code> untuk mengatur permintaan HTTP dari user dan mengembalikan tampilan yang sesuai. Oleh karena itu, <code>render</code> diperlukan agar dapat <code>render</code> tampilan HTML dengan menggunakan data yang saya berikan.</li>
+<li>Setelah itu, saya dapat memodifikasi berkas <code>main.html</code> agar dapat menampilkan data yang telah diambil dari <em>model</em> dengan mengubahnya menjadi struktur kode Django yang sesuai untuk menampilkan data dengan format {{ data }}</li>
+</ol>
+<p><strong>Mengonfigurasi <em>Routing</em> URL</strong></p>
+<ol start="20">
+<li>Routing URL perlu dilakukan agar Django dapat mengetahui view dan argumen apa yang perlu dijalankan atau diteruskan ketika user membuka URL tertentu. Untuk melakukan hal tersebut, saya perlu mengonfigurasi berkas <code>urls.py</code> yang ada di direktori <code>champions-store</code> dengan mengimpor fungsi <code>include</code> dan menambahkan rute URL yang akan mengarah ke tampilan <code>main</code> di dalam list <code>urlpatterns</code>.</li>
+<li>Untuk mengecek apakah routing berhasil, saya perlu menjalankan server terlebih dahulu dengan perintah <code>python manage.py runserver</code>, lalu, membuka [<a href="http://localhost:8000/">http://localhost:8000/</a> di peramban web saya.</li>
+</ol>
+<p><strong>Django Unit Testing</strong></p>
+<ol start="22">
+<li>Untuk mengetahui apakah kode yang telah saya buat bekerja sesuai dengan yang saya inginkan, saya perlu melakukan testing agar saya dapat mengecek apakah perubahan yang dilakukan dapat menimbulkan perilaku di luar keinginan saya. Dalam melakukan unit testing, saya perlu mengonfigurasi file <code>tests.py</code> pada direktori <code>main</code> dengan konfigurasi mengikuti panduan.</li>
+<li>Setelah itu, saya perlu menjalankan testing dengan perintah <code>python manage.py test</code> dan melihat output yang dihasilkan untuk mengetahui apakah aplikasi web yang telah saya buat berjalan sesuai keinginan.</li>
+<li>Setelah melakukan testing, saya <em>push</em> kembali ke repository GitHub saya beserta PWS agar perubahan yang saya lakukan dapat dilihat di URL <em>deployment</em> saya oleh user lain beserta kode programnya.</li>
 </ol>
 
