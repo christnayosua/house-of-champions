@@ -7,7 +7,7 @@
 <p><em><strong>by Christna Yosua Rotinsulu - 2406495691</strong></em></p>
 <p><strong>URL Deployment PWS :</strong><br>
 <a href="https://christna-yosua-houseofchampions.pbp.cs.ui.ac.id/">https://christna-yosua-houseofchampions.pbp.cs.ui.ac.id/</a></p>
-<h2 id="implementasi-pengembangan-aplikasi-web-menggunakan-django"><strong>Implementasi Pengembangan Aplikasi Web Menggunakan Django</strong></h2>
+<h2 id="implementasi-pengembangan-aplikasi-web-menggunakan-django-💻12"><strong>Implementasi Pengembangan Aplikasi Web Menggunakan Django</strong> 💻[1][2]</h2>
 <p><strong>Membuat Direktori dan Mengaktifkan <em>Virtual Environment</em></strong></p>
 <ol>
 <li>Tentu langkah pertama yang saya lakukan adalah membuat sebuah direktori baru bernama house-of-champions (<em>tema yang saya pilih</em>) dan masuk ke dalam folder tersebut.</li>
@@ -70,14 +70,14 @@
 <li>Setelah itu, saya perlu menjalankan testing dengan perintah <code>python manage.py test</code> dan melihat output yang dihasilkan untuk mengetahui apakah aplikasi web yang telah saya buat berjalan sesuai keinginan.</li>
 <li>Setelah melakukan testing, saya <em>push</em> kembali ke repository GitHub saya beserta PWS agar perubahan yang saya lakukan dapat dilihat di URL <em>deployment</em> saya oleh user lain beserta kode programnya.</li>
 </ol>
-<h2 id="django-request-client">Django Request Client</h2>
+<h2 id="django-request-client-👤-3">Django Request Client 👤 [3]</h2>
 <p><img src="https://www.canva.com/design/DAGyiKER53U/Uamgjs_Id0nyOQUwImMSJA/view?utm_content=DAGyiKER53U&amp;utm_campaign=designshare&amp;utm_medium=link2&amp;utm_source=uniquelinks&amp;utlId=h07a9e4acb9" alt="Bagan Client Request"><br>
 <a href="https://www.canva.com/design/DAGyiKER53U/Uamgjs_Id0nyOQUwImMSJA/view?utm_content=DAGyiKER53U&amp;utm_campaign=designshare&amp;utm_medium=link2&amp;utm_source=uniquelinks&amp;utlId=h07a9e4acb9">Bagan Request Client Alternative</a></p>
-<h2 id="peran-setting.py-dalam-django">Peran <a href="http://setting.py">setting.py</a> Dalam Django</h2>
+<h2 id="peran-setting.py-dalam-django-🎮">Peran <a href="http://setting.py">setting.py</a> Dalam Django 🎮</h2>
 <p>Berkas <a href="http://settings.py">settings.py</a> berperan sebagai berkas utama untuk mengontrol berbagai aspek proyek Django. Melalui file ini, saya dapat melakukan berbagai konfigurasi, mulai dari aplikasi, database, <em>middleware</em>, template, <em>Internationalization</em>, security, dan <em>authentication</em>, walaupun saat ini hanya beberapa konfigurasi yang baru diimplementasikan sepenuhnya dalam proyek saya. Sebagai contoh, ketika saya ingin melakukan deployment di Pacil Web Service, saya mendaftarkan URL <em>deployment</em> tersebut pada <code>ALLOWED_HOST</code> sehingga proyek Django saya dapat diakses melalui URL tersebut dan dapat dilihat oleh user lain.</p>
-<h2 id="migrasi-database-di-django">Migrasi Database di Django</h2>
+<h2 id="migrasi-database-di-django-📚4">Migrasi Database di Django 📚[4]</h2>
 <p>Agar Django dapat melacak perubahan pada model basis data yang dilakukan, hal yang perlu dilakukan adalah melakukan migrasi database tersebut. Jadi, migrasi adalah instruksi untuk mengubah struktur tabel basis data sesuai dengan perubahan model yang didefinisikan dalam kode terbaru. Untuk melakukan migrasi, saya perlu menjalankan perintah <code>python manage.py makemigrations</code>. Apa yang akan dilakukan perintah tersebut? Django awalnya akan membandingkan model versi sekarang dengan versi sebelumnya. Lalu, Django akan membuat file migrasi khusus untuk menjalankan operasi database yang diperlukan dan nanti akan disimpan di berkas <code>migrations</code>. Setelah membuat migrasi, saya perlu menerapkan migrasi tersebut melalui perintah <code>python manage.py migrate</code> yang nantinya akan meminta Django untuk menjalankan operasi database yang tercantum di file migrasi yang tadi telah dibuat. Lalu riwayat migration tadi akan disimpan di tabel <code>django_migrations</code>. Django pun dapat melacak migrasi yang telah dilakukan sehingga mungkin dapat <em>rollback</em> ke versi sebelumnya. Selain itu, Django dapat menangani <em>dependencies</em> antara migrasi dan aplikasi yang berbeda.</p>
-<h2 id="alasan-django-dijadikan-permulaan-pembelajaran">Alasan Django Dijadikan Permulaan Pembelajaran</h2>
+<h2 id="alasan-django-dijadikan-permulaan-pembelajaran-😁-5">Alasan Django Dijadikan Permulaan Pembelajaran 😁 [5]</h2>
 <ol>
 <li>
 <p><em><strong>Ridiculously fast.</strong></em><br>
@@ -85,21 +85,27 @@ Django membantu <em>developer</em> dalam mengembangkan aplikasi dari konsep hing
 </li>
 <li>
 <p><em><strong>Fully Loaded</strong></em><br>
-Django menyediakan banyak fitur tambahan yang dapat dimanfaatkan oleh <em>developer</em> sehingga mempermudah <em>developer</em> dalam mengembangkan web.</p>
+Django menyediakan banyak fitur tambahan yang dapat dimanfaatkan oleh <em>developer</em> sehingga mempermudah pengembangan aplikasi web, terutama dalam menyelesaikan tugas-tugas web umum. Django menangani user authentication, content administration, site maps, RSS feeds, dan sebagainya.</p>
 </li>
 <li>
-<p>Fully loaded.</p>
+<p><strong>Reassuringly secure</strong><br>
+Django menganggap serius keamanan dan membantu pengembang menghindari berbagai kesalahan keamanan umum, seperti injeksi SQL, skrip lintas situs, pemalsuan permintaan lintas situs, dan <em>clickjacking</em>. Sistem autentikasi yang telah disediakan untuk membantu pengguna mengelola akun dan kata sandi pengguna dengan aman.</p>
 </li>
 <li>
-<p>Reassuringly secure.</p>
+<p><strong>Exceedingly scalable</strong><br>
+Beberapa situs tersibuk saat ini sebagian besar menggunakan kemampuan Django untuk menyesuaikan skala secara cepat dan fleksibel untuk memenuhi permintaan <em>traffic</em> terberat sebab semakin banyak <em>user</em> maka sumber daya di web tersebut yang ada semakin terkuras.</p>
 </li>
 <li>
-<p>Exceedingly scalable.</p>
-</li>
-<li>
-<p>Incredibly versatile.</p>
+<p><strong>Incredibly versatile</strong><br>
+Perusahaan, organisasi, dan pemerintahan telah menggunakan Django untuk membangun segala macam hal — mulai dari sistem manajemen konten hingga jejaring sosial hingga platform komputasi ilmiah.</p>
 </li>
 </ol>
-<h2 id="feedback">Feedback</h2>
-<h2 id="referensi">Referensi</h2>
+<h2 id="feedback-👍">Feedback 👍</h2>
+<p>Saya sangat menghargai dan mengapresiasi bagaimana asisten dosen membantu saya selama pengerjaan lab dan tugas individu. Selain itu, panduan yang diberikan sangat lengkap dan mudah dipahami sehingga membantu saya dalam memahami materi serta menyelesaikan tugas lab dan individu. Terima kasih 🙏</p>
+<h2 id="referensi-🔗">Referensi 🔗</h2>
+<p>[1] Tim Dosen dan Asisten Dosen PBP 2025 dan 2024. (21 Agustus 2025). <em>Tutorial 1: Pengenalan Aplikasi Django dan  <em>Model-View-Template</em>  (MVT) pada Django</em>. Retrieved from <a href="https://pbp-fasilkom-ui.github.io/ganjil-2026/docs/tutorial-1">https://pbp-fasilkom-ui.github.io/ganjil-2026/docs/tutorial-1</a></p>
+<p>[2] Tim Dosen dan Asisten Dosen PBP 2025 dan 2024. (27 Agustus 2025). <em>Tutorial 0: Konfigurasi dan Instalasi Git dan Djang</em>. Retrieved from <a href="https://pbp-fasilkom-ui.github.io/ganjil-2026/docs/tutorial-0">https://pbp-fasilkom-ui.github.io/ganjil-2026/docs/tutorial-0</a></p>
+<p>[3] Django. (n.d.). <em>Request and response objects</em>. Retrieved from <a href="https://docs.djangoproject.com/en/5.2/ref/request-response/">https://docs.djangoproject.com/en/5.2/ref/request-response/</a></p>
+<p>[4] Django. (n.d.). <em>Migrations</em>. Retrieved from <a href="https://docs.djangoproject.com/en/5.2/topics/migrations/">https://docs.djangoproject.com/en/5.2/topics/migrations/</a></p>
+<p>[5] Django. (n.d.). <em>Why Django?</em>. Retrieved from <a href="https://www.djangoproject.com/start/overview/">https://www.djangoproject.com/start/overview/</a></p>
 
