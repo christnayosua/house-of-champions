@@ -3,6 +3,8 @@
 
 ---
 
+<h2 id="tugas-individu-2">Tugas Individu 2</h2>
+<p><em><strong>by Christna Yosua Rotinsulu - 2406495691</strong></em></p>
 <p><strong>URL Deployment PWS :</strong><br>
 <a href="https://christna-yosua-houseofchampions.pbp.cs.ui.ac.id/">https://christna-yosua-houseofchampions.pbp.cs.ui.ac.id/</a></p>
 <h2 id="implementasi-pengembangan-aplikasi-web-menggunakan-django"><strong>Implementasi Pengembangan Aplikasi Web Menggunakan Django</strong></h2>
@@ -68,4 +70,6 @@
 <li>Setelah itu, saya perlu menjalankan testing dengan perintah <code>python manage.py test</code> dan melihat output yang dihasilkan untuk mengetahui apakah aplikasi web yang telah saya buat berjalan sesuai keinginan.</li>
 <li>Setelah melakukan testing, saya <em>push</em> kembali ke repository GitHub saya beserta PWS agar perubahan yang saya lakukan dapat dilihat di URL <em>deployment</em> saya oleh user lain beserta kode programnya.</li>
 </ol>
+<h2 id="django-request-client">Django Request Client</h2>
+<p><img src="https://drive.google.com/file/d/181tQWKWmVFIrM3CRBAeZY2-uogxq6EYM/view?usp=sharing" alt="Bagan.png"></p>
 
