@@ -101,7 +101,7 @@ Perusahaan, organisasi, dan pemerintahan telah menggunakan Django untuk membangu
 </li>
 </ol>
 <h2 id="feedback-👍">Feedback 👍</h2>
-<p>Saya sangat menghargai dan mengapresiasi bagaimana asisten dosen membantu saya selama pengerjaan lab dan tugas individu. Selain itu, panduan yang diberikan sangat lengkap dan mudah dipahami sehingga membantu saya dalam memahami materi serta menyelesaikan tugas lab dan individu. Terima kasih 🙏</p>
+<p>Saya sangat menghargai dan mengapresiasi bagaimana asisten dosen membantu saya selama pengerjaan lab dan tugas individu. Selain itu, panduan yang diberikan sangat lengkap, sistematis, dan mudah dipahami sehingga membantu saya dalam memahami materi serta menyelesaikan tugas lab dan individu, terlebih saya baru menggunakan Django untuk pertama kali. 👍</p>
 <h2 id="referensi-🔗">Referensi 🔗</h2>
 <p>[1] Tim Dosen dan Asisten Dosen PBP 2025 dan 2024. (21 Agustus 2025). <em>Tutorial 1: Pengenalan Aplikasi Django dan  <em>Model-View-Template</em>  (MVT) pada Django</em>. Retrieved from <a href="https://pbp-fasilkom-ui.github.io/ganjil-2026/docs/tutorial-1">https://pbp-fasilkom-ui.github.io/ganjil-2026/docs/tutorial-1</a></p>
 <p>[2] Tim Dosen dan Asisten Dosen PBP 2025 dan 2024. (27 Agustus 2025). <em>Tutorial 0: Konfigurasi dan Instalasi Git dan Djang</em>. Retrieved from <a href="https://pbp-fasilkom-ui.github.io/ganjil-2026/docs/tutorial-0">https://pbp-fasilkom-ui.github.io/ganjil-2026/docs/tutorial-0</a></p>
