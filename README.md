@@ -35,7 +35,7 @@
 </ol>
 <p><strong>Pembuatan Akun dan Deployment melalui PWS (Pacil <em>Web Service</em>)</strong></p>
 <ol start="12">
-<li>Pacil Web Service adalah salah satu bentuk layanan <strong>PaaS</strong>, yaitu Platform as a Service, yang disediakan untuk membantu mahasiswa, termasuk saya, dalam melakukan pengembangan, pengelolaan, dan peluncuran aplikasi tanpa perlu mengkhawatirkan infrastruktur dasarnya. Untuk membuat project tersebut, saya perlu membuat akun sesuai dengan <em>SSO UI</em> milik saya. Lalu, saya membuat project baru bernama <em>houseofchampions</em> sesuai dengan tema aplikasi yang saya pilih. Setelah itu, saya perlu menyimpan kredensial yang diberikan sebelum menjalankan instruksi <em><strong>Project Command</strong></em>.  Setelah menyimpan kredensial tersebut, saya pergi ke tab Environs untuk mengonfigurasi <em>environment variables</em> yang telah saya konfigurasi di file <code>.env.prod</code>. Lalu, saya kembali ke proyek Django saya untuk menambahkan URL <em>deployment</em> pada <code>ALLOWED_HOSTS</code> sehingga proyek saya dapat diakses melalui URL <em>deployment</em> PWS dan dapat dilihat oleh user lain.</li>
+<li>Pacil Web Service adalah salah satu bentuk layanan <strong>PaaS</strong>, yaitu Platform as a Service, yang disediakan untuk membantu mahasiswa, termasuk saya, dalam melakukan pengembangan, pengelolaan, dan peluncuran aplikasi tanpa perlu mengkhawatirkan infrastruktur dasarnya. Untuk membuat project tersebut, saya perlu membuat akun sesuai dengan <em>SSO UI</em> milik saya. Lalu, saya membuat project baru bernama <em>houseofchampions</em> sesuai dengan tema aplikasi yang saya pilih. Setelah itu, saya perlu menyimpan kredensial yang diberikan sebelum menjalankan instruksi <em><strong>Project Command</strong></em>.  Setelah menyimpan kredensial tersebut, saya pergi ke tab Environs untuk mengonfigurasi <em>environment variables</em> yang telah saya konfigurasi di file <code>.env.prod</code>. Lalu, saya kembali ke proyek Django saya untuk menambahkan URL <em>deployment</em> pada <code>ALLOWED_HOSTS</code> sehingga proyek saya dapat diakses melalui URL <em>deployment</em> PWS tersebut dan dapat dilihat oleh user lain.</li>
 <li>Setelah menambahkan <em>URL deployment</em>, saya melakukan <em>push</em> ke repositori GitHub saya dan mulai menjalankan perintah yang terdapat di <em>Project Command</em> pada halaman PWS. Lalu, akan muncul <em>pop-up</em> baru untuk memasukkan kredensial yang telah saya simpan tadi dan perlu menunggu beberapa detik hingga status deployment <em>Running</em>.</li>
 </ol>
 <p><strong>Membuat Aplikasi Django beserta Konfigurasi Model</strong></p>
@@ -71,5 +71,35 @@
 <li>Setelah melakukan testing, saya <em>push</em> kembali ke repository GitHub saya beserta PWS agar perubahan yang saya lakukan dapat dilihat di URL <em>deployment</em> saya oleh user lain beserta kode programnya.</li>
 </ol>
 <h2 id="django-request-client">Django Request Client</h2>
-<p><img src="https://drive.google.com/file/d/181tQWKWmVFIrM3CRBAeZY2-uogxq6EYM/view?usp=sharing" alt="Bagan.png"></p>
+<p><img src="https://www.canva.com/design/DAGyiKER53U/Uamgjs_Id0nyOQUwImMSJA/view?utm_content=DAGyiKER53U&amp;utm_campaign=designshare&amp;utm_medium=link2&amp;utm_source=uniquelinks&amp;utlId=h07a9e4acb9" alt="Bagan Client Request"><br>
+<a href="https://www.canva.com/design/DAGyiKER53U/Uamgjs_Id0nyOQUwImMSJA/view?utm_content=DAGyiKER53U&amp;utm_campaign=designshare&amp;utm_medium=link2&amp;utm_source=uniquelinks&amp;utlId=h07a9e4acb9">Bagan Request Client Alternative</a></p>
+<h2 id="peran-setting.py-dalam-django">Peran <a href="http://setting.py">setting.py</a> Dalam Django</h2>
+<p>Berkas <a href="http://settings.py">settings.py</a> berperan sebagai berkas utama untuk mengontrol berbagai aspek proyek Django. Melalui file ini, saya dapat melakukan berbagai konfigurasi, mulai dari aplikasi, database, <em>middleware</em>, template, <em>Internationalization</em>, security, dan <em>authentication</em>, walaupun saat ini hanya beberapa konfigurasi yang baru diimplementasikan sepenuhnya dalam proyek saya. Sebagai contoh, ketika saya ingin melakukan deployment di Pacil Web Service, saya mendaftarkan URL <em>deployment</em> tersebut pada <code>ALLOWED_HOST</code> sehingga proyek Django saya dapat diakses melalui URL tersebut dan dapat dilihat oleh user lain.</p>
+<h2 id="migrasi-database-di-django">Migrasi Database di Django</h2>
+<p>Agar Django dapat melacak perubahan pada model basis data yang dilakukan, hal yang perlu dilakukan adalah melakukan migrasi database tersebut. Jadi, migrasi adalah instruksi untuk mengubah struktur tabel basis data sesuai dengan perubahan model yang didefinisikan dalam kode terbaru. Untuk melakukan migrasi, saya perlu menjalankan perintah <code>python manage.py makemigrations</code>. Apa yang akan dilakukan perintah tersebut? Django awalnya akan membandingkan model versi sekarang dengan versi sebelumnya. Lalu, Django akan membuat file migrasi khusus untuk menjalankan operasi database yang diperlukan dan nanti akan disimpan di berkas <code>migrations</code>. Setelah membuat migrasi, saya perlu menerapkan migrasi tersebut melalui perintah <code>python manage.py migrate</code> yang nantinya akan meminta Django untuk menjalankan operasi database yang tercantum di file migrasi yang tadi telah dibuat. Lalu riwayat migration tadi akan disimpan di tabel <code>django_migrations</code>. Django pun dapat melacak migrasi yang telah dilakukan sehingga mungkin dapat <em>rollback</em> ke versi sebelumnya. Selain itu, Django dapat menangani <em>dependencies</em> antara migrasi dan aplikasi yang berbeda.</p>
+<h2 id="alasan-django-dijadikan-permulaan-pembelajaran">Alasan Django Dijadikan Permulaan Pembelajaran</h2>
+<ol>
+<li>
+<p><em><strong>Ridiculously fast.</strong></em><br>
+Django membantu <em>developer</em> dalam mengembangkan aplikasi dari konsep hingga siap untuk didistrbusikan secepat mungkin sehingga sangat ramah untuk pengguna yang baru belajar Django.</p>
+</li>
+<li>
+<p><em><strong>Fully Loaded</strong></em><br>
+Django menyediakan banyak fitur tambahan yang dapat dimanfaatkan oleh <em>developer</em> sehingga mempermudah <em>developer</em> dalam mengembangkan web.</p>
+</li>
+<li>
+<p>Fully loaded.</p>
+</li>
+<li>
+<p>Reassuringly secure.</p>
+</li>
+<li>
+<p>Exceedingly scalable.</p>
+</li>
+<li>
+<p>Incredibly versatile.</p>
+</li>
+</ol>
+<h2 id="feedback">Feedback</h2>
+<h2 id="referensi">Referensi</h2>
 
