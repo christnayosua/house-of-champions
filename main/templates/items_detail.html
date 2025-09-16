@@ -13,14 +13,15 @@
 <br /><br />
 {% endif %}
 
-<p>{{ items.description }}</p>
 <!-- Untuk menampilkan harga serta stock dari item yang dijual -->
 <!-- Mengecek apakah item sudah memiliki harga atau belum -->
 {% if items.price != 0 %}
-    <h1>Price: {{ items.price }}</h1>
+    <p>💵Price: <b>Rp{{ items.price }}</b></p>
 {% endif %}
 {% if items.stock != 0 %}
-    <h1>Stock: {{ items.stock }}</h1>
+    <p>📦Stock: <b>{{ items.stock }}</b></p>
 {% endif %}
+
+<p>{{ items.description }}</p>
 
 {% endblock content %}

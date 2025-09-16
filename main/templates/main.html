@@ -32,7 +32,22 @@
   <img src="{{ items.thumbnail }}" alt="thumbnail" width="150" height="100">
   <br />
   {% endif %}
+  
+  {% if items.price > 0 %}
+    <p>💵Price : Rp{{ items.price }}</p> 
+  {% endif %}
 
+  {% if items.stock > 0 %}
+    <p>📦Stock : Rp{{ items.stock }}</p>
+  {% endif %}
+
+  {% if items.rating > 0 %}
+    <p>⭐Rating : {{ items.rating }}/5.0</p>
+  {% endif %}
+
+  {% if items.brand != null %}
+    <p>🌿brand : {{ items.brand }}</p>
+  {% endif %}
   <p>{{ items.content|truncatewords:25 }}...</p>
 
   <p><a href="{% url 'main:show_items' items.id %}"><button>Read More</button></a></p>

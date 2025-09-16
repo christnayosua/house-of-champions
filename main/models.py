@@ -13,6 +13,8 @@ class Items(models.Model):
         ('training', 'Training'),
         ('special', 'Special'),
         ('national', 'National'),
+        ('classic', 'Classic'),
+        ('derby', 'Derby')
     ]
     
     # Item wajib
