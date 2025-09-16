@@ -1,38 +1,70 @@
-# Penambahan import module yang dibutuhkan 
 from django.shortcuts import render, redirect, get_object_or_404
-from main.forms import NewsForm
-from main.models import News
+from main.forms import ItemsForm
+from main.models import Items
+
+# Penambahan import modul untuk request pengiriman data ke dalam bentuk XML dan JSON
+from django.http import HttpResponse
+from django.core import serializers
+
+# Function untuk mengirimkan data dalam bentuk XML
+def show_xml(request):
+     items_list = Items.objects.all()
+     xml_data = serializers.serialize("xml", items_list)
+     return HttpResponse(xml_data, content_type="application/xml")
+
+# Function untuk mengirimkan data dalam bentuk JSON
+def show_json(request):
+    items_list = Items.objects.all()
+    json_data = serializers.serialize("json", items_list)
+    return HttpResponse(json_data, content_type="application/json")
+
+# Mengirimkan data dalam bentuk XML berdasarkan ID
+def show_xml_by_id(request, items_id):
+   try:
+       items_list = Items.objects.filter(pk=items_id)
+       xml_data = serializers.serialize("xml", items_list)
+       return HttpResponse(xml_data, content_type="application/xml")
+   except Items.DoesNotExist:
+       return HttpResponse(status=404)
+
+# Mengirimkan data dalam bentuk JSON berdasarkan ID
+def show_json_by_id(request, items_id):
+   try:
+       items_list = Items.objects.get(pk=items_id)
+       json_data = serializers.serialize("json", [items_list])
+       return HttpResponse(json_data, content_type="application/json")
+   except Items.DoesNotExist:
+       return HttpResponse(status=404)
 
 def show_main(request):
-    news_list = News.objects.all()
+    items_list = Items.objects.all()
 
-    # Modifikasi context sesuai kebutuhan
     context = {
         'applicationName' : 'House Of Champions',
+        'npm' : '2406495691',
         'name': 'Christna Yosua Rotinsulu',
         'class': 'PBP A',
-        'npm' : '2406495691',
-        'news_list': news_list
+        'news_list': items_list
     }
 
     return render(request, "main.html", context)
 
-def create_news(request):
-    form = NewsForm(request.POST or None)
+def create_items(request):
+    form = ItemsForm(request.POST or None)
 
     if form.is_valid() and request.method == "POST":
         form.save()
         return redirect('main:show_main')
 
     context = {'form': form}
-    return render(request, "create_news.html", context)
+    return render(request, "create_items.html", context)
 
-def show_news(request, id):
-    news = get_object_or_404(News, pk=id)
+def show_items(request, id):
+    news = get_object_or_404(Items, pk=id)
     news.increment_views()
 
     context = {
         'news': news
     }
 
-    return render(request, "news_detail.html", context)
+    return render(request, "items_detail.html", context)

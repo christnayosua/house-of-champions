@@ -1,4 +1,4 @@
-<h1>Football News</h1>
+<h1>{{ applicationName }}</h1>
 
 <h5>NPM: </h5>
 <p>{{ npm }}</p>
@@ -9,33 +9,33 @@
 <h5>Class:</h5>
 <p>{{ class }}</p>
 
-<a href="{% url 'main:create_news' %}">
-  <button>+ Add News</button>
+<a href="{% url 'main:create_items' %}">
+  <button>+ Add Items</button>
 </a>
 
 <hr>
 
-{% if not news_list %}
-<p>Belum ada data berita pada football news.</p>
+{% if not items_list %}
+<p>Belum ada item yang ditambahkan di House Of Champions</p>
 {% else %}
 
-{% for news in news_list %}
+{% for items in items_list %}
 <div>
-  <h2><a href="{% url 'main:show_news' news.id %}">{{ news.title }}</a></h2>
+  <h2><a href="{% url 'main:show_items' items.id %}">{{ items.title }}</a></h2>
 
-  <p><b>{{ news.get_category_display }}</b>{% if news.is_featured %} | 
-    <b>Featured</b>{% endif %}{% if news.is_news_hot %} | 
-    <b>Hot</b>{% endif %} | <i>{{ news.created_at|date:"d M Y H:i" }}</i> 
-    | Views: {{ news.news_views }}</p>
+  <p><b>{{ items.get_category_display }}</b>{% if items.is_featured %} | 
+    <b>Featured</b>{% endif %}{% if items.is_items_hot %} | 
+    <b>Hot</b>{% endif %} | <i>{{ items.created_at|date:"d M Y H:i" }}</i> 
+    | Views: {{ items.visitors }}</p>
 
-  {% if news.thumbnail %}
-  <img src="{{ news.thumbnail }}" alt="thumbnail" width="150" height="100">
+  {% if items.thumbnail %}
+  <img src="{{ items.thumbnail }}" alt="thumbnail" width="150" height="100">
   <br />
   {% endif %}
 
-  <p>{{ news.content|truncatewords:25 }}...</p>
+  <p>{{ items.content|truncatewords:25 }}...</p>
 
-  <p><a href="{% url 'main:show_news' news.id %}"><button>Read More</button></a></p>
+  <p><a href="{% url 'main:show_items' news.id %}"><button>Read More</button></a></p>
 </div>
 
 <hr>
