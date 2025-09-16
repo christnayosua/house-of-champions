@@ -24,6 +24,7 @@ def show_xml_by_id(request, items_id):
        items_list = Items.objects.filter(pk=items_id)
        xml_data = serializers.serialize("xml", items_list)
        return HttpResponse(xml_data, content_type="application/xml")
+    # Handle apabila tidak muncul
    except Items.DoesNotExist:
        return HttpResponse(status=404)
 
@@ -33,6 +34,7 @@ def show_json_by_id(request, items_id):
        items_list = Items.objects.get(pk=items_id)
        json_data = serializers.serialize("json", [items_list])
        return HttpResponse(json_data, content_type="application/json")
+    # Handle apabila tidak muncul 
    except Items.DoesNotExist:
        return HttpResponse(status=404)
 
