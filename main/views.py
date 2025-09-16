@@ -44,7 +44,7 @@ def show_main(request):
         'npm' : '2406495691',
         'name': 'Christna Yosua Rotinsulu',
         'class': 'PBP A',
-        'news_list': items_list
+        'items_list': items_list
     }
 
     return render(request, "main.html", context)
@@ -60,11 +60,11 @@ def create_items(request):
     return render(request, "create_items.html", context)
 
 def show_items(request, id):
-    news = get_object_or_404(Items, pk=id)
-    news.increment_views()
+    items = get_object_or_404(Items, pk=id)
+    items.increment_views()
 
     context = {
-        'news': news
+        'items': items
     }
 
     return render(request, "items_detail.html", context)
