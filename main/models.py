@@ -31,6 +31,10 @@ class News(models.Model):
     brand = models.CharField(max_length=100, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     
+    # Penambahan attribute untuk title dan content
+    title = models.TextField()
+    content = models.TextField()
+    
     def __str__(self):
         return self.title
     

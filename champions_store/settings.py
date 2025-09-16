@@ -37,7 +37,10 @@ DEBUG = True
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", 
                  "christna-yosua-houseofchampions.pbp.cs.ui.ac.id"]
 
-
+# Penambahan CSRF_TRUSTED_ORIGINS
+CSRF_TRUSTED_ORIGINS = [
+    "https://christna-yosua-houseofchampions.pbp.cs.ui.ac.id/"
+]
 # Application definition
 
 INSTALLED_APPS = [
@@ -65,7 +68,7 @@ ROOT_URLCONF = 'champions_store.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'], #Penambahan konten untuk dirs 
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

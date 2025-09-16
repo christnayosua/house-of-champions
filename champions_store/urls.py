@@ -16,8 +16,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from main.views import show_main, create_news, show_news
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('main.urls')),
+
+    # Tambahan urlpatterns
+    path('', show_main, name='show_main'),
+    path('create-news/', create_news, name='create_news'),
+    path('news/<str:id>/', show_news, name='show_news'),
 ]
