@@ -173,6 +173,18 @@ Pada <em>root folder</em>, saya membuat sebuah direktori baru bernama <code>temp
 <h2 id="feedback-untuk-tutorial-2-👍">Feedback untuk Tutorial 2 👍</h2>
 <p>Asdos sangat membantu saya untuk memahami dan mengerjakan tutorial 2 kemarin melalui panduan dan komunikasi melalui <em>Discord</em>. Selain itu, penjelasan-penjelasan bagian yang harus dikonfigurasi dan ditambahkan turut disertai penjelasan sehingga saya tidak hanya mengimplementasikan saja, tetapi juga memahami maksud dari hal tersebut. Dari hal tersebutlah, saya dapat mengerjakan tugas individu 3 dengan lebih mudah terutama jawaban-jawabannya sudah disediakan pada panduan tutorial 2 kemarin. Saya berharap agar hal ini terus konsisten terjadi untuk ke depannya. Great Job, kakak Asdos 💓!</p>
 <h2 id="screenshot-hasil-akses-url-pada-postman-🔗">Screenshot Hasil Akses URL pada Postman 🔗</h2>
+<h3>XML</h3>
+<p><img src="https://drive.google.com/file/d/1AK5E92Usf5qrHREjBmvNRYrhTAz65c07/view?usp=sharing" alt="XML"><br>
+<a href="https://drive.google.com/file/d/1AK5E92Usf5qrHREjBmvNRYrhTAz65c07/view?usp=sharing">Link Alternatif - XML</a></p>
+<h3>JSON</h3>
+<p><img src="https://drive.google.com/file/d/1J1xealYy1xaZobEFIv8eHIesyhQN2Sl-/view?usp=sharing" alt="JSON"><br>
+<a href="https://drive.google.com/file/d/1J1xealYy1xaZobEFIv8eHIesyhQN2Sl-/view?usp=sharing">Link Alternatif - JSON</a></p>
+<h3>XML by ID</h3>
+<p><img src="https://drive.google.com/file/d/1lchB-xxdxK1Ez-ygXanylS6KiuGI2mik/view?usp=sharing" alt="XML by ID"><br>
+<a href="https://drive.google.com/file/d/1lchB-xxdxK1Ez-ygXanylS6KiuGI2mik/view?usp=sharing">Link Alternatif - XML by ID</a></p>
+<h3>JSON by ID</h3>
+<p><img src="https://drive.google.com/file/d/1NmxHzjtEGwWF7LDSee7fse21lJOtEnd-/view?usp=sharing" alt="JSON by ID"><br>
+<a href="https://drive.google.com/file/d/1NmxHzjtEGwWF7LDSee7fse21lJOtEnd-/view?usp=sharing">Link Alternatif - JSON by ID</a></p>
 <h2 id="referensi-🔎">Referensi 🔎</h2>
 <p>[1] Sean. (2024, 23 October). <em>Data Delivery</em>. Retrieved from <a href="https://www.fanruan.com/en/glossary/big-data/data-delivery">https://www.fanruan.com/en/glossary/big-data/data-delivery</a><br>
 [2] Binar. (n.d.). <em>JSON: Pengertian, Fungsi, Jenis-Jenis, Kelebihan dan Kekurangannya</em>. Retrieved from <a href="https://www.binar.co.id/blog/json-adalah">https://www.binar.co.id/blog/json-adalah</a><br>
