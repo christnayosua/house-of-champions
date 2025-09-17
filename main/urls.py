@@ -16,6 +16,6 @@ urlpatterns = [
     path('json/', show_json, name='show_json'),
 
     # Menambahkan path agar dapat mengakses data dalam bentuk XML dan JSON berdasarkan ID
-    path('xml/<str:news_id>/', show_xml_by_id, name='show_xml_by_id'),
-    path('json/<str:news_id>/', show_json_by_id, name='show_json_by_id'),
+    path('xml/<str:items_id>/', show_xml_by_id, name='show_xml_by_id'),
+    path('json/<str:items_id>/', show_json_by_id, name='show_json_by_id'),
 ]
