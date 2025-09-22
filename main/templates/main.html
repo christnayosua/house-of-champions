@@ -1,3 +1,5 @@
+{% extends 'base.html' %}
+{% block content %}
 <h1>{{ applicationName }}</h1>
 
 <h5>NPM: </h5>
@@ -14,6 +16,21 @@
 </a>
 
 <hr>
+
+<!-- Menampilkan tombol logout -->
+<a href="{% url 'main:logout' %}">
+  <button>Logout</button>
+</a>
+
+<!-- Penambahan view untuk menampilkan informasi terakhir login -->
+<h5>Sesi terakhir login: {{ last_login }}</h5>
+
+<!-- Penambahan tombol untuk 'filter' products/items berdasarkan toko -->
+ <a href="?filter=all">
+    <button type="button">All Products</button>
+</a>
+<a href="?filter=my">
+    <button type="button">My Products</button>
 
 {% if not items_list %}
 <p>Belum ada item yang ditambahkan di House Of Champions</p>
@@ -38,7 +55,7 @@
   {% endif %}
 
   {% if items.stock > 0 %}
-    <p>📦Stock : Rp{{ items.stock }}</p>
+    <p>📦Stock : {{ items.stock }}</p>
   {% endif %}
 
   {% if items.rating > 0 %}
@@ -57,3 +74,4 @@
 {% endfor %}
 
 {% endif %}
+{% endblock content %}

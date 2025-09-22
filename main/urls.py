@@ -1,6 +1,15 @@
 from django.urls import path
 from main.views import show_main, create_items, show_items, show_xml, show_json, show_json_by_id, show_xml_by_id
 
+# Penambahan import fungsi register
+from main.views import register
+
+# Penambahan import fungsi login_user
+from main.views import login_user
+
+# Penambahan import fungsi logout_user
+from main.views import logout_user
+
 app_name = 'main'
 
 urlpatterns = [
@@ -18,4 +27,13 @@ urlpatterns = [
     # Menambahkan path agar dapat mengakses data dalam bentuk XML dan JSON berdasarkan ID
     path('xml/<str:items_id>/', show_xml_by_id, name='show_xml_by_id'),
     path('json/<str:items_id>/', show_json_by_id, name='show_json_by_id'),
+
+    # Menambahkan path url untuk mengakses fungsi register
+    path('register/', register, name='register'),
+
+    # Menambahkan path url untuk mengakses fungsi login_user
+    path('login/', login_user, name='login'),
+
+    # Menambahkan path url untuk mengakses fungsi logout_user
+    path('logout/', logout_user, name='logout'),
 ]

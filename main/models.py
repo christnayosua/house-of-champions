@@ -1,6 +1,12 @@
 import uuid
 from django.db import models
 
+# Penambahan import untuk implementasi menghubungkan model news dengan user
+from django.contrib.auth.models import User
+
+# Penambahan kelas untuk menghubungkan satu news dengan satu user melalui relationship
+
+
 # Create your models here.
 class Items(models.Model):
     CATEGORY_CHOICES = [
@@ -17,6 +23,10 @@ class Items(models.Model):
         ('derby', 'Derby')
     ]
     
+    # Penambahan variabel baru untuk menghubungkan satu news dengan satu user melalui relationship
+    # Hubungan many-to-one
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+
     # Item wajib
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255)

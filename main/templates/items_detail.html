@@ -24,4 +24,11 @@
 
 <p>{{ items.description }}</p>
 
+<!-- Penambahan view untuk menampilakn nama toko -->
+{% if items.user %}
+    <p>Author: {{ items.user.username }}</p>
+{% else %}
+    <p>Author: Anonymous</p>
+{% endif %}
+
 {% endblock content %}
