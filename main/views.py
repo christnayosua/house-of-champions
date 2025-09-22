@@ -3,6 +3,10 @@ import datetime
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
+# Penambahan import modul decorator login_required dari sistem autentikasi milik Django
+from django.contrib.auth.decorators import login_required
+
+
 from django.shortcuts import render, redirect, get_object_or_404
 from main.forms import ItemsForm
 from main.models import Items
@@ -16,9 +20,6 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 
-# Penambahan import modul decorator login_required dari sistem autentikasi milik Django
-from django.contrib.auth.decorators import login_required
-
 # Function untuk logout
 def logout_user(request):
     # Implementasi untuk logout user
@@ -30,21 +31,19 @@ def logout_user(request):
 
 # Function untuk mengautentikasi pengguna yang login 
 def login_user(request):
-   if request.method == 'POST':
-      form = AuthenticationForm(data=request.POST)
-
-      if form.is_valid():
+    if request.method == 'POST':
+        form = AuthenticationForm(data=request.POST)
+        if form.is_valid():
             # Konfigurasi untuk implementasi penggunaan data dari cookies
             user = form.get_user()
             login(request, user)
             response = HttpResponseRedirect(reverse("main:show_main"))
             response.set_cookie('last_login', str(datetime.datetime.now()))
             return response
-
-   else:
-      form = AuthenticationForm(request)
-   context = {'form': form}
-   return render(request, 'login.html', context)
+    else:
+        form = AuthenticationForm()
+    context = {'form': form}
+    return render(request, 'login.html', context)
 
 # Function untuk menghasilkan formulir registrasi secara otomatis dan menghasilkan akun pengguna ketika ada di-submit dari form 
 def register(request):
