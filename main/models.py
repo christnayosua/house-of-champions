@@ -4,9 +4,6 @@ from django.db import models
 # Penambahan import untuk implementasi menghubungkan model news dengan user
 from django.contrib.auth.models import User
 
-# Penambahan kelas untuk menghubungkan satu news dengan satu user melalui relationship
-
-
 # Create your models here.
 class Items(models.Model):
     CATEGORY_CHOICES = [
