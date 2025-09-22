@@ -39,7 +39,7 @@ ALLOWED_HOSTS = ["localhost", "127.0.0.1",
 
 # Penambahan CSRF_TRUSTED_ORIGINS
 CSRF_TRUSTED_ORIGINS = [
-    "https://christna-yosua-footballnews.pbp.cs.ui.ac.id/"
+    "https://christna-yosua-footballnews.pbp.cs.ui.ac.id",
 ]
 # Application definition
 
@@ -81,7 +81,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'champions_store.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
