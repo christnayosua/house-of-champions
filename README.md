@@ -287,4 +287,45 @@ Django, dalam hal otorisasi, menawarkan beberapa lapisan kontrol akses berupa de
 </ol>
 <p>Lalu, bagaimana peran Django dalam menghadapi hal tersebut?</p>
 <p><strong>Django</strong> secara proaktif akan menangani risiko keamanan cookies tersebut melalui berbagai mekanisme <em>built-in</em> yang dilakukan secara <em>layered</em>, dimulai dengan proteksi CSRF yang otomatis disertakan token unik pada setiap form untuk mencegah serangan CSRF, pengaturan secure flags pada cookies (<em>HttpOnly, Secure, and SameSite</em>) yang akan membatasi akses JavaScript dan memastikan transmisi data hanya dapat dilakukan melalui HTTPS, serta sistem session management yang akan membantu penyimpanan data-data yang sensitif di <em>server-side</em> dan <em>user</em> diberikan <em>session ID</em> yang sudah terenkripsi, dan fitur signed cookies untuk menyimpan data yang harus disimpan di <em>client side</em>. Melalui prosedur tersebut, aplikasi web yang dibangun dapat terlindungi oleh <em>multilayered defense system</em> yang efektif untuk mengurangi kerentanan tradisional pada cookies web.</p>
+<h3>Checklist Step-by-Step</h3>
+<hr>
+<h2>Function dan Form Registrasi</h2><h2>
+</h2><ol>
+<li>Saya mengimport <code>UserCreationForm</code> dan <code>messages</code> pada <code>views.py</code> untuk mengimplementasikan fungsi dan form registrasi akun. <code>UserCreationForm</code> adalah form bawaan dari Django untuk prosedur registrasi sehingga dapat langsung saya gunakan dalam aplikasi web saya. Lalu, saya menambahkan fungsi <code>register</code> pada <code>views.py</code> untuk menghasilkan formulir registrasi secara otomatis dan menghasilkan akun pengguna ketika data sudah di-<em>submit</em> dari form tersebut.</li>
+<li>Pada function <code>register</code> juga, saya menambahkan alur untuk melakukan validasi input yang dimasukkan oleh <em>user</em> pada form yang telah disediakan melalui perintah <code>form.is_valid()</code>. Sesudah divalidasi, isian form tersebut akan disimpan melalui perintah <code>form.save()</code>dan menampilkan pesan kepada <em>user</em> bahwa registrasi berhasil dan kembali ke halaman login.</li>
+<li>Pada subdirektori <code>templates</code>, saya menambahkan berkas HTML bernama <code>register.html</code> untuk memberikan visual kepada <em>user</em> untuk halaman registrasi.</li>
+<li>Setelah menambahkan views kepada <em>user</em>, saya mengintegrasikan fungsi <code>register</code> tadi pada <code>urls.py</code> untuk ditambahkan <code>urlpatterns</code> agar dapat menampilkan halaman <em>register</em> dan fungsinya sesuai <em>request</em> dari <em>user</em>.</li>
+</ol>
+<h3>Fungsi Login</h3>
+<hr>
+<ol start="5">
+<li>Setelah melakukan prosedur registrasi, saya membuat fungsi login pada <code>views.py</code> dengan menambahkan import <code>authenticate</code>, <code>login</code>, dan <code>AuthenticationForm</code> yang sudah disediakan oleh Django untuk mendukung proses login dan autentikasi.</li>
+<li>Pada berkas yang sama, saya menambahkan fungsi <code>login_user</code> untuk mengautentikasi pengguna yang ingin melakukan proses login. <em>User</em> nanti akan memasukkan <em>username</em> dan <em>password</em> serta di-<em>submit</em> sehingga mengirimkan request POST kepada aplikasi. Nantinya, aplikasi, dengan bantuan Django, akan melakukan proses autentikasi terhadap input yang dimasukkan oleh <em>user</em>. Apabila ditemukan kecocokan dengan data di <em>database</em>, maka fungsi ini akan membuat session untuk <em>user</em> tersebut.</li>
+<li>Setelah itu, pada subdirektori <code>templates</code>, saya menambahkan berkas HTML baru bernama <code>login.html</code> yang akan menampilkan halaman login kepada user. Lalu, saya membuka berkas <code>urls.py</code> untuk menambahkan <code>urlpatterns</code> agar dapat mengakses fungsi <code>login_user</code>.</li>
+</ol>
+<h3>Fungsi Logout</h3> 
+<hr>
+<ol start="8">
+<li>Sama seperti fungsi login, saya membuka kembali berkas <code>views.py</code> untuk mengimport <code>logout</code> untuk mekanisme logout pada aplikasi web, Setelah itu, saya menambahkan fungsi <code>logout_user</code> yang berfungsi untuk mendukung prosedur logout pada aplikasi web.</li>
+<li>Setelah itu, saya menambahkan views baru pada berkas <code>main.html</code>, yaitu tombol <em>Logout</em> agar ketika <em>user</em> menekan tombol tersebut, maka <em>user</em> akan logout dari aplikasi web. Lalu, pada berkas <code>urls.py</code>, saya menambahkan <code>urlpatterns</code> untuk mengakses fungsi <code>logout_user</code> yang telah dibuat agar dapat diakses.</li>
+</ol>
+<h3>Merestriksi Akses Halaman Main dan Products Detail</h3> 
+<hr>
+<ol start="10">
+<li>Untuk merestriksi akses halaman, saya perlu melakukan import <code>login_required</code> pada berkas <code>views.py</code> sebagai decorator untuk menambahkan fungsionalitas ke suatu fungsi tanpa mengubah isi dari kode fungsi tersebut. decorator tersebut saya letakkan pada bagian atas fungsi <code>show_main</code> dan <code>show_products</code>sehingga hanya <em>user</em> yang sudah terautentikasi saja yang dapat mengakses halaman tersebut.</li>
+</ol>
+<h3>Menggunakan Data dari Cookies</h3>
+<hr>
+<ol start="11">
+<li>Untuk menggunakan data dari cookies, saya perlu mengimport <code>HttpResponseRedirect</code>, <code>reverse</code>, dan <code>datetime</code> pada berkas <code>views.py</code>. Setelah itu, pada fungsi <code>login_user</code>, saya menambahkan konfigurasi untuk menyimpan cookie baru bernama <code>last_login</code> yang berisi <em>timestamp</em> terakhir melakukan <em>login</em>.</li>
+<li>Lalu, pada function <code>show_main</code>, saya menambahkan variabel baru bernama <code>last_login</code> yang akan menyimpan <em>timestamp</em> dari aktivitas <em>user</em>. Hal ini juga berlaku ketika <em>user</em> menekan tombol logout, maka cookie tersebut dihapus sehingga dapat diperbarui ketika <em>user</em> melakukan login.</li>
+<li>Untuk melihat aktivitas terakhir login <em>user</em>, saya menambahkan konfigurasi pada berkas <code>main.html</code> untuk menambahkan view baru yang berisi informasi <em>timestamp</em> terakhir dari <em>user</em> setelah melakukan login.</li>
+</ol>
+<h3>Menghubungkan Model Prodcts dengan User</h3>
+<hr>
+<ol start="14">
+<li>Untuk menghubungkan model <code>Products</code> kepada <em>user</em>,  peru mengimport model <code>User</code> yang sudah disediakan oleh Django. Pada model <code>Products</code>, saya menambahkan variabel baru yaitu <code>user</code> yang akan menyimpan data user dalam bentuk model <code>User</code>. Agar Django dapat mendeteksi perubahan yang terjadi pada <code>models.py</code>, saya perlu melakukan migrasi agar perubahan model yang saya lakukan terdeteksi dan tersimpan.</li>
+<li>Setelah itu, pada berkas <code>views.py</code>, saya menambahkan konfigurasi tambahan pada fungsi <code>create_products</code> agar objek hasil form yang dimasukkan <em>user</em> tidak langsung tersimpan di <em>database</em> sehingga dapat melakukan modifikasi terlebih dahulu. Selain itu, nilai dari <code>request.user</code> akan membuat setiap objek secara otomatis terhubunga kepada pengguna yang membuatnya.</li>
+<li>Lalu, pada function <code>show_main</code>, saya menambahkan konfigurasi untuk melakukan filter berdasarkan <em>author</em> yang menambahkan produk-produk tertentu di mana filter tersebut diambil dari query parameter <code>filter</code> pada URL. Agar fungsionalitas tersebut dapat dilihat, saya menambahkan view tambahan pada berkas <code>main.html</code> untuk menambahkan tombol filter My dan All. Lalu, pada berkas <code>products_detail.html</code>, saya juga menambahkan nama <em>author</em> yang menambahkan produk tertentu ke dalam aplikasi web.</li>
+</ol>
 
