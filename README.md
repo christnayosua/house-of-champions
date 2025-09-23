@@ -191,4 +191,100 @@ Pada <em>root folder</em>, saya membuat sebuah direktori baru bernama <code>temp
 [3] Ansel, J. (2022, Juny 1). <em>Working with Django Model Forms</em>. Retrieved from <a href="https://medium.com/@jansel358/working-with-django-model-forms-77afe017e2cc">https://medium.com/@jansel358/working-with-django-model-forms-77afe017e2cc</a><br>
 [4] Django Documentation. (n.d.). <em>How to Use Django’s CSRF Protection</em>. Retrieved from <a href="https://docs.djangoproject.com/id/5.2/howto/csrf/">https://docs.djangoproject.com/id/5.2/howto/csrf/</a><br>
 [5] Tim Dosen dan Asisten Dosen PBP 2024-2025. (2025, August 27). <em>Tutorial 2 : Form dan Data Delivery</em>. Retrieved from  <a href="https://pbp-fasilkom-ui.github.io/ganjil-2026/docs/tutorial-2#tutorial-implementasi-skeleton-sebagai-kerangka-views">https://pbp-fasilkom-ui.github.io/ganjil-2026/docs/tutorial-2#tutorial-implementasi-skeleton-sebagai-kerangka-views</a></p>
+<h2 id="tugas-individu-4">Tugas Individu 4</h2>
+<p><em><strong>by Christna Yosua Rotinsulu-2406495691</strong></em></p>
+<h3>Django's AuthenticationForm</h3>
+<hr>
+<p><code>AuthenticationForm</code> adalah form bawaan dari Django yang disediakan untuk mengautentikasi <em>user</em>. <code>AuthenticationForm</code> dapat diimport dari library <code>django.contrib.auth.forms</code>. Form ini nantinya akan memvalidasi username dan password yang dimasukkan pada halaman login terhadap database pengguna. Apabila ditemukan kecocokan/validasi sukses, maka Django akan mengembalikan objek <code>User</code> yang sesuai melalui method <code>get_user()</code>.</p>
+<p>Lalu, apa kelebihan dan kekurangan dari <code>AuthenticationForm</code> pada Django? Berikut adalah kelebihan dan kekurangan dari form tersebut:</p>
+<p><strong>Kelebihan</strong></p>
+<ol>
+<li>Sudah terintegrasi dengan sistem autentikasi Django (backends, <code>login()/logout()</code>)</li>
+<li>Dapat melakukan validasi secara otomatis, tanpa perlu didefinisikan oleh <em>developer</em> (<em>Ready-to-use)</em></li>
+<li>Mudah untuk dikustomisasi sesuai kebutuhan (<em>subclass atau override fields/label</em>)</li>
+<li>Mendukung <em>error handling</em> bawaan (ex. kredensial tidak valid)</li>
+<li>Terintegrasi dengan sistem <em>permissions</em> Django</li>
+</ol>
+<p><strong>Kekurangan</strong></p>
+<ol>
+<li>Masih terbatas pada autentikasi username/password standar sehingga perlu kustomisasi apabila ingin login via email (protokol keamanan lebih ketat)</li>
+<li>Perlu penyesuaian lebih lanjut untuk kebutuhan kustom yang lebih kompleks, seperti membuat custom backend atau form apabila ada kebutuhan logic autentikasi khusus, seperti SSO.</li>
+<li>Tampilan default perlu disesuaikan dengan desain aplikasi sehingga perlu styling dan i18n</li>
+<li>Tidak otomatis menangani fitur lanjutan (2FA, <em>rate-limiting</em>, <em>captcha</em>, dan <em>account lockout</em>)</li>
+</ol>
+<h3>Autentikasi vs Otorisasi: Butuh Keduanya atau Salah Satu?</h3>
+<hr>
+<p><strong>Autentikasi</strong> atau <em>authentication</em> adalah proses memverifikasi identitas, seperti <em>username, password, token, 2FA, dsb</em>. <strong>Autentikasi</strong> sama halnya dengan pertanyaan <em>siapa kamu?</em> Melalui <em>authentication</em>, <em>server-side</em> mengetahui <em>user</em> mana yang sedang berinteraksi atau dia seorang anonim.</p>
+<p>Di sisi lain, <strong>otorisasi</strong> atau <em>authorization</em> adalah proses memeriksa hak akses/izin, seperti <em>permissions</em>, <em>roles</em>, atau <em>groups</em>. <strong>Otorisasi</strong> sama halnya dengan pertanyaan <em>apa yang boleh kamu lakukan?</em> <strong>Otorisasi</strong> dilakukan setelah <strong>autentikasi</strong> sehingga setelah mengetahui <em>siapa dia</em>, <em>server-side</em> dapat mengetahui hak akses yang dimiliki <em>user</em> tersebut, seperti membaca/mengubah/menjalankan aksi tertentu.</p>
+<p>Lalu, bagaimana cara Django mengimplementasikan kedua hal tersebut?</p>
+<ul>
+<li><strong>Autentikasi</strong></li>
+</ul>
+<ol>
+<li>Django, menyediakan model <code>User</code> yang dapat diimport dari <code>django.contrib.auth.models.User</code> yang berfungsi untuk menyimpan identitas <em>user</em> dalam sebuah model/objek. Selain itu, data <em>user</em> juga dapat disimpan melalui custom user via <code>AUTH_USER_MODEL</code>.</li>
+<li>Django juga menyediakan function <code>authenticate()</code> untuk memeriksa kredensial milik <em>user</em> melalui <em>authentication backends</em> (<code>AUTHENTICATION_BACKENDS)</code> untuk bisa menambahkan backend custom, seperti login via email, LDAP, OAuth, SSO, dsb. Apabila ditemukan kecocokan/tervalidasi, maka Django akan mengembalikan objek <code>User</code> tersebut.</li>
+<li>Django sendiri saat ini sudah menyediakan sistem password hashing secara otomatis sehingga protokol keamanannya menjadi lebih ketat dan sulit diserang <em>attacker</em>.</li>
+<li>Untuk menyimpan <em>session</em> ID <em>user</em> ke cookie dan menandai bahwa user terautentikasi, Django menyediakan function <code>login(request, user)</code>. Hal ini akan membantu <em>user</em> agar state selama sesi interaksi dengan aplikasi web dapat terjaga sehingga tidak perlu melakukan prosedur login kembali, walaupun cukup beresiko jika tidak dilindungi.</li>
+<li>Django juga menyediakan beberapa tools bawaan juga, seperti <code>AuthenticationForm</code>, <code>LoginView</code>, <code>LogoutView</code>, password hashing yang tadi sudah dijelaskan, dan password reset flows.</li>
+</ol>
+<ul>
+<li><strong>Otorisasi</strong><br>
+Django, dalam hal otorisasi, menawarkan beberapa lapisan kontrol akses berupa dekorator, seperti <code>@login_required</code> (<em>yang digunakan dalam tutorial</em>) yang akan membatasi akses berdasarkan status login, <code>@permission_required</code> untuk izin akses yang lebih spesifik, dan pengecekan langsung di kode melalui <code>user.has_perm()</code>. Sistem otorisasi ini turut diperkuat dengan pembagian peran yang terstruktur dan hierarkis yang terdiri dari <em>superuser</em>, <em>staff</em>, dan <em>regular user</em> dan manajemen <em>group permission</em> di mana semua proses akan dilakukan setelah identitas <em>user</em> terautentikasi yang akan menciptakan alur keamanan yang berlapis dan sistematis.</li>
+</ul>
+<h3>Session vs Cookies: Penyimpan Jejak di Aplikasi Web</h3>
+<p><strong>Session</strong> atau <em>Penyimpanan Server-Side</em> adalah mekanisme untuk menyimpan data setiap <em>user</em> di antara <em>request</em> HTTP yang bersifat <em>stateless</em> sehingga <em>client</em> hanya menerima sessionid saja. Di sisi lain, <strong>cookie</strong> adalah penyimpanan <em>client-side</em> dalam bentuk file kecil berupa data yang disimpan di browser <em>user</em> atas permintaan website.</p>
+<p>Lalu, apa kelebihan dan kekurangan dari <code>session</code> dan <code>cookies</code>?</p>
+<ul>
+<li>✅<strong>Kelebihan Cookies</strong></li>
+</ul>
+<ol>
+<li><strong>Ringan untuk Server</strong>: cookies tidak butuh storage di sisi server sebab semua data disimpan di browser <em>user</em>. Hal tersebut menyebabkan server tetap <em>stateless</em> sehingga lebih mudah diskalakan, terutama pada arsitektur <em>microservices</em> yang mengutamakan kemandirian antar layanan.</li>
+<li><strong>Performa Tinggi</strong>: server tidak perlu melakukan <em>lookup</em> ke database atau chace untuk mencari data <em>user</em> sebab sudah tersedia langsung di setiap <em>request</em> yang dilakukan. Hal ini tentu akan mengurangi latensi dan meningkatkan performa aplikasi, terutama untuk data kecil yang sering diakses.</li>
+<li><strong>Persistensi Data</strong>: cookies dapat memiliki waktu kadaluwarsa yang panjang sehingga data tetap dapat tersimpan meskipun browser ditutup oleh <em>user</em>. Hal ini akan memungkinkan pengguna untuk kembali ke state atau preferensi sebelumnya tanpa perlu mengatur ulang, seperti login.</li>
+<li><strong>Simplicity</strong>: cookies sangat mudah diimplementasikan karena sudah didukung secara <em>built-in</em> oleh semua browser sehingga <em>developer</em> tidak perlu mengonfigurasi atau setup tambahan yang kompleks untuk dimanfaatkan.</li>
+<li><strong>Client Independence</strong>: setiap client tentu dapat menyimpan state-nya masing-masing di browser sehingga tidak ada penggunaan <em>resource</em> secara bersamaan di server. Hal ini akan mengurangi risiko <em>bottleneck</em> pada penyimpanan di sisi server.</li>
+</ol>
+<hr>
+<ul>
+<li>👎<strong>Kekurangan Cookies</strong></li>
+</ul>
+<ol>
+<li><strong>Keamanan Rendah</strong>: cookies memungkinkan <em>user</em> untuk memanipulasi data sebab berada di sisi browser. Selain itu, cookies sangat rentan terhadap serangan, seperti XSS (<em>Cross-Site Scripting</em>) dan CSRF (<em>Cross-Site Request Forgery</em>) jika tidak dikonfigurasi dengan benar oleh <em>developer</em>.</li>
+<li><strong>Ukuran Terbatas</strong>: cookies umumnya hanya mampu menyimpan sekitar 4KB per cookie dan biasanya hanya 20 cookie per domain yang didukung (tergantung browser). Hal tersebut tentu tidak cocok digunakan jika digunakan untuk menyimpan data yang lebih besar dan kompleks.</li>
+<li><strong>Privacy Concerns</strong>: cookies umumnya sering digunakan untuk melacak perilaku pengguna, misalnya oleh iklan atau layanan pihak ketiga. Dari hal tersebut, regulasi seperti GDPR mewajibkan adanya persetujuan pengguna sebelum menyimpan cookies (biasanya akan muncul pop-up). Akan tetapi, sebagian pengguna, termasuk saya, sering memilih untuk memblokir cookies karena alasan privasi.</li>
+<li><strong>Data Exposure</strong>: isi dari cookies dapat dilihat dengan mudah melalui <em>developer</em> tools yang ada di browser sehingga sangat beresiko apabila menyimpan data sensitif. Berdasarkan hal tersebut, cookies tidak menjadi pilihan utama untuk menyimpan informasi penting, seperti password atau data-data finansial.</li>
+<li><strong>Dependency on Client</strong>: cookies sangat bergantung pada browser client, tetapi <em>user</em> bisa saja menonaktifkan cookies, dan perilaku cookies di setiap browser maupun perangkat mobile pun bisa berbeda-beda. Hal ini akan menimbulkan keterbatasan dan inkonsistensi dalam pengalaman pengguna untuk ke depannya.</li>
+</ol>
+<hr>
+<ul>
+<li>✅<strong>Kelebihan Session</strong></li>
+</ul>
+<ol>
+<li><strong>Keamanan Tinggi</strong>: berbeda dengan cookies, session menyimpan data di server sehingga <em>client</em> tidak dapat langsung memanipulasinya sebab hanya <em>session ID</em> yang dikirimkan ke browser. Hal tersebut akan mengurangi resiko manipulasi dan eksposur data secara langsung.</li>
+<li><strong>Kapasitas Besar dan Tidak Terbatas</strong>: seesion dapat menampung objek yang lebih kompleks, seperti array, atau data yang relatif besar dan kompleks tanpa batasan ukuran ketat seperti cookie yang umumnya hanya bisa menampung sekitar 4KB untuk setiap cookie. Hal ini memungkinkan untuk menyimpan profil pengguna, preferensi, isi keranjang belanja, atau struktur data yang lebih kompleks.</li>
+<li><strong>Kontrol Penuh oleh Server</strong>: session hanya bisa dikelola di sisi server sehingga administrator atau aplikasi mempunyai hak akses tinggi, seperti mengahapus/invalidasi sesi kapan saja, mengatur timeout, dan menerapkan kebijakan pengelola sesi yang lebih terpadu. Hal ini akan memudahkan protokol keamanan dan manajemen <em>lifecycle</em> sesi untuk semua klien.</li>
+<li><strong>Privacy Better</strong>: data pengguna yang disimpan di sisi server membantu mengurangi eksposur pada perangkat pengguna dan memudahkan kepatuhan terhadap regulasi privasi, seperti GDPR/CCPA. Hal ini akan mengurangi potensi kebocoran data melalui perangkat klien.</li>
+<li><strong>Reliability</strong>: session tidak bergantung pada pengaturan browser milik klien sehingga <em>user</em> tidak bisa menonaktifkan session seperti cookie. Hal ini tentu akan meingkatkan reliabilitas mekanisme state karena server tetap mampu mempertahankan state meski ada variasi perilaku browser.</li>
+</ol>
+<hr> 
+<ul>
+<li><strong>👎Kekurangan Session</strong></li>
+</ul>
+<ol>
+<li><strong>Beban Server</strong>: session memerlukan ruang penyimpanan dan sumber daya lebih pada server terlebih sistem dengan banyak pengguna simultan, storgae dan I/O akan mempengaruhi performa aplikasi. Hal ini tentu memerlukan mekanisme <em>cleanup</em> untuk sesi-sesi yang sudah kedaluwarsa agar tidak menumpuk di server.</li>
+<li><strong>Scalability Issues</strong>: berbeda dengan cookie, session yang tersimpan di lokal suatu server akan menyebabkan inkonsistensi jika <em>request</em> yang di-post diarahkan ke server lain pada <em>environment</em> yang menggunakan <em>load balancer</em> dan banyak <em>instance</em> aplikasi. Hal tersebut membutuhkan <em>shared storage</em> atau <em>distributed chace</em> sehingga menambah kompleksitas infrastruktur.</li>
+<li><strong>Complexity</strong>: konfigurasi session biasanya lebih kompleks dibandingkan cookies sehingga membutuhkan pengaturan backend, seperti database atau chace, strategi eviction, backup/replikasi, dan kadang pengaturan keamanan tambahan. Hal ini akan menambah beban pengembangan dan operasional dibanding solusi <em>client-only</em>.</li>
+<li><strong>Statefulness</strong>: session membuat server menjadi stateful yang bertentangan dengan prinsip <em>RESTful</em> yang mengutamakan <em>statelessness</em>. Hal ini akan membuat layanan yang sepenuhnya <em>stateless</em> atau <em>microservice</em> yang mudah diskalakan menjadi lebih menantang tanpa arsitektur tambahan.</li>
+</ol>
+<h3>Data Aman, Hati Tenang: Strategi Django dalam Mengendalikan Cookies</h3> 
+<hr>
+<p>Penggunaan cookies, secara <em>default</em>, tidak aman digunakan dalam pengembangan aplikasi web. Hal ini disebabkan oleh risiko keamanan yang dapat ditimbulkan dari penggunaan cookies tanpa konfigurasi keamanan lebih lanjut. Berikut adalah beberapa serangan yang berpontesi terjadi pada penggunaan cookies:</p>
+<ol>
+<li><strong>Cross-Site Scripting (XSS)</strong>: <em>attacker</em> akan mencuri cookies melalui kode JavaScript “jahat”. Hal ini memungkinkan <em>attacker</em> untuk mencuri data-data sensitif yang tersimpan di browser, seperti session ID, melalui manipulasi DOM atau akses langsung ke document.cookie.</li>
+<li><strong>Cross-Site Request Forgery (CSRF)</strong>: <em>attacker</em> akan melakukan manipulasi cookies untuk melakukan aksi yang tidak sah atas nama <em>user</em> di mana korban akan membujuk pengguna yang sudah login untuk mengunjungi situs-situs “perangkap” yang mengirim <em>request</em> tertenu ke aplikasi web target. Dari hal tersebut, perubahan data dapat terjadi tanpa sepengetahuan <em>user</em>.</li>
+<li><strong>Session Hijacking</strong>: <em>attacker</em> akan mencuri session ID <em>user</em> untuk menyamar sebagai pengguna yang sah. Hal ini tentu akan mengakibatkan akses tidak sah ke akun pengguna.</li>
+<li><strong>Data Tempering</strong>: cookies yang disimpan di client-side dan dapat dimodifikasi melalui browser developer tools, terlebih data yang tidak divalidasi dengan baik di sisi server, seperti ID pengguna, dapat dimanipulasi oleh <em>attacker</em> untuk mendapatkan keuntungan secara ilegal atau akses yang tidak terotorisasi.</li>
+</ol>
+<p>Lalu, bagaimana peran Django dalam menghadapi hal tersebut?</p>
+<p><strong>Django</strong> secara proaktif akan menangani risiko keamanan cookies tersebut melalui berbagai mekanisme <em>built-in</em> yang dilakukan secara <em>layered</em>, dimulai dengan proteksi CSRF yang otomatis disertakan token unik pada setiap form untuk mencegah serangan CSRF, pengaturan secure flags pada cookies (<em>HttpOnly, Secure, and SameSite</em>) yang akan membatasi akses JavaScript dan memastikan transmisi data hanya dapat dilakukan melalui HTTPS, serta sistem session management yang akan membantu penyimpanan data-data yang sensitif di <em>server-side</em> dan <em>user</em> diberikan <em>session ID</em> yang sudah terenkripsi, dan fitur signed cookies untuk menyimpan data yang harus disimpan di <em>client side</em>. Melalui prosedur tersebut, aplikasi web yang dibangun dapat terlindungi oleh <em>multilayered defense system</em> yang efektif untuk mengurangi kerentanan tradisional pada cookies web.</p>
 
