@@ -8,8 +8,8 @@ from django.contrib.auth.decorators import login_required
 
 
 from django.shortcuts import render, redirect, get_object_or_404
-from main.forms import ItemsForm
-from main.models import Items
+from main.forms import ProductsForm
+from main.models import Products
 
 # Penambahan import modul untuk request pengiriman data ke dalam bentuk XML dan JSON
 from django.http import HttpResponse
@@ -61,34 +61,34 @@ def register(request):
 
 # Function untuk mengirimkan data dalam bentuk XML
 def show_xml(request):
-     items_list = Items.objects.all()
-     xml_data = serializers.serialize("xml", items_list)
+     products_list = Products.objects.all()
+     xml_data = serializers.serialize("xml", products_list)
      return HttpResponse(xml_data, content_type="application/xml")
 
 # Function untuk mengirimkan data dalam bentuk JSON
 def show_json(request):
-    items_list = Items.objects.all()
-    json_data = serializers.serialize("json", items_list)
+    products_list = Products.objects.all()
+    json_data = serializers.serialize("json", products_list)
     return HttpResponse(json_data, content_type="application/json")
 
 # Mengirimkan data dalam bentuk XML berdasarkan ID
-def show_xml_by_id(request, items_id):
+def show_xml_by_id(request, products_id):
    try:
-       items_list = Items.objects.filter(pk=items_id)
-       xml_data = serializers.serialize("xml", items_list)
+       products_list = Products.objects.filter(pk=products_id)
+       xml_data = serializers.serialize("xml", products_list)
        return HttpResponse(xml_data, content_type="application/xml")
     # Handle apabila tidak muncul
-   except Items.DoesNotExist:
+   except Products.DoesNotExist:
        return HttpResponse(status=404)
 
 # Mengirimkan data dalam bentuk JSON berdasarkan ID
-def show_json_by_id(request, items_id):
+def show_json_by_id(request, products_id):
    try:
-       items_list = Items.objects.get(pk=items_id)
-       json_data = serializers.serialize("json", [items_list])
+       products_list = Products.objects.get(pk=products_id)
+       json_data = serializers.serialize("json", [products_list])
        return HttpResponse(json_data, content_type="application/json")
     # Handle apabila tidak muncul 
-   except Items.DoesNotExist:
+   except Products.DoesNotExist:
        return HttpResponse(status=404)
 
 # Decorator login_required untuk show_main
@@ -98,45 +98,45 @@ def show_main(request):
     filter_type = request.GET.get("filter", "all")  # default 'all'
 
     if filter_type == "all":
-        items_list = Items.objects.all()
+        products_list = Products.objects.all()
     else:
-        items_list = Items.objects.filter(user=request.user)
+        products_list = Products.objects.filter(user=request.user)
 
     context = {
         'applicationName' : 'House Of Champions',
         'npm' : '2406495691',
         'name': 'Christna Yosua Rotinsulu',
         'class': 'PBP A',
-        'items_list': items_list,
+        'products_list': products_list,
         # Penambahan variabel untuk last_login
         'last_login': request.COOKIES.get('last_login', 'Never')
     }
 
     return render(request, "main.html", context)
 
-def create_items(request):
-    form = ItemsForm(request.POST or None)
+def create_products(request):
+    form = ProductsForm(request.POST or None)
 
     if form.is_valid() and request.method == "POST":
         # Konfigurasi untuk menghubungkan satu news dengan satu user
         # commit = false berperan agar Django tidak langsung menyimpan objek hasil form ke database,
         # hal tersebut memungkinkan agar developer dapat melakukan modifikasi pada objek sebelum disimpan
-        items_entry = form.save(commit = False)
-        items_entry.user = request.user
-        items_entry.save()
+        products_entry = form.save(commit = False)
+        products_entry.user = request.user
+        products_entry.save()
         return redirect('main:show_main')
 
     context = {'form': form}
-    return render(request, "create_items.html", context)
+    return render(request, "create_products.html", context)
 
-# Decorator untuk fungsi show_items
+# Decorator untuk fungsi show_products
 @login_required(login_url='/login')
-def show_items(request, id):
-    items = get_object_or_404(Items, pk=id)
-    items.increment_views()
+def show_products(request, id):
+    products = get_object_or_404(Products, pk=id)
+    products.increment_views()
 
     context = {
-        'items': items
+        'products': products
     }
 
-    return render(request, "items_detail.html", context)
+    return render(request, "products_detail.html", context)

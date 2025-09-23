@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block content %}
+<p><a href="{% url 'main:show_main' %}"><button>← Back to Products List</button></a></p>
+
+<h1>{{ products.name }}</h1>
+<p><b>{{ products.get_category_display }}</b>{% if products.is_featured %} | 
+    <b>Featured</b>{% endif %}{% if products.is_products_hot %} | 
+    <b>Hot</b>{% endif %} | <i>{{ products.created_at|date:"d M Y, H:i" }}</i> 
+    | Views: {{ products.visitors }}</p>
+
+{% if products.thumbnail %}
+<img src="{{ products.thumbnail }}" alt="Products thumbnail" width="300">
+<br /><br />
+{% endif %}
+
+<!-- Untuk menampilkan harga serta stock dari item yang dijual -->
+<!-- Mengecek apakah item sudah memiliki harga atau belum -->
+{% if products.price != 0 %}
+    <p>💵Price: <b>Rp{{ products.price }}</b></p>
+{% endif %}
+{% if products.stock != 0 %}
+    <p>📦Stock: <b>{{ products.stock }}</b></p>
+{% endif %}
+
+<p>{{ products.description }}</p>
+
+<!-- Penambahan view untuk menampilakn nama toko -->
+{% if products.user %}
+    <p>Author: {{ products.user.username }}</p>
+{% else %}
+    <p>Author: Anonymous</p>
+{% endif %}
+
+{% endblock content %}

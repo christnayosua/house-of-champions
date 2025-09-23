@@ -5,7 +5,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 # Create your models here.
-class Items(models.Model):
+class Products(models.Model):
     CATEGORY_CHOICES = [
         ('transfer', 'Transfer'),
         ('update', 'Update'),
@@ -47,7 +47,7 @@ class Items(models.Model):
         return self.name
     
     @property
-    def is_items_hot(self):
+    def is_products_hot(self):
         return self.visitors > 20
         
     def increment_views(self):

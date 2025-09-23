@@ -11,11 +11,9 @@
 <h5>Class:</h5>
 <p>{{ class }}</p>
 
-<a href="{% url 'main:create_items' %}">
-  <button>+ Add Items</button>
+<a href="{% url 'main:create_products' %}">
+  <button>+ Add Products</button>
 </a>
-
-<hr>
 
 <!-- Menampilkan tombol logout -->
 <a href="{% url 'main:logout' %}">
@@ -32,42 +30,44 @@
 <a href="?filter=my">
     <button type="button">My Products</button>
 
-{% if not items_list %}
+<hr>
+
+{% if not products_list %}
 <p>Belum ada item yang ditambahkan di House Of Champions</p>
 {% else %}
 
-{% for items in items_list %}
+{% for products in products_list %}
 <div>
-  <h2><a href="{% url 'main:show_items' items.id %}">{{ items.title }}</a></h2>
+  <h2><a href="{% url 'main:show_products' products.id %}">{{ products.title }}</a></h2>
 
-  <p><b>{{ items.get_category_display }}</b>{% if items.is_featured %} | 
-    <b>Featured</b>{% endif %}{% if items.is_items_hot %} | 
-    <b>Hot</b>{% endif %} | <i>{{ items.created_at|date:"d M Y H:i" }}</i> 
-    | Views: {{ items.visitors }}</p>
+  <p><b>{{ products.get_category_display }}</b>{% if products.is_featured %} | 
+    <b>Featured</b>{% endif %}{% if products.is_products_hot %} | 
+    <b>Hot</b>{% endif %} | <i>{{ products.created_at|date:"d M Y H:i" }}</i> 
+    | Views: {{ products.visitors }}</p>
 
-  {% if items.thumbnail %}
-  <img src="{{ items.thumbnail }}" alt="thumbnail" width="150" height="100">
+  {% if products.thumbnail %}
+  <img src="{{ products.thumbnail }}" alt="thumbnail" width="150" height="100">
   <br />
   {% endif %}
   
-  {% if items.price > 0 %}
-    <p>💵Price : Rp{{ items.price }}</p> 
+  {% if products.price > 0 %}
+    <p>💵Price : Rp{{ products.price }}</p> 
   {% endif %}
 
-  {% if items.stock > 0 %}
-    <p>📦Stock : {{ items.stock }}</p>
+  {% if products.stock > 0 %}
+    <p>📦Stock : {{ products.stock }}</p>
   {% endif %}
 
-  {% if items.rating > 0 %}
-    <p>⭐Rating : {{ items.rating }}/5.0</p>
+  {% if products.rating > 0 %}
+    <p>⭐Rating : {{ products.rating }}/5.0</p>
   {% endif %}
 
-  {% if items.brand != null %}
-    <p>🌿brand : {{ items.brand }}</p>
+  {% if products.brand != null %}
+    <p>🌿brand : {{ products.brand }}</p>
   {% endif %}
-  <p>{{ items.content|truncatewords:25 }}...</p>
+  <p>{{ products.content|truncatewords:25 }}...</p>
 
-  <p><a href="{% url 'main:show_items' items.id %}"><button>Read More</button></a></p>
+  <p><a href="{% url 'main:show_products' products.id %}"><button>Read More</button></a></p>
 </div>
 
 <hr>
