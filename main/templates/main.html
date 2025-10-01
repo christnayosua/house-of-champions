@@ -1,168 +1,163 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{#
-  Home template with decorative background + CSS-only light/dark toggle (no JS)
-#}
-
 {% block meta %}
 <title>House Of Champions</title>
 {% endblock meta %}
 
 {% block extra_head %}
+<!-- Mendapatkan google font -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
 
 <style>
-  :root {
-    --bg: #f9fafb; /* light page background */
-    --card: #ffffff;
-    --muted: #6b7280;
-    --text: #111827;
-    --border: #e5e7eb;
-    --accent: #16a34a; /* green-600 */
-    --decor-filter: saturate(0.95) brightness(1);
-    --decor-opacity: 0.5;
-  }
-
-  #theme-toggle:checked ~ .site {
-    --bg: #0b1220;
-    --card: #0f1724;
-    --muted: #9ca3af;
-    --text: #f9fafb;
-    --border: #1f2937;
-    --accent: #22c55e;
-    --decor-filter: saturate(0.6) brightness(0.55) contrast(0.9);
-    --decor-opacity: 0.32;
-  }
-
+  /* Melakukan dekorasi untuk class selector */
   .decor-bg-home {
-    position: fixed;
-    inset: 0 0 auto 0;
-    height: 42vh;
-    pointer-events: none;
-    z-index: -1;
+    position: fixed; inset: 0 0 auto 0; height: 36vh; z-index: -1;
     background-image: url('https://i.pinimg.com/1200x/44/24/62/44246235fc68567de2d96e63b642d6c6.jpg');
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: right top;
-    filter: var(--decor-filter);
-    opacity: var(--decor-opacity);
-    transform: translateY(-8%);
-    transition: filter .25s ease, opacity .25s ease, transform .25s ease;
+    background-size: cover; background-position: right top; opacity: .40;
+    filter: saturate(.95) brightness(.95);
+    transition: opacity .2s ease, transform .2s ease;
+    transform: translateY(-6%);
   }
-  @media (max-width: 768px) { .decor-bg-home { background-position: center top; height: 28vh; } }
+  @media (max-width: 768px) { .decor-bg-home { background-position: center top; height: 24vh; } }
 
-  .site { background-color: var(--bg); color: var(--text); }
-  .site .card, .site .bg-card { background-color: var(--card) !important; }
-  .site .muted { color: var(--muted) !important; }
-  .site .accent { color: var(--accent) !important; }
-  .site .accent-bg { background-color: var(--accent) !important; }
-  .site .border-custom { border-color: var(--border) !important; }
-
-  .theme-float { position: fixed; right: 1rem; bottom: 1.25rem; z-index: 60; display: inline-flex; gap: .5rem; align-items:center; background: rgba(255,255,255,0.85); backdrop-filter: blur(6px); padding:.35rem .5rem; border-radius:9999px; border:1px solid rgba(15,23,42,0.06); }
-  .site #theme-toggle { position:absolute; left:-9999px; }
-  .theme-btn { display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:8px; cursor:pointer; border:1px solid transparent; }
-  .site #theme-toggle:not(:checked) + .theme-float .theme-btn-light { background:rgba(0,0,0,0.04); }
-  .site #theme-toggle:checked + .theme-float .theme-btn-dark { background:rgba(255,255,255,0.06); }
-  .theme-float .theme-btn:focus { outline: 2px solid rgba(99,102,241,0.25); outline-offset:2px; }
-
-  .product-card { background-color: var(--card) !important; border: 1px solid var(--border) !important; }
+  /* Toggle button micro-animation */
+  .theme-toggle { transition: transform .14s ease; }
+  .theme-toggle:active { transform: scale(.97); }
 </style>
 {% endblock extra_head %}
 
 {% block content %}
-<!-- Hidden checkbox toggles theme via CSS only -->
-<input type="checkbox" id="theme-toggle" aria-hidden="true">
-
-<!-- Decorative background -->
+<!-- decoration -->
 <div class="decor-bg-home" aria-hidden="true"></div>
 
-<div class="site">
+<!-- Site wrapper -->
+<div id="site-root" class="min-h-screen font-inter antialiased bg-gray-50 dark:bg-slate-900 transition-colors duration-200">
+
   {% include 'navbar.html' %}
 
-  <div class="w-full pt-20 min-h-screen">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-
-      <!-- Hero -->
-      <header class="mb-8 grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
-        <div>
-          <h1 class="display-font text-4xl sm:text-5xl font-extrabold leading-tight" style="color:var(--text)">Discover the Latest<br><span class="accent" style="color:var(--accent)">House of Champions</span></h1>
-          <p class="mt-4 text-lg muted" style="color:var(--muted)">Browse curated football products, stories, and community picks. Add your own products and join the conversation.</p>
-
-          <div class="mt-6 flex flex-wrap gap-3">
-            <a class="inline-flex items-center px-5 py-3 rounded-md accent-bg text-white font-medium transition" style="background:var(--accent)">Create Product</a>
-            <a class="inline-flex items-center px-5 py-3 rounded-md border border-custom muted" style="border-color:var(--border); color:var(--text); background:var(--card)">Explore Products</a>
-          </div>
-        </div>
-
-        <div class="hidden lg:flex items-center justify-end">
-          <div class="w-72 h-48 rounded-xl overflow-hidden shadow-lg bg-card border border-custom">      
-            <img src="https://i.pinimg.com/736x/35/b6/a4/35b6a4be55427628567b9102645870c0.jpg" alt="Tsubatsa" class="w-full h-full object-cover">      
-          </div>
-        </div>
-      </header>
-
-      <!-- Filters -->
-      <div class="mb-8 border rounded-lg p-4" style="background:var(--card); border-color:var(--border)">
-        <div class="flex flex-wrap gap-3">
-          <!-- All -->
-          <a href="?filter=all"
-             class="{% if request.GET.filter == 'all' or not request.GET.filter %}px-4 py-2 rounded-md font-medium transition-colors accent-bg text-white{% else %}px-4 py-2 rounded-md font-medium transition-colors bg-white text-gray-700 border{% endif %}"
-             style="{% if request.GET.filter == 'all' or not request.GET.filter %}background:var(--accent); color:#fff; border-color:var(--border);{% else %}background:var(--card); color:var(--text); border-color:var(--border);{% endif %}">
-            All Products
-          </a>
-
-          <!-- My -->
-          <a href="?filter=my"
-             class="{% if request.GET.filter == 'my' %}px-4 py-2 rounded-md font-medium transition-colors accent-bg text-white{% else %}px-4 py-2 rounded-md font-medium transition-colors bg-white text-gray-700 border{% endif %}"
-             style="{% if request.GET.filter == 'my' %}background:var(--accent); color:#fff; border-color:var(--border);{% else %}background:var(--card); color:var(--text); border-color:var(--border);{% endif %}">
-            My Products
-          </a>
-
-          <!-- Hot -->
-          <a href="?filter=hot"
-             class="{% if request.GET.filter == 'hot' %}px-4 py-2 rounded-md font-medium transition-colors accent-bg text-white{% else %}px-4 py-2 rounded-md font-medium transition-colors bg-white text-gray-700 border{% endif %}"
-             style="{% if request.GET.filter == 'hot' %}background:var(--accent); color:#fff; border-color:var(--border);{% else %}background:var(--card); color:var(--text); border-color:var(--border);{% endif %}">
-            Hot
-          </a>
-        </div>
-
-        {% if user.is_authenticated %}
-          <div class="text-sm muted mt-4">Last login: {{ last_login }}</div>
-        {% endif %}
-      </div>
-
-      <!-- Products Grid or Empty State -->
-      {% if not products_list %}
-        <div class="card rounded-lg p-12 text-center" style="background:var(--card); border:1px solid var(--border)">
-          <div class="w-32 h-32 mx-auto mb-4">
-            <video autoplay muted loop class="w-full h-full object-contain">
-              <source src="{% static 'video/no-products.mp4' %}" type="video/mp4">
-              <!-- fallback text -->
-            </video>
-          </div>
-          <h3 class="text-xl font-semibold mb-2" style="color:var(--text)">No Products found</h3>
-          <p class="muted mb-6">Be the first to share football products with the community.</p>
-          <a href="{% url 'main:create_products' %}" class="inline-flex items-center px-4 py-2" style="background:var(--accent); color:#fff; border-radius:8px;">Create Product</a>
-        </div>
-      {% else %}
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {% for products in products_list %}
-            {% include 'card_products.html' with products=products %}
-          {% endfor %}
-        </div>
-      {% endif %}
-
-    </div>
+  <!-- Theme control (persisted by JS) -->
+  <div class="fixed right-4 bottom-6 z-50">
+    <button id="btn-theme" class="theme-toggle inline-flex items-center gap-2 px-3 py-2 rounded-full shadow-lg bg-white/90 dark:bg-slate-800/90 border border-gray-200 dark:border-slate-700"
+            aria-label="Toggle theme" title="Toggle theme">
+      <svg id="icon-sun" class="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+        <path d="M12 3v2M12 19v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M3 12h2M19 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.5" />
+      </svg>
+      <svg id="icon-moon" class="w-5 h-5 hidden" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+        <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span id="theme-label" class="text-sm font-medium text-slate-700 dark:text-slate-200">Theme</span>
+    </button>
   </div>
 
-  <!-- Floating theme toggle (CSS-only) -->
-  <label class="theme-float" for="theme-toggle" role="button" aria-label="Toggle theme">
-    <button type="button" class="theme-btn theme-btn-light" title="Light mode" aria-hidden="true">☀️</button>
-    <button type="button" class="theme-btn theme-btn-dark" title="Dark mode" aria-hidden="true">🌙</button>
-  </label>
+  <main class="pt-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+    <!-- Hero -->
+    <section class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center mb-10">
+      <div>
+        <h1 class="text-4xl sm:text-5xl font-extrabold leading-tight text-slate-900 dark:text-white">
+          Discover the Latest<br>
+          <span class="text-emerald-500">House of Champions</span>
+        </h1>
+        <p class="mt-4 text-lg text-slate-600 dark:text-slate-300 max-w-xl">Curated football products, stories and community picks. Add your own and be featured.</p>
+
+        <div class="mt-6 flex flex-wrap gap-3">
+          <a href="{% url 'main:create_products' %}" class="inline-flex items-center px-5 py-3 rounded-md bg-emerald-500 text-white font-medium shadow hover:brightness-105">Create Product</a>
+          <a href="#" class="inline-flex items-center px-5 py-3 rounded-md bg-white/90 border text-slate-800 hover:shadow">Explore</a>
+        </div>
+      </div>
+
+      <div class="hidden lg:flex justify-end">
+        <div class="w-80 h-48 rounded-2xl overflow-hidden shadow-2xl ring-1 ring-black/5 dark:ring-white/5 transform hover:scale-[1.02] transition-all">
+          <img src="https://i.pinimg.com/736x/9e/e4/18/9ee4180999c90b7075a315fbf9d37e81.jpg" alt="preview" class="w-full h-full object-cover">
+        </div>
+      </div>
+    </section>
+
+    <!-- Filters -->
+    <section class="mb-8">
+      <div class="inline-flex gap-3 bg-white/80 dark:bg-slate-800/60 p-3 rounded-lg shadow-sm">
+        <a href="?filter=all" class="px-4 py-2 rounded-md font-medium {% if not request.GET.filter or request.GET.filter == 'all' %}bg-emerald-500 text-white{% else %}bg-transparent text-slate-700 dark:text-slate-200 ring-1 ring-black/5 dark:ring-white/5{% endif %}">All</a>
+        <a href="?filter=my" class="px-4 py-2 rounded-md font-medium {% if request.GET.filter == 'my' %}bg-emerald-500 text-white{% else %}bg-transparent text-slate-700 dark:text-slate-200 ring-1 ring-black/5 dark:ring-white/5{% endif %}">My</a>
+        <a href="?filter=hot" class="px-4 py-2 rounded-md font-medium {% if request.GET.filter == 'hot' %}bg-emerald-500 text-white{% else %}bg-transparent text-slate-700 dark:text-slate-200 ring-1 ring-black/5 dark:ring-white/5{% endif %}">Hot 🔥</a>
+      </div>
+
+      {% if user.is_authenticated %}
+        <div class="mt-3 text-sm text-slate-500 dark:text-slate-300">Last login: {{ last_login }}</div>
+      {% endif %}
+    </section>
+
+    <!-- Products grid -->
+    {% if not products_list %}
+      <div class="bg-white dark:bg-slate-800 p-12 rounded-2xl shadow border border-black/5 dark:border-white/5 text-center">
+        <div class="w-28 h-28 mx-auto mb-4">
+          <video autoplay muted loop class="w-full h-full object-contain">
+            <source src="{% static 'video/no-products.mp4' %}" type="video/mp4">
+          </video>
+        </div>
+        <img src="https://i.pinimg.com/originals/ab/c9/6f/abc96f284c5fd1a927380fe94b07a816.gif" alt="no Products" class="mx-auto rounded-xl mb-6 mt-2">
+        <h3 class="text-xl font-semibold text-slate-900 dark:text-white mb-2">No products found</h3>
+        <p class="text-slate-600 dark:text-slate-300 mb-4">Be the first to add a product.</p>
+        <a href="{% url 'main:create_products' %}" class="inline-block px-4 py-2 bg-emerald-500 text-white rounded-md">Create Product</a>
+      </div>
+    {% else %}
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for products in products_list %}
+          {% include 'card_products.html' with products=products %}
+        {% endfor %}
+      </div>
+    {% endif %}
+  </main>
 </div>
 
+<!-- Theme script: toggles 'dark' class on <html> and persists choice to localStorage -->
+<script>
+(function () {
+  const root = document.documentElement;
+  const btn = document.getElementById('btn-theme');
+  const iconSun = document.getElementById('icon-sun');
+  const iconMoon = document.getElementById('icon-moon');
+  const label = document.getElementById('theme-label');
+
+  // get initial preference: from localStorage -> else prefers-color-scheme -> else light
+  function getStoredTheme() {
+    try { return localStorage.getItem('site-theme'); } catch (e) { return null; }
+  }
+  function storeTheme(t) {
+    try { localStorage.setItem('site-theme', t); } catch (e) {}
+  }
+
+  function prefersDark() {
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+
+  function applyTheme(theme) {
+    if (theme === 'dark') {
+      root.classList.add('dark');
+      iconSun.classList.add('hidden');
+      iconMoon.classList.remove('hidden');
+      label.textContent = 'Dark';
+    } else {
+      root.classList.remove('dark');
+      iconMoon.classList.add('hidden');
+      iconSun.classList.remove('hidden');
+      label.textContent = 'Light';
+    }
+  }
+
+  // initialize
+  let theme = getStoredTheme();
+  if (!theme) theme = prefersDark() ? 'dark' : 'light';
+  applyTheme(theme);
+
+  // toggle handler
+  btn.addEventListener('click', function () {
+    const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+    applyTheme(newTheme);
+    storeTheme(newTheme);
+  });
+})();
+</script>
 {% endblock content %}
