@@ -404,7 +404,7 @@ Dalam mengambil dan menerapkan style CSS yang dibuat *developer* untuk aplikasi 
 <li><strong>Menambahkan konfigurasi static files pada aplikasi</strong> dengan menambahkan <em>middleware</em> WhiteNoise pada berkas <code>settings.py</code> agar Django dapat mengelola berkas statis secara otomatis dalam mode produksi tanpa perlu konfigurasi yang kompleks. Lalu, menambahkan konfigurasi variabel <code>STATIC_ROOT</code>, <code>STATICFILES_DIRS</code>, dan <code>STATIC_URL</code>.<br>
 10.<strong>Costum styling halaman login, register, navbar, home, dan product details</strong> menggunakan Tailwind.</li>
 </ol>
-<h2 id="referensi">Referensi</h2>
+<h2 id="referensi-🔎-2">Referensi 🔎</h2>
 <p>[1] MDN Web Docs. (n.d.). <em>Basic CSS selectors</em>. Retrieved from <a href="https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Styling_basics/Basic_selectors">https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Styling_basics/Basic_selectors</a><br>
 [2] w3schools. (n.d.). <em>HTML  Responsive Web Design</em>. Retrieved from <a href="https://www.w3schools.com/html/html_responsive.asp">https://www.w3schools.com/html/html_responsive.asp</a><br>
 [3] w3schools. (n.d.). <em>CSS  Box Model</em>. Retrieved from <a href="https://www.w3schools.com/css/css_boxmodel.asp">https://www.w3schools.com/css/css_boxmodel.asp</a><br>
