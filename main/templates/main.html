@@ -3,10 +3,6 @@
 
 {#
   Home template with decorative background + CSS-only light/dark toggle (no JS)
-  - Uses a hidden checkbox to switch theme via CSS selectors
-  - Because this is CSS-only, the preference will NOT persist across pages or reloads
-  - Tailwind classes are still used; key colors/backgrounds are overridden via CSS variables when toggle is checked
-  - Place this template where you used the previous one (it includes navbar via {% include 'navbar.html' %})
 #}
 
 {% block meta %}
@@ -30,19 +26,17 @@
     --decor-opacity: 0.5;
   }
 
-  /* When the hidden checkbox is checked -> dark theme variables */
   #theme-toggle:checked ~ .site {
-    --bg: #0b1220; /* dark background */
-    --card: #0f1724; /* card */
+    --bg: #0b1220;
+    --card: #0f1724;
     --muted: #9ca3af;
     --text: #f9fafb;
     --border: #1f2937;
-    --accent: #22c55e; /* slightly brighter green for dark */
+    --accent: #22c55e;
     --decor-filter: saturate(0.6) brightness(0.55) contrast(0.9);
     --decor-opacity: 0.32;
   }
 
-  /* Decorative background layer */
   .decor-bg-home {
     position: fixed;
     inset: 0 0 auto 0;
@@ -60,7 +54,6 @@
   }
   @media (max-width: 768px) { .decor-bg-home { background-position: center top; height: 28vh; } }
 
-  /* Apply variables to common areas to override Tailwind colors where needed */
   .site { background-color: var(--bg); color: var(--text); }
   .site .card, .site .bg-card { background-color: var(--card) !important; }
   .site .muted { color: var(--muted) !important; }
@@ -68,17 +61,13 @@
   .site .accent-bg { background-color: var(--accent) !important; }
   .site .border-custom { border-color: var(--border) !important; }
 
-  /* Floating toggle (no JS) */
   .theme-float { position: fixed; right: 1rem; bottom: 1.25rem; z-index: 60; display: inline-flex; gap: .5rem; align-items:center; background: rgba(255,255,255,0.85); backdrop-filter: blur(6px); padding:.35rem .5rem; border-radius:9999px; border:1px solid rgba(15,23,42,0.06); }
   .site #theme-toggle { position:absolute; left:-9999px; }
   .theme-btn { display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:8px; cursor:pointer; border:1px solid transparent; }
   .site #theme-toggle:not(:checked) + .theme-float .theme-btn-light { background:rgba(0,0,0,0.04); }
   .site #theme-toggle:checked + .theme-float .theme-btn-dark { background:rgba(255,255,255,0.06); }
-
-  /* Simple focus for accessibility */
   .theme-float .theme-btn:focus { outline: 2px solid rgba(99,102,241,0.25); outline-offset:2px; }
 
-  /* Card defaults used in this template */
   .product-card { background-color: var(--card) !important; border: 1px solid var(--border) !important; }
 </style>
 {% endblock extra_head %}
@@ -110,7 +99,7 @@
 
         <div class="hidden lg:flex items-center justify-end">
           <div class="w-72 h-48 rounded-xl overflow-hidden shadow-lg bg-card border border-custom">      
-            <img src="https://i.pinimg.com/736x/35/b6/a4/35b6a4be55427628567b9102645870c0.jpg" alt="Tsubatsa">      
+            <img src="https://i.pinimg.com/736x/35/b6/a4/35b6a4be55427628567b9102645870c0.jpg" alt="Tsubatsa" class="w-full h-full object-cover">      
           </div>
         </div>
       </header>
@@ -118,9 +107,26 @@
       <!-- Filters -->
       <div class="mb-8 border rounded-lg p-4" style="background:var(--card); border-color:var(--border)">
         <div class="flex flex-wrap gap-3">
-          <a href="?filter=all" class="px-4 py-2 rounded-md font-medium transition-colors {% if request.GET.filter == 'all' or not request.GET.filter %}accent-bg text-white{% else %}bg-white text-gray-700 border{% endif %}" style="background: {% if request.GET.filter == 'all' or not request.GET.filter %}var(--accent){% else %}var(--card){% endif %}; color: {% if request.GET.filter == 'all' or not request.GET.filter %}#fff{% else %}var(--text){% endif %}; border-color: var(--border);">All Products</a>
-          <a href="?filter=my" class="px-4 py-2 rounded-md font-medium transition-colors {% if request.GET.filter == 'my' %}accent-bg text-white{% else %}bg-white text-gray-700 border{% endif %}" style="background: {% if request.GET.filter == 'my' %}var(--accent){% else %}var(--card){% endif %}; color: {% if request.GET.filter == 'my' %}#fff{% else %}var(--text){% endif %}; border-color: var(--border);">My Products</a>
-          <a href="?filter=hot" class="px-4 py-2 rounded-md font-medium transition-colors {% if request.GET.filter == 'hot' %}accent-bg text-white{% else %}bg-white text-gray-700 border{% endif %}" style="background: {% if request.GET.filter == 'hot' %}var(--accent){% else %}var(--card){% endif %}; color: {% if request.GET.filter == 'hot' %}#fff{% else %}var(--text){% endif %}; border-color: var(--border);">Hot</a>
+          <!-- All -->
+          <a href="?filter=all"
+             class="{% if request.GET.filter == 'all' or not request.GET.filter %}px-4 py-2 rounded-md font-medium transition-colors accent-bg text-white{% else %}px-4 py-2 rounded-md font-medium transition-colors bg-white text-gray-700 border{% endif %}"
+             style="{% if request.GET.filter == 'all' or not request.GET.filter %}background:var(--accent); color:#fff; border-color:var(--border);{% else %}background:var(--card); color:var(--text); border-color:var(--border);{% endif %}">
+            All Products
+          </a>
+
+          <!-- My -->
+          <a href="?filter=my"
+             class="{% if request.GET.filter == 'my' %}px-4 py-2 rounded-md font-medium transition-colors accent-bg text-white{% else %}px-4 py-2 rounded-md font-medium transition-colors bg-white text-gray-700 border{% endif %}"
+             style="{% if request.GET.filter == 'my' %}background:var(--accent); color:#fff; border-color:var(--border);{% else %}background:var(--card); color:var(--text); border-color:var(--border);{% endif %}">
+            My Products
+          </a>
+
+          <!-- Hot -->
+          <a href="?filter=hot"
+             class="{% if request.GET.filter == 'hot' %}px-4 py-2 rounded-md font-medium transition-colors accent-bg text-white{% else %}px-4 py-2 rounded-md font-medium transition-colors bg-white text-gray-700 border{% endif %}"
+             style="{% if request.GET.filter == 'hot' %}background:var(--accent); color:#fff; border-color:var(--border);{% else %}background:var(--card); color:var(--text); border-color:var(--border);{% endif %}">
+            Hot
+          </a>
         </div>
 
         {% if user.is_authenticated %}
@@ -132,7 +138,10 @@
       {% if not products_list %}
         <div class="card rounded-lg p-12 text-center" style="background:var(--card); border:1px solid var(--border)">
           <div class="w-32 h-32 mx-auto mb-4">
-            <video autoplay muted loop src="{% static 'video/no-products.mp4' %}" class="w-full h-full object-contain"></video>
+            <video autoplay muted loop class="w-full h-full object-contain">
+              <source src="{% static 'video/no-products.mp4' %}" type="video/mp4">
+              <!-- fallback text -->
+            </video>
           </div>
           <h3 class="text-xl font-semibold mb-2" style="color:var(--text)">No Products found</h3>
           <p class="muted mb-6">Be the first to share football products with the community.</p>
