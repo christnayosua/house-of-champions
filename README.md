@@ -335,4 +335,79 @@ Django, dalam hal otorisasi, menawarkan beberapa lapisan kontrol akses berupa de
 [3] GeeksforGeeks. (2025, July 23). <em>Difference Between Session and Cookies</em>. Retrieved from <a href="https://www.geeksforgeeks.org/javascript/difference-between-session-and-cookies/">https://www.geeksforgeeks.org/javascript/difference-between-session-and-cookies/</a><br>
 [4] Django Documentation. (n.d.). <em>Security in Django</em>. Retrieved from <a href="https://docs.djangoproject.com/en/5.2/topics/security/">https://docs.djangoproject.com/en/5.2/topics/security/</a><br>
 [5] Tim Dosen dan Asisten Dosen PBP 2024 dan 2025. (n.d). <em>Tutorial 3: Autentikasi, Session, Cookies dan Selenium</em>. Retrieved from <a href="https://pbp-fasilkom-ui.github.io/ganjil-2026/docs/tutorial-3">https://pbp-fasilkom-ui.github.io/ganjil-2026/docs/tutorial-3</a></p>
+<h2 id="tugas-individu-5">Tugas Individu 5</h2>
+<p><em><strong>by Christna Yosua Rotinsulu-2406495691</strong></em></p>
+<h3>Urutan Prioritas Pengambilan CSS 🎨[1]</h3>
+<hr>
+Dalam mengambil dan menerapkan style CSS yang dibuat *developer* untuk aplikasi web, urutan yang akan menjadi fokus browser adalah sebagai berikut:
+<ol>
+<li><strong>Importance</strong> : deklarasi dengan <code>!important</code> akan menjadi pilihan pertama browser untuk memilih style CSS yang ingin diterapkan. Lalu, bagaimana jika terdapat dua rules tersebut? Dalam mengatasi hal tersebut, browser akan melihat <em><strong>specificity</strong></em> mana yang lebih tinggi. Lalu, bagaimana jika <strong><em>specifity</em>-nya</strong> sama? Browser akan melihat <em>source order</em> yang muncul paling akhir.</li>
+<li><strong>Inline styles (<code>style="...")</code></strong>: <em>inline style</em> mempunyai <em>specificity</em> yang sangat tinggi sehingga ketika <em>style CSS</em> didefinisikan secara <em>inline</em> (<em>mengabaikan deklarasi <code>!mportant</code></em>), maka hal tersebut akan menjadi prioritas browser untuk memutuskan dan menerapkan <em>style</em> tersebut.</li>
+<li><strong>ID Selector (<code>#id</code>)</strong> mempunyai <em>specifity</em> tinggi dalam CSS <em>Style</em>, terlebih id harus unik. Biasanya, <em>developer</em> menggunakan hal ini untuk desain bagian yang lebih spesifik.</li>
+<li><strong>Class, attribute, pseudo-class (<code>.class, [attribute], :hover</code>)</strong> mempunyai <em>specificity</em> yang sedang sehingga prioritas untuk menerapkannya bergantung pada prioritas yang lebih tinggi. <em>Developer</em> umumnya menggunakan selector ini untuk desain bagian spesifik dalam jumlah banyak, seperti desain <code>div</code> dan <code>button</code> dengan className yang sama.</li>
+<li><strong>Element and pseudo-element (<code>div, p, ::after</code>)</strong> mempunyai <em>specificity</em> yang rendah. Hal ini perlu diperhatikan sebab semua element yang dipilih dalam berkas HTML akan menerapkan style tersebut sehingga untuk desain lebih spesifik dapat menggunakan selector dengan <em>specificity</em> yang lebih tinggi.</li>
+<li><strong>Source Order</strong>: lalu, bagaimana jika tidak menggunakan selector <code>.class</code>, <code>#id</code>, dsb? atau ada dua <em>selector</em> dengan rules yang sama? Untuk menangani hal tersebut, browser akan melihat urutan rules yang ditulis dan akan memilih <em>rules</em> yang ditulis paling terakhir/bawah (terbaru).</li>
+<li><strong>Origin</strong>: dalam praktiknya, <em>developer</em> lebih memilih untuk menggunakan <em>eksternal style</em> sehingga lebih mudah dalam mengatur desain yang ingin digunakan, terlebih jika kode terlalu banyak, maka jika <em>rules</em> langsung didefinisikan di berkas yang sama akan merepotkan <em>developer</em> untuk <em>develop</em> desain browser menjadi lebih menarik.</li>
+</ol>
+<h3>Mengapa Responsive Design Penting? 📲 [2]</h3>
+<hr>
+<p>Alasan kenapa <em>responsive design</em> perlu menjadi perhatian utama <em>developer</em> dalam mengembangkan sebuah aplikasi adalah sebagai berikut:</p>
+<ol>
+<li><strong>Tidak Bergantung Pada Device</strong>: <em>user</em> dapat membuka aplikasi melalui peramban web dari ponsel, laptop, atau TV sehingga <em>developer</em> perlu memperhatikan agar <em>layout</em> menjadi lebih adaptif di semua <em>device</em>.</li>
+<li><strong>UX  &amp; Konversi</strong>: tata letak yang baik pada semua perangkat akan memberikan kenyamanan kepada <em>user</em> dalam mengakses aplikasi web tersebut. Selain itu, hal ini akan membantu menurunkan <em>bounce</em> sehingga menaikkan konversi antara <em>user</em> dengan aplikasi, seperti pendaftaran atau pembelian produk.</li>
+<li><strong>SEO atau Search Engine Optimazion</strong> akan membantu menarik perhatian <em>user</em> untuk mengunjungi aplikasi yang dibuat. Tetapi, SEO lebih memprioritaskan <em>mobile-friendly pages</em> sehingga tata letak harus lebih adaptif untuk device mobile.</li>
+<li><strong>Aksesibilitas</strong>: salah satu hal yang perlu diperhatikan <em>user</em> adalah target pemasaran. Oleh sebab itu, apabila target pemasaran ditujukan kepada orang tua dan lansia akan lebih baik jika <em>responsive design + breakpoints</em> yang masuk akal diterapkan dalam aplikasi, seperti pembesaran ukuran teks, sehingga membantu <em>user</em> dalam mengakses aplikasi.</li>
+</ol>
+<p>Salah satu contoh aplikasi yang sudah menerapkan <em>responsive design</em> adalah <strong>Tokopedia/Shopee</strong>. Aplikasi tersebut mempunyai layout yang adaptif terhadap semua device, elemen CTA besar, dan navigasi tab bawah sangat membantu <em>user</em> melakukan pembelian produk, transaksi, pelacakan barang, menyampaikan keluhan, dsb.</p>
+<p>Di sisi lain, ada beberapa aplikasi yang belum atau kurang menerapkan <em>responsive design</em> yang umumnya digunakan di beberapa <strong>portal pemerintahan lama atau aplikasi intranet perusahaan lawas</strong> yang masih dirancang untuk <em>desktop only</em>, tabel yang melebar, dan tombol kecil. Biasanya aplikasi tersebut masih menggunakan codebase lama, depedensi UI lawas, atau tidak ada prioritas bisnis untuk redesign, seperti <em>e-commerce</em> modern saat ini.</p>
+<h3>Box Model 📦 [3]</h3>
+<hr>
+<p>Dalam CSS Style, Box model dibagi menjadi 4 bagian, yaitu <strong>Content</strong>, <strong>Padding</strong>, <strong>Border</strong>,  dan <strong>Margin</strong>.</p>
+<ol>
+<li><strong>Content</strong>: box atau area untuk menaruh teks/gambar.</li>
+<li><strong>Padding</strong>: space di dalam box yang terletak di antara <em>content dan border</em>. (Background juga dapat melekat sampai padding).</li>
+<li><strong>Border</strong>: garis yang berada di sekitar <em>padding dan content</em>.</li>
+<li><strong>Margin</strong>: space yang berada di luar border dan memisahkan elemen dari elemen lain. (Note: margin dapat <em>collapse</em> untuk <em>vertical margins</em>).</li>
+</ol>
+<p>Contoh implementasi:</p>
+<pre><code>.card{
+    content-box;
+    width: 300px; 
+    padding: 20px;              
+    border: 2px solid #00000;  
+    margin: 16px;               
+    box-sizing: border-box;     
+}
+</code></pre>
+<p><strong>Penjelasan</strong></p>
+<ol>
+<li>Padding 20px -&gt; memberi space di bagian atas, bawah, kanan, dan kiri sebesar 20 pixels</li>
+<li>Border 2px solid #00000 -&gt; memberi garis pada box <strong>card</strong> setebal 2 pixels dan tidak putus putus dengan warna hitam (bisa menggunakan RGB dan hsl juga untuk mengatur lightness atau saturation)</li>
+<li>Margin 16px -&gt; Memberi space di luar box (kanan, kiri, atas, dan bawah) <strong>card</strong> sebesar 16 pixels.</li>
+</ol>
+<h3>Flexbox vs Grid : Mana yang Lebih Bagus? 💪 [4]</h3>
+<hr>
+<p>Flexbox adalah konsep layout di mana menaruh box layout menjadi satu dimensi (baris atau kolom). Hal ini sangat baik apabila diterapkan pada bar navigasi, card row, center-align vertical/horizontal, komponen UI yang linear. Flexbox akan menjadi lebih adaptif di semua device karena box layout tidak akan menghimpit satu dengan yang lain pada ukuran screen device yang lebih kecil. Beberapa properti utama di flexbox: <code>display: flex; flex-direction; justify-content; align-items; gap; flex-wrap; flex-grow/shrink/basis</code>.</p>
+<p>Di sisi lain, Grid adalah konsep layout di mana menaruh box layout menjadi dua dimensi (baris dan kolom) sehingga cocok untuk layout halaman, gallery, complex card layout, asymmetrical layouts, dsb. Beberapa properti utama dalam CSS Grid meliputi <code>display: grid; grid-template-columns/rows; gap; grid-auto-flow; grid-area</code>.</p>
+<p>Lalu, mana yang lebih bagus? Konsep layout tersebut perlu dikatikan dengan kebutuhan aplikasi. Apabila layout utamanya baris/kolom sederhana, maka gunakan <strong>Flexbox</strong>. Lalu, apabila butuh kontrol baris dan kolom kompleks, maka gunakan <strong>Grid</strong>. Atau, bisa menggunakan kedua konsep layout tersebut untuk halaman (<strong>Grid</strong>) atau komponen internal (<strong>Flexbox</strong>)</p>
+<h3>Checklist Step by Step</h3>
+<hr>
+<ol>
+<li><strong>Menambah tailwind ke aplikasi</strong>: membuka berkas <code>base.html</code> yang telah dibuat sebelumnya dan menambahkan tag <code>&lt;meta name="viewport&gt;</code> agar halaman web menjadi adaptif terhadap ukuran dan perilaku <em>mobile device</em>.</li>
+<li>Menambahkan script CDN (<em>Content Delivery Network</em>) Tailwind di bagian head pada berkas <code>base.html</code>.</li>
+<li><strong>Menambahkan fitur edit_products</strong> pada berkas <code>views.py</code> yang menerima parameter <code>request</code> dan <code>id</code> agar toko dapat mengedit produk mereka di aplikasi web secara langsung tanpa perlu <code>create_product</code> kembali.</li>
+<li><strong>Menambahkan tampilan edit_product</strong> dengan menambahkan berkas baru bernama <code>edit_products.html</code> dan mengintegrasikan tampilan tersebut melalui <code>urls.py</code> agar dapat diakses. Lalu, mengimport function <code>create_products</code> dan path ke function tersebut.</li>
+<li><strong>Melakukan pembaruan <code>main.html</code></strong> untuk menambahkan tombol <code>edit</code> yang dapat di-<em>click</em> toko untuk memperbarui produk mereka.</li>
+<li><strong>Menambahkan fitur <code>delete_products</code></strong> dengan menambahkan function <code>delete_products</code> yang menerima parameter <code>request</code> dan <code>id</code> pada berkas <code>views.py</code> agar toko dapat menghapus produk mereka dari aplikasi (sebelumnya belum tersedia). Lalu, mengintegrasikan fungsi tersebut pada berkas <code>urls.py</code> dan menambahkan url untuk mengakses fungsi tersebut.</li>
+<li><strong>Memunculkan tombol <code>delete</code> pada berkas <code>main.html</code></strong> dengan mengubah bagian loop <code>product_list</code> yang dapat di-<em>click</em> untuk mengakses fungsi tersebut.</li>
+<li><strong>Menambahkan navigation bar</strong> pada direktori <code>templates</code> di root directory. Navigation bar ini akan membantu aplikasi dalam menavigasi berbagai halaman atau fitur yang ada di aplikasi web.</li>
+<li><strong>Menambahkan konfigurasi static files pada aplikasi</strong> dengan menambahkan <em>middleware</em> WhiteNoise pada berkas <code>settings.py</code> agar Django dapat mengelola berkas statis secara otomatis dalam mode produksi tanpa perlu konfigurasi yang kompleks. Lalu, menambahkan konfigurasi variabel <code>STATIC_ROOT</code>, <code>STATICFILES_DIRS</code>, dan <code>STATIC_URL</code>.<br>
+10.<strong>Costum styling halaman login, register, navbar, home, dan product details</strong> menggunakan Tailwind.</li>
+</ol>
+<h2 id="referensi">Referensi</h2>
+<p>[1] MDN Web Docs. (n.d.). <em>Basic CSS selectors</em>. Retrieved from <a href="https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Styling_basics/Basic_selectors">https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Styling_basics/Basic_selectors</a><br>
+[2] w3schools. (n.d.). <em>HTML  Responsive Web Design</em>. Retrieved from <a href="https://www.w3schools.com/html/html_responsive.asp">https://www.w3schools.com/html/html_responsive.asp</a><br>
+[3] w3schools. (n.d.). <em>CSS  Box Model</em>. Retrieved from <a href="https://www.w3schools.com/css/css_boxmodel.asp">https://www.w3schools.com/css/css_boxmodel.asp</a><br>
+[4] Codepolitan. (2018, July 10). <em>CSS Grid vs Flexbox</em>. Retrieved from <a href="https://www.codepolitan.com/blog/css-grid-vs-flexbox-5b4336849183d/">https://www.codepolitan.com/blog/css-grid-vs-flexbox-5b4336849183d/</a><br>
+[5] Tim Dosen dan Asdos PBP 2025. (n.d.) <em>Tutorial 4: Desain Web Menggunakan HTML dan CSS3 &amp; Metode Update dan Delete pada Data</em>. Retrieved from <a href="https://pbp-fasilkom-ui.github.io/ganjil-2026/docs/tutorial-4">https://pbp-fasilkom-ui.github.io/ganjil-2026/docs/tutorial-4</a></p>
 
