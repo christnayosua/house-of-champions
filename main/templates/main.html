@@ -1,77 +1,159 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{#
+  Home template with decorative background + CSS-only light/dark toggle (no JS)
+  - Uses a hidden checkbox to switch theme via CSS selectors
+  - Because this is CSS-only, the preference will NOT persist across pages or reloads
+  - Tailwind classes are still used; key colors/backgrounds are overridden via CSS variables when toggle is checked
+  - Place this template where you used the previous one (it includes navbar via {% include 'navbar.html' %})
+#}
+
+{% block meta %}
+<title>House Of Champions</title>
+{% endblock meta %}
+
+{% block extra_head %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #f9fafb; /* light page background */
+    --card: #ffffff;
+    --muted: #6b7280;
+    --text: #111827;
+    --border: #e5e7eb;
+    --accent: #16a34a; /* green-600 */
+    --decor-filter: saturate(0.95) brightness(1);
+    --decor-opacity: 0.5;
+  }
+
+  /* When the hidden checkbox is checked -> dark theme variables */
+  #theme-toggle:checked ~ .site {
+    --bg: #0b1220; /* dark background */
+    --card: #0f1724; /* card */
+    --muted: #9ca3af;
+    --text: #f9fafb;
+    --border: #1f2937;
+    --accent: #22c55e; /* slightly brighter green for dark */
+    --decor-filter: saturate(0.6) brightness(0.55) contrast(0.9);
+    --decor-opacity: 0.32;
+  }
+
+  /* Decorative background layer */
+  .decor-bg-home {
+    position: fixed;
+    inset: 0 0 auto 0;
+    height: 42vh;
+    pointer-events: none;
+    z-index: -1;
+    background-image: url('https://i.pinimg.com/1200x/44/24/62/44246235fc68567de2d96e63b642d6c6.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: right top;
+    filter: var(--decor-filter);
+    opacity: var(--decor-opacity);
+    transform: translateY(-8%);
+    transition: filter .25s ease, opacity .25s ease, transform .25s ease;
+  }
+  @media (max-width: 768px) { .decor-bg-home { background-position: center top; height: 28vh; } }
+
+  /* Apply variables to common areas to override Tailwind colors where needed */
+  .site { background-color: var(--bg); color: var(--text); }
+  .site .card, .site .bg-card { background-color: var(--card) !important; }
+  .site .muted { color: var(--muted) !important; }
+  .site .accent { color: var(--accent) !important; }
+  .site .accent-bg { background-color: var(--accent) !important; }
+  .site .border-custom { border-color: var(--border) !important; }
+
+  /* Floating toggle (no JS) */
+  .theme-float { position: fixed; right: 1rem; bottom: 1.25rem; z-index: 60; display: inline-flex; gap: .5rem; align-items:center; background: rgba(255,255,255,0.85); backdrop-filter: blur(6px); padding:.35rem .5rem; border-radius:9999px; border:1px solid rgba(15,23,42,0.06); }
+  .site #theme-toggle { position:absolute; left:-9999px; }
+  .theme-btn { display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:8px; cursor:pointer; border:1px solid transparent; }
+  .site #theme-toggle:not(:checked) + .theme-float .theme-btn-light { background:rgba(0,0,0,0.04); }
+  .site #theme-toggle:checked + .theme-float .theme-btn-dark { background:rgba(255,255,255,0.06); }
+
+  /* Simple focus for accessibility */
+  .theme-float .theme-btn:focus { outline: 2px solid rgba(99,102,241,0.25); outline-offset:2px; }
+
+  /* Card defaults used in this template */
+  .product-card { background-color: var(--card) !important; border: 1px solid var(--border) !important; }
+</style>
+{% endblock extra_head %}
+
 {% block content %}
-<h1>{{ applicationName }}</h1>
+<!-- Hidden checkbox toggles theme via CSS only -->
+<input type="checkbox" id="theme-toggle" aria-hidden="true">
 
-<h5>NPM: </h5>
-<p>{{ npm }}</p>
+<!-- Decorative background -->
+<div class="decor-bg-home" aria-hidden="true"></div>
 
-<h5>Name:</h5>
-<p>{{ name }}</p>
+<div class="site">
+  {% include 'navbar.html' %}
 
-<h5>Class:</h5>
-<p>{{ class }}</p>
+  <div class="w-full pt-20 min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
-<a href="{% url 'main:create_products' %}">
-  <button>+ Add Products</button>
-</a>
+      <!-- Hero -->
+      <header class="mb-8 grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
+        <div>
+          <h1 class="display-font text-4xl sm:text-5xl font-extrabold leading-tight" style="color:var(--text)">Discover the Latest<br><span class="accent" style="color:var(--accent)">House of Champions</span></h1>
+          <p class="mt-4 text-lg muted" style="color:var(--muted)">Browse curated football products, stories, and community picks. Add your own products and join the conversation.</p>
 
-<!-- Menampilkan tombol logout -->
-<a href="{% url 'main:logout' %}">
-  <button>Logout</button>
-</a>
+          <div class="mt-6 flex flex-wrap gap-3">
+            <a class="inline-flex items-center px-5 py-3 rounded-md accent-bg text-white font-medium transition" style="background:var(--accent)">Create Product</a>
+            <a class="inline-flex items-center px-5 py-3 rounded-md border border-custom muted" style="border-color:var(--border); color:var(--text); background:var(--card)">Explore Products</a>
+          </div>
+        </div>
 
-<!-- Penambahan view untuk menampilkan informasi terakhir login -->
-<h5>Sesi terakhir login: {{ last_login }}</h5>
+        <div class="hidden lg:flex items-center justify-end">
+          <div class="w-72 h-48 rounded-xl overflow-hidden shadow-lg bg-card border border-custom">      
+            <img src="https://i.pinimg.com/736x/35/b6/a4/35b6a4be55427628567b9102645870c0.jpg" alt="Tsubatsa">      
+          </div>
+        </div>
+      </header>
 
-<!-- Penambahan tombol untuk 'filter' products/items berdasarkan toko -->
- <a href="?filter=all">
-    <button type="button">All Products</button>
-</a>
-<a href="?filter=my">
-    <button type="button">My Products</button>
+      <!-- Filters -->
+      <div class="mb-8 border rounded-lg p-4" style="background:var(--card); border-color:var(--border)">
+        <div class="flex flex-wrap gap-3">
+          <a href="?filter=all" class="px-4 py-2 rounded-md font-medium transition-colors {% if request.GET.filter == 'all' or not request.GET.filter %}accent-bg text-white{% else %}bg-white text-gray-700 border{% endif %}" style="background: {% if request.GET.filter == 'all' or not request.GET.filter %}var(--accent){% else %}var(--card){% endif %}; color: {% if request.GET.filter == 'all' or not request.GET.filter %}#fff{% else %}var(--text){% endif %}; border-color: var(--border);">All Products</a>
+          <a href="?filter=my" class="px-4 py-2 rounded-md font-medium transition-colors {% if request.GET.filter == 'my' %}accent-bg text-white{% else %}bg-white text-gray-700 border{% endif %}" style="background: {% if request.GET.filter == 'my' %}var(--accent){% else %}var(--card){% endif %}; color: {% if request.GET.filter == 'my' %}#fff{% else %}var(--text){% endif %}; border-color: var(--border);">My Products</a>
+          <a href="?filter=hot" class="px-4 py-2 rounded-md font-medium transition-colors {% if request.GET.filter == 'hot' %}accent-bg text-white{% else %}bg-white text-gray-700 border{% endif %}" style="background: {% if request.GET.filter == 'hot' %}var(--accent){% else %}var(--card){% endif %}; color: {% if request.GET.filter == 'hot' %}#fff{% else %}var(--text){% endif %}; border-color: var(--border);">Hot</a>
+        </div>
 
-<hr>
+        {% if user.is_authenticated %}
+          <div class="text-sm muted mt-4">Last login: {{ last_login }}</div>
+        {% endif %}
+      </div>
 
-{% if not products_list %}
-<p>Belum ada item yang ditambahkan di House Of Champions</p>
-{% else %}
+      <!-- Products Grid or Empty State -->
+      {% if not products_list %}
+        <div class="card rounded-lg p-12 text-center" style="background:var(--card); border:1px solid var(--border)">
+          <div class="w-32 h-32 mx-auto mb-4">
+            <video autoplay muted loop src="{% static 'video/no-products.mp4' %}" class="w-full h-full object-contain"></video>
+          </div>
+          <h3 class="text-xl font-semibold mb-2" style="color:var(--text)">No Products found</h3>
+          <p class="muted mb-6">Be the first to share football products with the community.</p>
+          <a href="{% url 'main:create_products' %}" class="inline-flex items-center px-4 py-2" style="background:var(--accent); color:#fff; border-radius:8px;">Create Product</a>
+        </div>
+      {% else %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {% for products in products_list %}
+            {% include 'card_products.html' with products=products %}
+          {% endfor %}
+        </div>
+      {% endif %}
 
-{% for products in products_list %}
-<div>
-  <h2><a href="{% url 'main:show_products' products.id %}">{{ products.title }}</a></h2>
+    </div>
+  </div>
 
-  <p><b>{{ products.get_category_display }}</b>{% if products.is_featured %} | 
-    <b>Featured</b>{% endif %}{% if products.is_products_hot %} | 
-    <b>Hot</b>{% endif %} | <i>{{ products.created_at|date:"d M Y H:i" }}</i> 
-    | Views: {{ products.visitors }}</p>
-
-  {% if products.thumbnail %}
-  <img src="{{ products.thumbnail }}" alt="thumbnail" width="150" height="100">
-  <br />
-  {% endif %}
-  
-  {% if products.price > 0 %}
-    <p>💵Price : Rp{{ products.price }}</p> 
-  {% endif %}
-
-  {% if products.stock > 0 %}
-    <p>📦Stock : {{ products.stock }}</p>
-  {% endif %}
-
-  {% if products.rating > 0 %}
-    <p>⭐Rating : {{ products.rating }}/5.0</p>
-  {% endif %}
-
-  {% if products.brand != null %}
-    <p>🌿brand : {{ products.brand }}</p>
-  {% endif %}
-  <p>{{ products.content|truncatewords:25 }}...</p>
-
-  <p><a href="{% url 'main:show_products' products.id %}"><button>Read More</button></a></p>
+  <!-- Floating theme toggle (CSS-only) -->
+  <label class="theme-float" for="theme-toggle" role="button" aria-label="Toggle theme">
+    <button type="button" class="theme-btn theme-btn-light" title="Light mode" aria-hidden="true">☀️</button>
+    <button type="button" class="theme-btn theme-btn-dark" title="Dark mode" aria-hidden="true">🌙</button>
+  </label>
 </div>
 
-<hr>
-{% endfor %}
-
-{% endif %}
 {% endblock content %}

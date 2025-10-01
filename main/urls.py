@@ -10,6 +10,16 @@ from main.views import login_user
 # Penambahan import fungsi logout_user
 from main.views import logout_user
 
+# Penambahan import fungsi edit_products
+from main.views import edit_products    
+
+# Penambahan import fungsi delete_products
+from main.views import delete_products
+
+# Dummy import
+from main.views import product_us
+from main.views import contact_us
+
 app_name = 'main'
 
 urlpatterns = [
@@ -36,4 +46,14 @@ urlpatterns = [
 
     # Menambahkan path url untuk mengakses fungsi logout_user
     path('logout/', logout_user, name='logout'),
+
+    # Penambahan path url untuk mengakses fungsi edit_products
+    path('products/<uuid:id>/edit', edit_products, name='edit_products'),
+
+    # Penambahan path url untuk mengakses fungsi delete_products
+    path('products/<uuid:id>/delete', delete_products, name='delete_products'),
+
+    # Dummy path url
+    path('product_us/', product_us, name='product_us'),
+    path('contact_us/', contact_us, name='contact_us'),
 ]

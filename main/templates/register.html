@@ -1,32 +1,194 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block meta %}
-<title>Register</title>
+<title>Register - House Of Champions</title>
 {% endblock meta %}
-
 {% block content %}
+<!-- PURE-CSS THEME TOGGLE + VIDEO BACKGROUND (no JS) -->
+<style>
+  :root{
+    --overlay-light: rgba(255,255,255,0.35);
+    --overlay-dark: rgba(0,0,0,0.55);
+    --card-bg-light: rgba(255,255,255,0.78);
+    --card-bg-dark: rgba(13,18,23,0.78);
+    --text-light: #0f172a;   /* gray-900 */
+    --text-dark: #e6eef8;    /* near-white */
+    --muted-light: #475569;  /* gray-600 */
+    --muted-dark: #c7d2fe;
+    --accent: #16a34a;
+    --border-light: rgba(148,163,184,0.18);
+    --border-dark: rgba(99,102,241,0.08);
+  }
 
-<div>
-  <h1>Register</h1>
+  /* Layout */
+  .theme-root { min-height:100vh; position:relative; font-family:Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; }
+  .bg-video { position:fixed; inset:0; width:100%; height:100%; object-fit:cover; z-index:-30; }
+  .bg-overlay { position:fixed; inset:0; background:var(--overlay-light); z-index:-20; backdrop-filter: blur(4px); }
 
-  <form method="POST">
-    {% csrf_token %}
-    <table>
-      {{ form.as_table }}
-      <tr>
-        <td></td>
-        <td><input type="submit" name="submit" value="Daftar" /></td>
-      </tr>
-    </table>
-  </form>
+  /* Card */
+  .auth-card {
+    width:100%;
+    max-width:520px;
+    margin:0 auto;
+    border-radius:14px;
+    border:1px solid var(--border-light);
+    background:var(--card-bg-light);
+    box-shadow: 0 12px 40px rgba(2,6,23,0.16);
+    padding:2rem;
+    backdrop-filter: blur(8px);
+  }
 
-  {% if messages %}
-  <ul>
-    {% for message in messages %}
-    <li>{{ message }}</li>
-    {% endfor %}
-  </ul>
-  {% endif %}
+  /* Typography */
+  .title { font-size:1.75rem; font-weight:800; color:var(--text-light); margin-bottom:0.25rem; }
+  .subtitle { color:var(--muted-light); margin-bottom:1rem; }
+
+  /* Inputs / Buttons */
+  .form-row { margin-bottom:0.9rem; }
+  .label { display:block; font-size:0.875rem; margin-bottom:0.35rem; color:var(--text-light); }
+  .input { width:100%; padding:0.9rem 1rem; border-radius:10px; border:1px solid var(--border-light); background:transparent; color:inherit; outline:none; font-size:0.95rem; }
+  .input::placeholder { color: #94a3b8; }
+  .btn { width:100%; padding:0.9rem; border-radius:10px; background:var(--accent); color:white; font-weight:600; border:0; cursor:pointer; font-size:1rem; }
+  .msg { padding:0.65rem 0.9rem; border-radius:8px; font-size:0.95rem; margin-bottom:0.6rem; }
+
+  /* Top-right theme toggle */
+  .theme-toggle {
+    position:fixed;
+    top:18px;
+    right:18px;
+    z-index:40;
+    display:inline-flex;
+    gap:8px;
+    align-items:center;
+    padding:8px 12px;
+    border-radius:9999px;
+    background: rgba(255,255,255,0.78);
+    box-shadow: 0 8px 20px rgba(2,6,23,0.08);
+    backdrop-filter: blur(6px);
+    font-weight:600;
+    color:#0f172a;
+  }
+  .theme-toggle svg { width:18px; height:18px; }
+
+  /* Hidden checkbox toggles CSS variables for dark mode */
+  #theme-checkbox { display:none; }
+  /* When checked, apply dark variants by changing the light variables */
+  #theme-checkbox:checked ~ .theme-root {
+    --overlay-light: var(--overlay-dark);
+    --card-bg-light: var(--card-bg-dark);
+    --text-light: var(--text-dark);
+    --muted-light: var(--muted-dark);
+    --border-light: var(--border-dark);
+  }
+
+  /* Adjust overlay color when dark */
+  #theme-checkbox:checked ~ .theme-root .bg-overlay {
+    background: var(--overlay-dark);
+  }
+
+  /* Responsive */
+  @media (max-width:640px) {
+    .auth-card { padding:1.25rem; margin: 1.25rem; border-radius:12px; }
+    .title { font-size:1.4rem; }
+    .theme-toggle { top:12px; right:12px; padding:8px 10px; }
+  }
+</style>
+
+<!-- hidden checkbox controls theme (pure CSS) -->
+<input type="checkbox" id="theme-checkbox" aria-hidden="true">
+
+<div class="theme-root">
+  <!-- Video background (autoplay, muted, loop) -->
+  <!-- IMPORTANT: Replace src with your desired video asset; keep muted attribute to ensure no sound -->
+  <video class="bg-video" autoplay muted loop playsinline poster=""
+         aria-hidden="true">
+    <source src="{% static 'video/register_bg.mp4' %}" type="video/mp4">
+    <!-- Fallback background image for browsers that block autoplay -->
+    Your browser does not support the video tag.
+  </video>
+
+  <!-- Overlay (controls darkness/transparency) -->
+  <div class="bg-overlay" aria-hidden="true"></div>
+
+  <!-- Theme toggle (label tied to hidden checkbox) -->
+  <label for="theme-checkbox" class="theme-toggle" role="button" aria-pressed="false">
+    <!-- Sun icon (inline SVG) -->
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v2M12 19v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span style="font-size:0.95rem">Toggle Theme</span>
+  </label>
+
+  <!-- Centered form card -->
+  <div style="display:flex; align-items:center; justify-content:center; min-height:100vh; padding:3rem 1rem;">
+    <div class="auth-card" role="region" aria-labelledby="register-title">
+      <div style="text-align:center; margin-bottom:1rem;">
+        <h2 id="register-title" class="title">Join Us</h2>
+        <p class="subtitle">Create your House Of Champions account</p>
+      </div>
+
+      <!-- Form Errors Display -->
+      {% if form.non_field_errors %}
+        <div style="margin-bottom:1rem;">
+          {% for error in form.non_field_errors %}
+            <div class="msg" style="background:rgba(254,226,226,0.9); border:1px solid rgba(254,202,202,0.6); color:#7f1d1d;">
+              {{ error }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% if form.errors %}
+        <div style="margin-bottom:1rem;">
+          {% for field, errors in form.errors.items %}
+            {% if field != '__all__' %}
+              {% for error in errors %}
+                <div class="msg" style="background:rgba(254,226,226,0.9); border:1px solid rgba(254,202,202,0.6); color:#7f1d1d; margin-bottom:0.5rem;">
+                  <strong>{{ field|title }}:</strong> {{ error }}
+                </div>
+              {% endfor %}
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <form method="POST" action="" class="space-y-5" style="margin-top:0.35rem;">
+        {% csrf_token %}
+
+        <div class="form-row">
+          <label for="username" class="label">Username</label>
+          <input id="username" name="username" type="text" required class="input" placeholder="Choose a username">
+        </div>
+
+        <div class="form-row">
+          <label for="password1" class="label">Password</label>
+          <input id="password1" name="password1" type="password" required class="input" placeholder="Create a password">
+        </div>
+
+        <div class="form-row">
+          <label for="password2" class="label">Confirm Password</label>
+          <input id="password2" name="password2" type="password" required class="input" placeholder="Confirm your password">
+        </div>
+
+        <button type="submit" class="btn">Create Account</button>
+      </form>
+
+      <!-- Messages -->
+      {% if messages %}
+        <div style="margin-top:1rem;">
+          {% for message in messages %}
+            <div class="msg" style="background:rgba(255,255,255,0.6); border:1px solid rgba(156,163,175,0.12); color:var(--text-light);">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <div style="margin-top:1rem; text-align:center; border-top:1px solid rgba(148,163,184,0.08); padding-top:0.9rem;">
+        <p style="color:var(--muted-light); font-size:0.95rem;">
+          Already have an account?
+          <a href="{% url 'main:login' %}" style="color:var(--accent); font-weight:700; text-decoration:none;"> Sign In</a>
+        </p>
+      </div>
+    </div>
+  </div>
 </div>
-
 {% endblock content %}

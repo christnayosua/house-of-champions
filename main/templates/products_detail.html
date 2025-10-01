@@ -1,34 +1,211 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{#
+  Product detail template with improved design + explicit light/dark mode support + background image
+  - Requires Tailwind CSS with `darkMode: 'class'` in tailwind.config.js
+  - Stores theme preference in localStorage
+  - Uses Google Fonts (Poppins + Inter).
+  - Background image applied via a decorative fixed layer with adjustable saturation & position
+  - JS now toggles both `dark` and `light` classes on <html> so styles can target them explicitly
+#}
+
+{% block meta %}
+<title>{{ products.title }} - House Of Champions</title>
+{% endblock meta %}
+
+{% block extra_head %}
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root { --ui-font: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; --display-font: 'Poppins', var(--ui-font); }
+  body { font-family: var(--ui-font); }
+  .display-font { font-family: var(--display-font); }
+
+  /* Decorative full-bleed background image layer */
+  .decor-bg {
+    position: fixed; /* sits behind content */
+    inset: 0 0 auto 0; /* cover full width, control height separately */
+    height: 40vh; /* only cover top portion visually */
+    pointer-events: none; /* don't intercept clicks */
+    z-index: -1;
+    background-image: url('https://i.pinimg.com/1200x/44/24/62/44246235fc68567de2d96e63b642d6c6.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: right top; /* adjust the position here */
+    filter: saturate(0.85) brightness(0.98); /* default: slightly reduced saturation */
+    opacity: 0.45; /* makes image subtle so content remains readable */
+    transform: translateY(-10%); /* lift image slightly */
+    transition: opacity 300ms ease, filter 300ms ease, transform 300ms ease;
+  }
+
+  /* Light-mode specific tweaks (explicit .light class on html) */
+  .light .decor-bg {
+    filter: saturate(0.95) brightness(1.0) contrast(0.98);
+    opacity: 0.5;
+  }
+
+  /* Dark-mode tweaks for the background so it blends in dark themes */
+  .dark .decor-bg {
+    filter: saturate(0.6) brightness(0.55) contrast(0.9);
+    opacity: 0.32;
+  }
+
+  /* Small screens: adjust cropping so focal point stays visible */
+  @media (max-width: 768px) {
+    .decor-bg { background-position: center top; height: 30vh; opacity: 0.25; }
+    .light .decor-bg { opacity: 0.28; }
+  }
+</style>
+{% endblock extra_head %}
+
 {% block content %}
-<p><a href="{% url 'main:show_main' %}"><button>← Back to Products List</button></a></p>
+<!-- Decorative background layer -->
+<div class="decor-bg" aria-hidden="true"></div>
 
-<h1>{{ products.name }}</h1>
-<p><b>{{ products.get_category_display }}</b>{% if products.is_featured %} | 
-    <b>Featured</b>{% endif %}{% if products.is_products_hot %} | 
-    <b>Hot</b>{% endif %} | <i>{{ products.created_at|date:"d M Y, H:i" }}</i> 
-    | Views: {{ products.visitors }}</p>
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 
-{% if products.thumbnail %}
-<img src="{{ products.thumbnail }}" alt="Products thumbnail" width="300">
-<br /><br />
-{% endif %}
+    <!-- Top bar: Back + Theme Toggle -->
+    <div class="flex items-center justify-between mb-6">
+      <a href="{% url 'main:show_main' %}" class="inline-flex items-center gap-2 text-gray-700 dark:text-gray-200 hover:underline">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 011.414 1.414L6.414 9H17a1 1 0 110 2H6.414l3.293 3.293a1 1 0 010 1.414z" clip-rule="evenodd"/></svg>
+        Back to Products
+      </a>
 
-<!-- Untuk menampilkan harga serta stock dari item yang dijual -->
-<!-- Mengecek apakah item sudah memiliki harga atau belum -->
-{% if products.price != 0 %}
-    <p>💵Price: <b>Rp{{ products.price }}</b></p>
-{% endif %}
-{% if products.stock != 0 %}
-    <p>📦Stock: <b>{{ products.stock }}</b></p>
-{% endif %}
+      <div class="flex items-center gap-3">
+        <div class="text-sm text-gray-500 dark:text-gray-400 mr-2">Theme</div>
+        <button id="theme-toggle" aria-label="Toggle theme" class="inline-flex items-center justify-center p-2 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition-all">
+          <svg id="icon-sun" class="h-5 w-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m8.66-9H21M3 12h1m15.36 6.36l-.7-.7M6.34 6.34l-.7-.7m12.02 12.02l-.7-.7M6.34 17.66l-.7-.7M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+          <svg id="icon-moon" class="h-5 w-5 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 116.707 2.707 7 7 0 0017.293 13.293z"></path></svg>
+        </button>
+      </div>
+    </div>
 
-<p>{{ products.description }}</p>
+    <!-- Main card -->
+    <article class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm dark:shadow-lg transition-colors">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 p-6 sm:p-8">
 
-<!-- Penambahan view untuk menampilakn nama toko -->
-{% if products.user %}
-    <p>Author: {{ products.user.username }}</p>
-{% else %}
-    <p>Author: Anonymous</p>
-{% endif %}
+        <!-- Left: Images -->
+        <div class="lg:col-span-1">
+          <div class="rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-700">
+            {% if products.thumbnail %}
+              <img src="{{ products.thumbnail }}" alt="{{ products.title }}" class="w-full h-72 object-cover">
+            {% else %}
+              <div class="w-full h-72 flex items-center justify-center text-gray-400">No image</div>
+            {% endif %}
+          </div>
+          <!-- Thumbnails placeholder -->
+          <div class="mt-4 flex gap-3">
+            <div class="w-20 h-20 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 flex items-center justify-center text-sm text-gray-400">1</div>
+            <div class="w-20 h-20 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 flex items-center justify-center text-sm text-gray-400">2</div>
+            <div class="w-20 h-20 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 flex items-center justify-center text-sm text-gray-400">3</div>
+          </div>
+        </div>
+
+        <!-- Middle: Product info -->
+        <div class="lg:col-span-2 flex flex-col">
+          <header class="mb-4">
+            <div class="flex items-center gap-3 mb-3">
+              <span class="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-green-600 text-white">{{ products.get_category_display }}</span>
+              {% if products.is_featured %}
+                <span class="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-yellow-100 text-yellow-800">Featured</span>
+              {% endif %}
+              {% if products.is_products_hot %}
+                <span class="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-red-100 text-red-800">Hot</span>
+              {% endif %}
+            </div>
+
+            <h1 class="display-font text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white leading-tight">{{ products.title }}</h1>
+
+            <div class="mt-3 flex items-center gap-4 text-sm text-gray-500 dark:text-gray-300">
+              <time datetime="{{ products.created_at|date:'c' }}">{{ products.created_at|date:"M j, Y g:i A" }}</time>
+              <span>{{ products.products_views }} views</span>
+            </div>
+          </header>
+
+          <div class="prose dark:prose-invert max-w-none mb-6">
+            <div class="text-gray-700 dark:text-gray-200 leading-relaxed whitespace-pre-line text-base sm:text-lg">{{ products.description }}</div>
+          </div>
+
+          <div class="mt-auto pt-4 border-t border-gray-100 dark:border-gray-700">
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="font-medium text-gray-900 dark:text-gray-100">Shop: {% if products.user %}{{ products.user.username }}{% else %}Anonymous{% endif %}</div>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Seller</p>
+              </div>
+
+              <!-- Action buttons -->
+              <div class="flex items-center gap-3">
+                <button class="px-4 py-2 rounded-lg bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition">Contact Seller</button>
+                <button class="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:shadow transition">Add to Wishlist</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </article>
+  </div>
+</div>
 
 {% endblock content %}
+
+{% block extra_scripts %}
+<script>
+(function(){
+  const html = document.documentElement;
+  const toggle = document.getElementById('theme-toggle');
+  const sun = document.getElementById('icon-sun');
+  const moon = document.getElementById('icon-moon');
+
+  function storedTheme() {
+    return localStorage.getItem('theme');
+  }
+
+  function systemPrefersDark() {
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+
+  function isDark() {
+    const stored = storedTheme();
+    if (stored) return stored === 'dark';
+    return systemPrefersDark();
+  }
+
+  function applyTheme(dark) {
+    if (dark) {
+      html.classList.add('dark');
+      html.classList.remove('light');
+      moon.classList.add('hidden');
+      sun.classList.remove('hidden');
+    } else {
+      html.classList.remove('dark');
+      html.classList.add('light');
+      sun.classList.add('hidden');
+      moon.classList.remove('hidden');
+    }
+  }
+
+  // Initialize theme on load
+  applyTheme(isDark());
+
+  // Toggle handler
+  toggle.addEventListener('click', function(){
+    const nextIsDark = !html.classList.contains('dark');
+    applyTheme(nextIsDark);
+    localStorage.setItem('theme', nextIsDark ? 'dark' : 'light');
+  });
+
+  // Optional: listen to system changes if user hasn't set preference
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+    if (!storedTheme()) {
+      applyTheme(e.matches);
+    }
+  });
+})();
+</script>
+{% endblock extra_scripts %}

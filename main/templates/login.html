@@ -1,32 +1,165 @@
 {% extends 'base.html' %}
 
 {% block meta %}
-<title>Login</title>
+<title>Login - House Of Champions</title>
 {% endblock meta %}
 
 {% block content %}
-<div class="login">
-  <h1>Login</h1>
+<!-- Pure-CSS theme toggle (no JavaScript) -->
+<style>
+  :root{
+    --bg-overlay-light: rgba(255,255,255,0.35);
+    --bg-overlay-dark: rgba(0,0,0,0.55);
+    --card-bg-light: rgba(255,255,255,0.72);
+    --card-bg-dark: rgba(17,24,39,0.75);
+    --text-light: #111827; /* gray-900 */
+    --text-dark: #eef2ff;  /* near white */
+    --muted-light: #4b5563; /* gray-600 */
+    --muted-dark: #c7d2fe;  /* pale */
+    --border-light: rgba(156,163,175,0.35);
+    --border-dark: rgba(100,116,139,0.35);
+    --bg-image: url('https://i.pinimg.com/1200x/03/ee/c9/03eec9b931191d5ce1ad3a6ec7f7a9db.jpg');
+  }
 
-  <form method="POST" action="">
-    {% csrf_token %}
-    <table>
-      {{ form.as_table }}
-      <tr>
-        <td></td>
-        <td><input class="btn login_btn" type="submit" value="Login" /></td>
-      </tr>
-    </table>
-  </form>
+  /* Layout */
+  .theme-root{ min-height:100vh; position:relative; }
+  .bg-hero{ position:absolute; inset:0; background-image:var(--bg-image); background-size:cover; background-position:center; z-index:-20; }
+  #bg-overlay{ position:absolute; inset:0; background:var(--bg-overlay-light); z-index:-10; }
 
-  {% if messages %}
-  <ul>
-    {% for message in messages %}
-    <li>{{ message }}</li>
-    {% endfor %}
-  </ul>
-  {% endif %} Don't have an account yet?
-  <a href="{% url 'main:register' %}">Register Now</a>
+  /* Card */
+  .auth-card{ border-radius:18px; border:1px solid var(--border-light); background:var(--card-bg-light); backdrop-filter: blur(8px); box-shadow:0 10px 30px rgba(2,6,23,0.15); }
+
+  /* Text */
+  .title{ color:var(--text-light); }
+  .muted{ color:var(--muted-light); }
+
+  /* Theme toggle button */
+  .theme-toggle{ display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border-radius:9999px; background:rgba(255,255,255,0.72); box-shadow:0 6px 18px rgba(2,6,23,0.08); backdrop-filter: blur(6px); }
+  .theme-toggle svg{ width:18px; height:18px; }
+
+  /* Hidden checkbox + checked styles */
+  #theme-checkbox{ display:none; }
+  #theme-checkbox:checked ~ .theme-root {
+    --bg-overlay-light: var(--bg-overlay-dark);
+    --card-bg-light: var(--card-bg-dark);
+    --text-light: var(--text-dark);
+    --muted-light: var(--muted-dark);
+    --border-light: var(--border-dark);
+  }
+
+  /* When checked, tweak overlay opacity for darker feel */
+  #theme-checkbox:checked ~ .theme-root #bg-overlay{ background:var(--bg-overlay-dark); }
+
+  /* Adjust inputs in dark mode via the same variables */
+  .input-field{ background:transparent; border:1px solid rgba(148,163,184,0.18); color:inherit; }
+
+  /* Responsive tweaks */
+  @media (max-width:640px){ .auth-card{ padding:18px; } }
+</style>
+
+<!-- Hidden checkbox used to toggle theme (pure CSS) -->
+<input type="checkbox" id="theme-checkbox" aria-hidden="true">
+
+<div class="theme-root">
+  <!-- Background image + overlay -->
+  <div class="bg-hero" aria-hidden="true"></div>
+  <div id="bg-overlay" aria-hidden="true"></div>
+
+  <!-- Top-right theme toggle (label tied to hidden checkbox) -->
+  <div class="absolute top-6 right-6 z-20">
+    <label for="theme-checkbox" class="theme-toggle cursor-pointer">
+      <!-- Sun Icon -->
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 3v2M12 19v2M5 5l1.5 1.5M17.5 17.5L19 19M3 12h2M19 12h2M5 19l1.5-1.5M17.5 6.5L19 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span class="text-sm font-medium">Toggle Theme</span>
+    </label>
+  </div>
+
+  <div class="flex items-center justify-center min-h-screen p-8">
+    <div class="max-w-md w-full">
+      <div class="auth-card p-6 sm:p-8">
+        <div class="text-center mb-6">
+          <h1 class="text-3xl font-extrabold title mb-1">Sign In</h1>
+          <p class="muted">Welcome back to House Of Champions</p>
+        </div>
+
+        <!-- Form Errors Display -->
+        {% if form.non_field_errors %}
+          <div class="mb-4">
+            {% for error in form.non_field_errors %}
+              <div class="px-4 py-3 rounded-md text-sm border bg-red-50 border-red-200 text-red-700">
+                {{ error }}
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        {% if form.errors %}
+          <div class="mb-4">
+            {% for field, errors in form.errors.items %}
+              {% if field != '__all__' %}
+                {% for error in errors %}
+                  <div class="px-4 py-3 rounded-md text-sm border bg-red-50 border-red-200 text-red-700 mb-2">
+                    <strong>{{ field|title }}:</strong> {{ error }}
+                  </div>
+                {% endfor %}
+              {% endif %}
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <form method="POST" action="" class="space-y-5">
+          {% csrf_token %}
+
+          <div>
+            <label for="username" class="block text-sm font-medium mb-2" style="color:var(--text-light)">Username</label>
+            <input 
+              id="username" 
+              name="username" 
+              type="text" 
+              required 
+              class="w-full px-4 py-3 rounded-md input-field" 
+              placeholder="Enter your username">
+          </div>
+
+          <div>
+            <label for="password" class="block text-sm font-medium mb-2" style="color:var(--text-light)">Password</label>
+            <input 
+              id="password" 
+              name="password" 
+              type="password" 
+              required 
+              class="w-full px-4 py-3 rounded-md input-field" 
+              placeholder="Enter your password">
+          </div>
+
+          <button 
+            type="submit" 
+            class="w-full font-medium py-3 px-4 rounded-md" 
+            style="background:#16a34a;color:#fff">
+            Sign In
+          </button>
+        </form>
+
+        <!-- Messages Display -->
+        {% if messages %}
+          <div class="mt-5">
+            {% for message in messages %}
+              <div class="px-4 py-3 rounded-md text-sm border mb-2" style="background:rgba(255,255,255,0.6);border-color:rgba(156,163,175,0.25);color:var(--text-light)">
+                {{ message }}
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <div class="mt-6 text-center pt-6" style="border-top:1px solid rgba(156,163,175,0.12)">
+          <p class="text-sm muted" style="color:var(--muted-light)">
+            Don't have an account? 
+            <a href="{% url 'main:register' %}" style="color:#059669;font-weight:600;">Register Now</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 {% endblock content %}

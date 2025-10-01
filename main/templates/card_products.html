@@ -1,0 +1,128 @@
+<article
+  class="group bg-black rounded-2xl border border-gray-200 hover:shadow-lg transform transition-all duration-300 ease-out overflow-hidden cursor-pointer"
+  aria-labelledby="product-{{ products.id }}-title"
+  tabindex="0"
+>
+  <div class="relative will-change-transform transition-all duration-300 ease-out group-hover:scale-[1.03]">
+
+    <!-- Thumbnail area -->
+    <div class="aspect-[16/9] relative overflow-hidden rounded-t-2xl bg-gray-100">
+      {% if products.thumbnail %}
+        <img
+          src="{{ products.thumbnail }}"
+          alt="{{ products.title }} thumbnail"
+          class="w-full h-full object-cover transform transition-transform duration-500 ease-out group-hover:scale-110"
+          loading="lazy"
+        />
+      {% else %}
+        <div class="w-full h-full flex items-center justify-center text-gray-400">No image</div>
+      {% endif %}
+
+      <!-- bottom caption overlay (visible, max 100 chars) -->
+      <div class="absolute left-0 right-0 bottom-0 p-3 backdrop-blur-sm bg-black/40">
+        <p class="text-xs sm:text-sm text-white leading-tight line-clamp-3">
+          {{ products.description|truncatechars:50 }}
+        </p>
+      </div>
+
+      <!-- Category badge -->
+      <div class="absolute top-3 left-3">
+        <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-white/10 backdrop-blur-sm text-white border border-white/10">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 opacity-90" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+            <path d="M2 11a1 1 0 011-1h14a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM5 7a3 3 0 100-6 3 3 0 000 6z" />
+          </svg>
+          {{ products.get_category_display }}
+        </span>
+      </div>
+
+      <!-- Right-top badges: Featured / Hot / Price USD / Price IDR / Stock -->
+      <div class="absolute top-3 right-3 flex items-center gap-2">
+        {% if products.is_featured %}
+          <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-yellow-50 text-yellow-800 shadow-sm">            
+            🔥Featured
+          </span>
+        {% endif %}
+
+        {% if products.is_products_hot %}
+          <!-- Hot label with subtle pulse -->
+          <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-red-50 text-red-800 shadow-sm animate-pulse">
+            🔥 Hot
+          </span>
+        {% endif %}
+
+        <!-- Price USD (if exists) -->
+        {% if products.price %}
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-gradient-to-r from-emerald-400 to-emerald-600 text-white shadow-md">
+            ${{ products.price|floatformat:2 }}
+          </span>
+        {% endif %}
+
+        <!-- Price IDR (requires either products.price_idr or usd_to_idr_rate variable + multiply filter) -->
+        {% if products.price_idr %}
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md">
+            {{ products.price }}
+          </span>
+        {% elif usd_to_idr_rate and products.price %}
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md">
+            {{ products.price }}
+          </span>
+        {% endif %}
+
+        <!-- Stock badge -->
+        {% if products.stock is not None %}
+          {% if products.stock %}
+            <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-green-50 text-green-800 shadow-sm">
+              In stock · {{ products.stock }} left
+            </span>
+          {% else %}
+            <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-gray-700 text-white shadow-sm">
+              Out of stock
+            </span>
+          {% endif %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="p-5">
+    <div class="flex items-center text-sm text-gray-500 mb-3">
+      <time datetime="{{ products.created_at|date:'c' }}" class="sr-only">Published on {{ products.created_at|date:"M j, Y" }}</time>
+      <span class="text-xs text-gray-400">{{ products.created_at|date:"M j, Y" }}</span>
+      <span class="mx-2">•</span>
+      <span class="text-xs">{{ products.visitors }} views</span>
+    </div>
+
+    <h3 id="product-{{ products.id }}-title" class="text-lg font-semibold text-gray-900 mb-2 line-clamp-2 leading-tight">
+      <a href="{% url 'main:show_products' products.id %}" class="hover:text-emerald-600 transition-colors">{{ products.title }}</a>
+    </h3>
+
+    <p class="text-gray-600 text-sm leading-relaxed line-clamp-3 mb-4">
+      {{ products.content|truncatewords:22 }}
+    </p>
+
+    <!-- Action Buttons -->
+    {% if user.is_authenticated and products.user == user %}
+      <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+        <a href="{% url 'main:show_products' products.id %}" class="text-emerald-600 hover:text-emerald-700 font-medium text-sm transition-colors">Read more</a>
+        <div class="flex space-x-3 items-center">
+          <a href="{% url 'main:edit_products' products.id %}" class="text-gray-600 hover:text-gray-800 text-sm transition-colors">Edit</a>
+          <a href="{% url 'main:delete_products' products.id %}" class="text-red-600 hover:text-red-700 text-sm transition-colors">Delete</a>
+        </div>
+      </div>
+    {% else %}
+      <div class="pt-4 border-t border-gray-100">
+        <a href="{% url 'main:show_products' products.id %}" class="inline-flex items-center gap-2 text-emerald-600 hover:text-emerald-700 font-medium text-sm transition-colors">
+          Read more →
+        </a>
+      </div>
+    {% endif %}
+  </div>
+
+  <style>
+    article.group:focus-within { outline: 3px solid rgba(16,185,129,0.12); outline-offset: 4px; }
+    /* small utility for clamping up to 3 lines in modern browsers */
+    .line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  </style>
+</article>

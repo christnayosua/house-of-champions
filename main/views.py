@@ -20,6 +20,33 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 
+# Dummy function
+def product_us(request, id):
+    return render(request)
+
+def contact_us(request, id):
+    return render(request)
+
+# Penambahan function untuk delete_products
+def delete_products(request, id):
+    products = get_object_or_404(Products, pk=id)
+    products.delete()
+    return HttpResponseRedirect(reverse('main:show_main'))
+
+# Menambahkan function untuk edit_products
+def edit_products(request, id):
+    products = get_object_or_404(Products, pk=id)
+    form = ProductsForm(request.POST or None, instance=products)
+    if form.is_valid() and request.method == 'POST':
+        form.save()
+        return redirect('main:show_main')
+
+    context = {
+        'form': form
+    }
+
+    return render(request, "edit_products.html", context)
+
 # Function untuk logout
 def logout_user(request):
     # Implementasi untuk logout user
@@ -118,7 +145,7 @@ def create_products(request):
     form = ProductsForm(request.POST or None)
 
     if form.is_valid() and request.method == "POST":
-        # Konfigurasi untuk menghubungkan satu news dengan satu user
+        # Konfigurasi untuk menghubungkan satu products dengan satu user
         # commit = false berperan agar Django tidak langsung menyimpan objek hasil form ke database,
         # hal tersebut memungkinkan agar developer dapat melakukan modifikasi pada objek sebelum disimpan
         products_entry = form.save(commit = False)

@@ -28,6 +28,11 @@ class Products(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255)
     price = models.IntegerField(default=0)
+
+    @property
+    def formatted_price(self):
+        return f"{self.price:,.0f}".replace(",", ".")
+    
     description = models.TextField()
     thumbnail = models.URLField(blank=True, null=True)
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='other')
