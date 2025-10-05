@@ -34,7 +34,9 @@ class Products(models.Model):
         return f"{self.price:,.0f}".replace(",", ".")
     
     description = models.TextField()
-    thumbnail = models.URLField(blank=True, null=True)
+    thumbnail1 = models.URLField(blank=True, null=True)
+    thumbnail2 = models.URLField(blank=True, null=True)
+    thumbnail3 = models.URLField(blank=True, null=True)
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='other')
     is_featured = models.BooleanField(default=False)
     
@@ -43,6 +45,7 @@ class Products(models.Model):
     stock = models.PositiveIntegerField(default=0)
     rating = models.FloatField(default=0.0)
     brand = models.URLField(blank=True, null=True)
+    brandName = models.CharField(max_length=20, default="brand")
     created_at = models.DateTimeField(auto_now_add=True)
 
     # Penambahan attribute visitors untuk memberikan informasi popularitas item yang sering dilihat user

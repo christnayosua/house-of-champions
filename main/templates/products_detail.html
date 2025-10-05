@@ -58,6 +58,51 @@
     .decor-bg { background-position: center top; height: 30vh; opacity: 0.25; }
     .light .decor-bg { opacity: 0.28; }
   }
+
+  /* Custom styles for thumbnail gallery */
+  .thumbnail-item {
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 2px solid;
+  }
+
+  .thumbnail-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .thumbnail-item.active {
+    border-color: #10b981 !important;
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3);
+  }
+
+  .main-image-container {
+    transition: all 0.3s ease;
+  }
+
+  .main-image {
+    transition: opacity 0.3s ease;
+  }
+
+  .fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.98); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .thumbnail-placeholder {
+    background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+    color: #9ca3af;
+    font-weight: 500;
+  }
+
+  .dark .thumbnail-placeholder {
+    background: linear-gradient(135deg, #374151, #4b5563);
+    color: #d1d5db;
+  }
 </style>
 {% endblock extra_head %}
 
@@ -68,7 +113,7 @@
   <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 
     <div class="flex items-center justify-between mb-6">
-      <a href="{% url 'main:show_main' %}" class="inline-flex items-center gap-2 text-gray-700 dark:text-gray-200 hover:underline">
+      <a href="{% url 'main:show_main' %}" class="inline-flex items-center gap-2 text-gray-700 dark:text-gray-200 hover:underline transition-colors">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 011.414 1.414L6.414 9H17a1 1 0 110 2H6.414l3.293 3.293a1 1 0 010 1.414z" clip-rule="evenodd"/></svg>
         Back to Products
       </a>
@@ -86,17 +131,62 @@
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 p-6 sm:p-8">
 
         <div class="lg:col-span-1">
-          <div class="rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-700">
-            {% if products.thumbnail %}
-              <img src="{{ products.thumbnail }}" alt="{{ products.title }}" class="w-full h-72 object-cover">
+          <!-- Main Image Container -->
+          <div class="rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-700 main-image-container" id="main-image-container">
+            {% if products.thumbnail1 %}
+              <img src="{{ products.thumbnail1 }}" alt="{{ products.title }}" class="w-full h-72 object-cover main-image fade-in" id="main-image">
             {% else %}
-              <div class="w-full h-72 flex items-center justify-center text-gray-400">No image</div>
+              <div class="w-full h-72 flex items-center justify-center text-gray-400 thumbnail-placeholder">
+                <div class="text-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto mb-2 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  <p class="text-sm">No Image Available</p>
+                </div>
+              </div>
             {% endif %}
           </div>
-          <div class="mt-4 flex gap-3">
-            <div class="w-20 h-20 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 flex items-center justify-center text-sm text-gray-400">1</div>
-            <div class="w-20 h-20 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 flex items-center justify-center text-sm text-gray-400">2</div>
-            <div class="w-20 h-20 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 flex items-center justify-center text-sm text-gray-400">3</div>
+          
+          <!-- Thumbnail Gallery -->
+          <div class="mt-4 flex gap-3 justify-center">
+            <!-- Thumbnail 1 -->
+            <div class="thumbnail-item w-20 h-20 rounded-lg bg-gray-50 dark:bg-gray-700 border-2 border-emerald-500 flex items-center justify-center overflow-hidden active" 
+                 data-image="{% if products.thumbnail1 %}{{ products.thumbnail1 }}{% endif %}" 
+                 data-alt="{{ products.title }} - Thumbnail 1">
+              {% if products.thumbnail1 %}
+                <img src="{{ products.thumbnail1 }}" alt="{{ products.title }} - Thumbnail 1" class="w-full h-full object-cover">
+              {% else %}
+                <div class="thumbnail-placeholder w-full h-full flex items-center justify-center rounded-lg">
+                  <span class="text-xs font-medium">1</span>
+                </div>
+              {% endif %}
+            </div>
+            
+            <!-- Thumbnail 2 -->
+            <div class="thumbnail-item w-20 h-20 rounded-lg bg-gray-50 dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 flex items-center justify-center overflow-hidden" 
+                 data-image="{% if products.thumbnail2 %}{{ products.thumbnail2 }}{% endif %}" 
+                 data-alt="{{ products.title }} - Thumbnail 2">
+              {% if products.thumbnail2 %}
+                <img src="{{ products.thumbnail2 }}" alt="{{ products.title }} - Thumbnail 2" class="w-full h-full object-cover">
+              {% else %}
+                <div class="thumbnail-placeholder w-full h-full flex items-center justify-center rounded-lg">
+                  <span class="text-xs font-medium">2</span>
+                </div>
+              {% endif %}
+            </div>
+            
+            <!-- Thumbnail 3 -->
+            <div class="thumbnail-item w-20 h-20 rounded-lg bg-gray-50 dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 flex items-center justify-center overflow-hidden" 
+                 data-image="{% if products.thumbnail3 %}{{ products.thumbnail3 }}{% endif %}" 
+                 data-alt="{{ products.title }} - Thumbnail 3">
+              {% if products.thumbnail3 %}
+                <img src="{{ products.thumbnail3 }}" alt="{{ products.title }} - Thumbnail 3" class="w-full h-full object-cover">
+              {% else %}
+                <div class="thumbnail-placeholder w-full h-full flex items-center justify-center rounded-lg">
+                  <span class="text-xs font-medium">3</span>
+                </div>
+              {% endif %}
+            </div>
           </div>
         </div>
 
@@ -105,10 +195,10 @@
             <div class="flex items-center gap-3 mb-3">
               <span class="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-green-600 text-white">{{ products.get_category_display }}</span>
               {% if products.is_featured %}
-                <span class="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-yellow-100 text-yellow-800">Featured</span>
+                <span class="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">Featured</span>
               {% endif %}
               {% if products.is_products_hot %}
-                <span class="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-red-100 text-red-800">Hot</span>
+                <span class="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">Hot</span>
               {% endif %}
             </div>
 
@@ -132,8 +222,8 @@
               </div>
 
               <div class="flex items-center gap-3">
-                <button class="px-4 py-2 rounded-lg bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition">Contact Seller</button>
-                <button class="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:shadow transition">Add to Wishlist</button>
+                <button class="px-4 py-2 rounded-lg bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition-colors">Contact Seller</button>
+                <button class="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:shadow transition-all">Add to Wishlist</button>
               </div>
             </div>
           </div>
@@ -149,6 +239,7 @@
 {% block extra_scripts %}
 <script>
 (function(){
+  // Theme Toggle Functionality
   const html = document.documentElement;
   const toggle = document.getElementById('theme-toggle');
   const sun = document.getElementById('icon-sun');
@@ -196,6 +287,101 @@
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
     if (!storedTheme()) {
       applyTheme(e.matches);
+    }
+  });
+
+  // Thumbnail Gallery Functionality - FIXED VERSION
+  document.addEventListener('DOMContentLoaded', function() {
+    const thumbnails = document.querySelectorAll('.thumbnail-item');
+    const mainImageContainer = document.getElementById('main-image-container');
+    
+    // Function to change main image
+    function changeMainImage(imageUrl, altText) {
+      if (!imageUrl) {
+        console.log('No image URL provided');
+        return; // Skip if no image URL
+      }
+      
+      console.log('Changing main image to:', imageUrl);
+      
+      // Create new image element
+      const newImage = document.createElement('img');
+      newImage.src = imageUrl;
+      newImage.alt = altText;
+      newImage.className = 'w-full h-72 object-cover main-image fade-in';
+      newImage.id = 'main-image';
+      
+      // Replace content with fade effect
+      mainImageContainer.innerHTML = '';
+      mainImageContainer.appendChild(newImage);
+      
+      // Add scale effect to container
+      mainImageContainer.style.transform = 'scale(1.02)';
+      setTimeout(() => {
+        mainImageContainer.style.transform = 'scale(1)';
+      }, 300);
+    }
+    
+    // Function to update active thumbnail
+    function updateActiveThumbnail(clickedThumb) {
+      console.log('Updating active thumbnail');
+      thumbnails.forEach(thumb => {
+        thumb.classList.remove('active');
+        thumb.classList.remove('border-emerald-500');
+        thumb.classList.add('border-gray-200', 'dark:border-gray-600');
+      });
+      
+      clickedThumb.classList.add('active');
+      clickedThumb.classList.add('border-emerald-500');
+      clickedThumb.classList.remove('border-gray-200', 'dark:border-gray-600');
+    }
+    
+    // Add click event to each thumbnail
+    thumbnails.forEach(thumb => {
+      thumb.addEventListener('click', function() {
+        const imageUrl = this.getAttribute('data-image');
+        const altText = this.getAttribute('data-alt');
+        
+        console.log('Thumbnail clicked:', imageUrl);
+        
+        // Skip if no image URL (placeholder thumbnail)
+        if (!imageUrl) {
+          console.log('No image URL, skipping');
+          return;
+        }
+        
+        // Update active state
+        updateActiveThumbnail(this);
+        
+        // Change main image
+        changeMainImage(imageUrl, altText);
+      });
+    });
+    
+    // Add keyboard accessibility
+    thumbnails.forEach(thumb => {
+      thumb.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          const imageUrl = this.getAttribute('data-image');
+          const altText = this.getAttribute('data-alt');
+          
+          // Skip if no image URL
+          if (!imageUrl) return;
+          
+          updateActiveThumbnail(this);
+          changeMainImage(imageUrl, altText);
+        }
+      });
+      
+      // Make thumbnails focusable for accessibility
+      thumb.setAttribute('tabindex', '0');
+    });
+
+    // Initialize - set first thumbnail as active if it has an image
+    const firstThumbnail = document.querySelector('.thumbnail-item');
+    if (firstThumbnail && firstThumbnail.getAttribute('data-image')) {
+      updateActiveThumbnail(firstThumbnail);
     }
   });
 })();
