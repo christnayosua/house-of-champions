@@ -42,7 +42,7 @@ class Products(models.Model):
     # Selain itu, rating berguna agar dapat menampilkan barang-barang yang direkomendasikan oleh aplikasi berdasarkan review user lain
     stock = models.PositiveIntegerField(default=0)
     rating = models.FloatField(default=0.0)
-    brand = models.CharField(max_length=100, blank=True, null=True)
+    brand = models.URLField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     # Penambahan attribute visitors untuk memberikan informasi popularitas item yang sering dilihat user
@@ -58,3 +58,20 @@ class Products(models.Model):
     def increment_views(self):
         self.visitors += 1
         self.save()
+
+
+    # Tambahan method untuk formatting price
+    def get_price_in_rupiah(self):
+        return "Rp {:0,.0f}".format(self.price).replace(",", ".")
+    
+    # Tambahan method untuk formatting price menjadi usd
+    def get_price_in_dollar(self):
+        return "$ {:0,.0f}".format(self.price/16000).replace(",", ".")
+    
+    # Tambahan method untuk membatasi rating
+    def get_clean_rating(self):
+        if self.rating > 5:
+            return 5.0
+        elif self.rating < 0:
+            return 0.0
+        return round(self.rating, 1)
