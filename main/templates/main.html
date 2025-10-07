@@ -26,6 +26,11 @@
   /* Toggle button micro-animation */
   .theme-toggle { transition: transform .14s ease; }
   .theme-toggle:active { transform: scale(.97); }
+
+  /* Smooth transitions for theme switching */
+  .theme-transition * {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  }
 </style>
 {% endblock extra_head %}
 
@@ -34,7 +39,7 @@
 <div class="decor-bg-home" aria-hidden="true"></div>
 
 <!-- Site wrapper -->
-<div id="site-root" class="min-h-screen font-inter antialiased bg-gray-50 dark:bg-slate-900 transition-colors duration-200">
+<div id="site-root" class="min-h-screen font-inter antialiased bg-gray-50 dark:bg-slate-900 transition-colors duration-200 theme-transition">
 
   {% include 'navbar.html' %}
 
@@ -59,13 +64,13 @@
       <div>
         <h1 class="text-4xl sm:text-5xl font-extrabold leading-tight text-slate-900 dark:text-white">
           Discover the Latest<br>
-          <span class="text-emerald-500">House of Champions</span>
+          <span class="text-emerald-500">House Of Champions</span>
         </h1>
-        <p class="mt-4 text-lg text-slate-600 dark:text-slate-300 max-w-xl">Curated football products, stories and community picks. Add your own and be featured.</p>
+        <p class="mt-4 text-lg text-slate-600 dark:text-slate-300 max-w-xl">Stay updated with the latest football stories and analysis. Add your own and be featured.</p>
 
         <div class="mt-6 flex flex-wrap gap-3">
-          <a href="{% url 'main:create_products' %}" class="inline-flex items-center px-5 py-3 rounded-md bg-emerald-500 text-white font-medium shadow hover:brightness-105">Create Product</a>
-          <a href="#" class="inline-flex items-center px-5 py-3 rounded-md bg-white/90 border text-slate-800 hover:shadow">Explore</a>
+          <a href="{% url 'main:create_products' %}" class="inline-flex items-center px-5 py-3 rounded-md bg-emerald-500 text-white font-medium shadow hover:brightness-105 transition-all">Create Products</a>
+          <a href="#" class="inline-flex items-center px-5 py-3 rounded-md bg-white/90 dark:bg-slate-800/90 border border-gray-300 dark:border-slate-600 text-slate-800 dark:text-slate-200 hover:shadow transition-all">Explore</a>
         </div>
       </div>
 
@@ -78,10 +83,9 @@
 
     <!-- Filters -->
     <section class="mb-8">
-      <div class="inline-flex gap-3 bg-white/80 dark:bg-slate-800/60 p-3 rounded-lg shadow-sm">
-        <a href="?filter=all" class="px-4 py-2 rounded-md font-medium {% if not request.GET.filter or request.GET.filter == 'all' %}bg-emerald-500 text-white{% else %}bg-transparent text-slate-700 dark:text-slate-200 ring-1 ring-black/5 dark:ring-white/5{% endif %}">All</a>
-        <a href="?filter=my" class="px-4 py-2 rounded-md font-medium {% if request.GET.filter == 'my' %}bg-emerald-500 text-white{% else %}bg-transparent text-slate-700 dark:text-slate-200 ring-1 ring-black/5 dark:ring-white/5{% endif %}">My</a>
-        <a href="?filter=hot" class="px-4 py-2 rounded-md font-medium {% if request.GET.filter == 'hot' %}bg-emerald-500 text-white{% else %}bg-transparent text-slate-700 dark:text-slate-200 ring-1 ring-black/5 dark:ring-white/5{% endif %}">Hot 🔥</a>
+      <div class="inline-flex gap-3 bg-white/80 dark:bg-slate-800/60 p-3 rounded-lg shadow-sm backdrop-blur-sm">
+        <a href="?filter=all" class="px-4 py-2 rounded-md font-medium transition-all {% if not request.GET.filter or request.GET.filter == 'all' %}bg-emerald-500 text-white{% else %}bg-transparent text-slate-700 dark:text-slate-200 ring-1 ring-black/5 dark:ring-white/5 hover:bg-gray-100 dark:hover:bg-slate-700{% endif %}">All Products</a>
+        <a href="?filter=my" class="px-4 py-2 rounded-md font-medium transition-all {% if request.GET.filter == 'my' %}bg-emerald-500 text-white{% else %}bg-transparent text-slate-700 dark:text-slate-200 ring-1 ring-black/5 dark:ring-white/5 hover:bg-gray-100 dark:hover:bg-slate-700{% endif %}">My Products</a>
       </div>
 
       {% if user.is_authenticated %}
@@ -91,19 +95,16 @@
 
     <!-- Products grid -->
     {% if not products_list %}
-      <div class="bg-white dark:bg-slate-800 p-12 rounded-2xl shadow border border-black/5 dark:border-white/5 text-center">
-        <div class="w-28 h-28 mx-auto mb-4">
-          <video autoplay muted loop class="w-full h-full object-contain">
-            <source src="{% static 'video/no-products.mp4' %}" type="video/mp4">
-          </video>
+      <div class="bg-white dark:bg-slate-800 p-12 rounded-2xl shadow border border-black/5 dark:border-white/5 text-center transition-all">
+        <div class="w-32 h-32 mx-auto mb-4">
+          <img src="https://i.pinimg.com/originals/ab/c9/6f/abc96f284c5fd1a927380fe94b07a816.gif" alt="No products available" class="w-full h-full object-contain">
         </div>
-        <img src="https://i.pinimg.com/originals/ab/c9/6f/abc96f284c5fd1a927380fe94b07a816.gif" alt="no Products" class="mx-auto rounded-xl mb-6 mt-2">
         <h3 class="text-xl font-semibold text-slate-900 dark:text-white mb-2">No products found</h3>
-        <p class="text-slate-600 dark:text-slate-300 mb-4">Be the first to add a product.</p>
-        <a href="{% url 'main:create_products' %}" class="inline-block px-4 py-2 bg-emerald-500 text-white rounded-md">Create Product</a>
+        <p class="text-slate-600 dark:text-slate-300 mb-4">Be the first to share football products with the community.</p>
+        <a href="{% url 'main:create_products' %}" class="inline-block px-4 py-2 bg-emerald-500 text-white rounded-md hover:brightness-105 transition-all">Create Products</a>
       </div>
     {% else %}
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {% for products in products_list %}
           {% include 'card_products.html' with products=products %}
         {% endfor %}
@@ -112,8 +113,334 @@
   </main>
 </div>
 
-<!-- Theme script: toggles 'dark' class on <html> and persists choice to localStorage -->
+<!-- DOMPurify (CDN) for sanitization on client-side where needed -->
+<script src="https://cdn.jsdelivr.net/npm/dompurify@2.4.0/dist/purify.min.js"></script>
+
+<!-- Enhanced Theme script dengan localStorage dan system preference -->
 <script>
+   // ---------------------------
+   // Utility: CSRF helper
+   // ---------------------------
+   function getCookie(name) {
+     const v = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+     return v ? decodeURIComponent(v.pop()) : null;
+   }
+   const csrftoken = getCookie('csrftoken');
+
+   // ---------------------------
+   // Simple modal & toast helpers
+   // ---------------------------
+   function showModal(html) {
+     let modal = document.getElementById('ajax-modal');
+     if (!modal) {
+       modal = document.createElement('div');
+       modal.id = 'ajax-modal';
+       modal.innerHTML = `
+         <div class="fixed inset-0 z-50 flex items-center justify-center">
+           <div id="ajax-modal-backdrop" class="absolute inset-0 bg-black/50"></div>
+           <div class="relative z-10 w-full max-w-3xl p-6">
+             <div id="ajax-modal-content" class="bg-white dark:bg-slate-800 rounded-lg shadow-lg overflow-auto"></div>
+           </div>
+         </div>
+       `;
+       document.body.appendChild(modal);
+       modal.querySelector('#ajax-modal-backdrop').addEventListener('click', hideModal);
+     }
+     modal.querySelector('#ajax-modal-content').innerHTML = html;
+     modal.style.display = 'block';
+   }
+
+   function hideModal() {
+     const modal = document.getElementById('ajax-modal');
+     if (modal) modal.style.display = 'none';
+   }
+
+   function showToast(title, message = '', type = 'info') {
+     // simple ephemeral toast
+     const t = document.createElement('div');
+     t.className = 'fixed right-6 bottom-6 z-60 p-4 rounded-md shadow-lg';
+     t.style.background = type === 'success' ? 'linear-gradient(90deg,#10b981,#059669)' : '#111827';
+     t.style.color = '#fff';
+     t.innerHTML = `<strong class="block">${title}</strong><span class="block text-sm mt-1">${message}</span>`;
+     document.body.appendChild(t);
+     setTimeout(() => t.style.opacity = '0', 2500);
+     setTimeout(() => t.remove(), 3000);
+   }
+
+   // ---------------------------
+   // addProductsEntry (AJAX)
+   // ---------------------------
+   async function addProductsEntry(e) {
+     e && e.preventDefault && e.preventDefault();
+
+     const form = document.querySelector('#productsForm');
+     if (!form) {
+       console.warn('Form #productsForm not found');
+       return false;
+     }
+
+     const url = "{% url 'main:add_products_entry_ajax' %}";
+
+     const formData = new FormData(form);
+     try {
+       const res = await fetch(url, {
+         method: 'POST',
+         headers: { 'X-CSRFToken': csrftoken },
+         body: formData
+       });
+
+       const data = await res.json();
+       if (res.ok && data.success) {
+         // If server returns card_html, insert to grid
+         if (data.card_html) {
+           const grid = document.getElementById('products-grid');
+           if (grid) {
+             // insert as first child
+             const wrapper = document.createElement('div');
+             wrapper.innerHTML = data.card_html;
+             const newCard = wrapper.firstElementChild;
+             // animate in
+             newCard.style.opacity = '0';
+             grid.prepend(newCard);
+             requestAnimationFrame(() => {
+               newCard.style.transition = 'opacity 0.4s, transform 0.4s';
+               newCard.style.opacity = '1';
+               newCard.style.transform = '';
+             });
+           } else {
+             // fallback: reload
+             window.location.reload();
+           }
+         } else {
+           // fallback: reload
+           window.location.reload();
+         }
+
+         form.reset();
+         hideModal();
+         showToast('Products added successfully!', '', 'success');
+         document.dispatchEvent(new CustomEvent('productsAdded'));
+       } else {
+         // show returned form fragment with errors if provided
+         if (data.html) {
+           showModal(data.html);
+         } else {
+           alert(data.message || 'Failed to add product');
+         }
+       }
+     } catch (err) {
+       console.error(err);
+       alert('Terjadi kesalahan saat menambahkan produk.');
+     }
+     return false;
+   }
+
+   // ---------------------------
+   // Build card (client-side fallback)
+   // kept for cases where server returns raw data instead of card_html
+   // ---------------------------
+function buildProductsCardElement(item) {
+    const article = document.createElement('article');
+    article.className = 'bg-white rounded-lg border border-gray-200 hover:shadow-lg transition-shadow duration-300 overflow-hidden flex flex-col h-full';
+
+    const linkDetail = `{% url 'main:show_products' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', item.id);
+    const linkEdit = `{% url 'main:edit_products' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', item.id);
+    const linkDelete = `{% url 'main:delete_products' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', item.id);
+
+    const title = DOMPurify.sanitize(item.title);
+    const content = DOMPurify.sanitize(item.content);
+    const category = DOMPurify.sanitize(item.category);
+    const thumbnail = DOMPurify.sanitize(item.thumbnail || '');
+    const createdAt = DOMPurify.sanitize(new Date(item.created_at).toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'short', 
+        day: 'numeric' 
+    }));
+    const productsView = DOMPurify.sanitize(String(item.products_views || 0));
+    const isFeatured = item.is_featured;
+    const isHot = Number(item.products_views) > 20;
+
+    const thumbnailHtml = thumbnail
+        ? `<img src="${thumbnail}" alt="${title}" class="w-full h-full object-cover">`
+        : `<div class='w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center'></div>`;
+
+    const categoryLabel = getReadableCategoryName(category);
+    const featuredLabel = isFeatured ? `<span class='inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-yellow-100 text-yellow-800'>Featured</span>` : '';
+    const hotLabel = isHot ? `<span class='inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-red-100 text-red-800'>Hot</span>` : '';
+
+    const editDeleteHtml = (typeof CURRENT_USER_ID !== 'undefined' && Number(CURRENT_USER_ID) === Number(item.user_id))
+        ? `<div class='flex space-x-2'>
+            <a href='${linkEdit}' class='text-gray-600 hover:text-gray-700 text-sm transition-colors edit-product-btn' data-id='${item.id}'>Edit</a>
+            <a href='#' class='text-red-600 hover:text-red-700 text-sm transition-colors delete-product-btn' data-id='${item.id}'>Delete</a>
+          </div>`
+        : '';
+
+    const cardHtml = `
+        <div class="aspect-[16/9] relative overflow-hidden">
+          ${thumbnailHtml}
+          <div class="absolute top-3 left-3">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-green-600 text-white">${categoryLabel}</span>
+          </div>
+          <div class="absolute top-3 right-3 flex space-x-2">
+            ${featuredLabel}
+            ${hotLabel}
+          </div>
+        </div>
+        <div class="p-5 flex flex-col flex-1">
+          <div class="flex items-center text-sm text-gray-500 mb-3">
+            <time>${createdAt}</time>
+            <span class="mx-2">•</span>
+            <span>${productsView} views</span>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900 mb-3 line-clamp-2 leading-tight">
+            <a href="${linkDetail}" class="hover:text-green-600 transition-colors">${title}</a>
+          </h3>
+          <p class="text-gray-600 text-sm leading-relaxed line-clamp-3 mb-4">${content}</p>
+          <div class="pt-4 border-t border-gray-100 flex items-center justify-between">
+            <a href="${linkDetail}" class="text-green-600 hover:text-green-700 font-medium text-sm transition-colors">Read more</a>
+            ${editDeleteHtml}
+          </div>
+        </div>
+    `;
+
+    article.innerHTML = cardHtml;
+    return article;
+}
+
+   // small helper for readable category (user-provided)
+   function getReadableCategoryName(slug) {
+     if (!slug) return 'General';
+     // Extend mapping if you have categories mapping
+     return slug.charAt(0).toUpperCase() + slug.slice(1);
+   }
+
+   // ---------------------------
+   // Edit & Delete: event delegation
+   // ---------------------------
+   document.addEventListener('click', async function (ev) {
+     const el = ev.target;
+
+     // ----- Delete product (AJAX) -----
+     if (el.matches('.delete-product-btn') || el.closest('.delete-product-btn')) {
+       ev.preventDefault();
+       const btn = el.matches('.delete-product-btn') ? el : el.closest('.delete-product-btn');
+       const id = btn.dataset.id;
+       if (!id) return;
+
+       if (!confirm('Are you sure you want to delete this product?')) return;
+       const url = "{% url 'main:delete_products' '00000000-0000-0000-0000-000000000000' %}".replace('00000000-0000-0000-0000-000000000000', id);
+
+       try {
+         const res = await fetch(url, {
+           method: 'POST',
+           headers: { 'X-CSRFToken': csrftoken, 'Accept': 'application/json' }
+         });
+         const data = await res.json();
+         if (res.ok && data.success) {
+           // remove card
+           const card = document.getElementById(`product-card-${id}`) || btn.closest('[id^="product-card-"]');
+           if (card) {
+             card.style.transition = 'opacity 0.25s, transform 0.25s';
+             card.style.opacity = '0';
+             card.style.transform = 'translateY(-12px)';
+             setTimeout(() => card.remove(), 280);
+           } else {
+             // fallback reload
+             window.location.reload();
+           }
+           showToast('Product deleted', '', 'success');
+         } else {
+           alert(data.message || 'Failed to delete product');
+         }
+       } catch (err) {
+         console.error(err);
+         alert('Terjadi kesalahan saat menghapus produk.');
+       }
+     }
+
+     // ----- Edit product (open form via AJAX GET) -----
+     if (el.matches('.edit-product-btn') || el.closest('.edit-product-btn')) {
+       ev.preventDefault();
+       const btn = el.matches('.edit-product-btn') ? el : el.closest('.edit-product-btn');
+       const id = btn.dataset.id;
+       if (!id) return;
+       const url = "{% url 'main:edit_products' '00000000-0000-0000-0000-000000000000' %}".replace('00000000-0000-0000-0000-000000000000', id);
+
+       try {
+         const res = await fetch(url, { method: 'GET', headers: { 'Accept': 'application/json' }});
+         const data = await res.json();
+         if (res.ok && data.success && data.html) {
+           showModal(data.html);
+           bindEditForm(); // attach submit handler to newly injected form
+         } else {
+           alert('Gagal memuat form edit.');
+         }
+       } catch (err) {
+         console.error(err);
+         alert('Terjadi kesalahan memuat form edit.');
+       }
+     }
+   });
+
+   // Bind submit handler for edit form inside modal
+   function bindEditForm() {
+     const form = document.querySelector('#ajax-modal form#product-edit-form') || document.querySelector('form#product-edit-form');
+     if (!form) return;
+     const productId = form.dataset.productId || form.querySelector('[name="id"]') && form.querySelector('[name="id"]').value;
+
+     // Cancel button
+     const btnCancel = form.querySelector('#btn-cancel-edit');
+     if (btnCancel) btnCancel.addEventListener('click', (ev) => { ev.preventDefault(); hideModal(); });
+
+     form.addEventListener('submit', async function (ev) {
+       ev.preventDefault();
+       const actionUrl = "{% url 'main:edit_products' '00000000-0000-0000-0000-000000000000' %}".replace('00000000-0000-0000-0000-000000000000', productId);
+       const formData = new FormData(form);
+       try {
+         const res = await fetch(actionUrl, {
+           method: 'POST',
+           headers: { 'X-CSRFToken': csrftoken, 'Accept': 'application/json' },
+           body: formData
+         });
+         const data = await res.json();
+         if (res.ok && data.success) {
+           // replace card
+           if (data.card_html) {
+             const wrapper = document.createElement('div');
+             wrapper.innerHTML = data.card_html;
+             const newCard = wrapper.firstElementChild;
+             const oldCard = document.getElementById(`product-card-${productId}`);
+             if (oldCard && newCard) {
+               oldCard.replaceWith(newCard);
+             } else {
+               window.location.reload();
+             }
+           } else {
+             window.location.reload();
+           }
+           hideModal();
+           showToast('Product updated', '', 'success');
+         } else {
+           // show returned form with errors
+           if (data.html) {
+             const modalContent = document.querySelector('#ajax-modal #ajax-modal-content');
+             if (modalContent) modalContent.innerHTML = data.html;
+             // rebind new form
+             bindEditForm();
+           } else {
+             alert(data.message || 'Gagal menyimpan perubahan.');
+           }
+         }
+       } catch (err) {
+         console.error(err);
+         alert('Terjadi kesalahan saat menyimpan perubahan.');
+       }
+     }, { once: true });
+   }
+
+   // ---------------------------
+   // Theme code (unchanged, kept from your original)
+   // ---------------------------
 (function () {
   const root = document.documentElement;
   const btn = document.getElementById('btn-theme');
@@ -121,43 +448,76 @@
   const iconMoon = document.getElementById('icon-moon');
   const label = document.getElementById('theme-label');
 
-  // get initial preference: from localStorage -> else prefers-color-scheme -> else light
   function getStoredTheme() {
-    try { return localStorage.getItem('site-theme'); } catch (e) { return null; }
+    try { 
+      return localStorage.getItem('site-theme'); 
+    } catch (e) { 
+      return null; 
+    }
   }
   function storeTheme(t) {
-    try { localStorage.setItem('site-theme', t); } catch (e) {}
+    try { 
+      localStorage.setItem('site-theme', t); 
+    } catch (e) {
+      console.warn('Could not store theme preference:', e);
+    }
   }
-
   function prefersDark() {
     return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
   }
-
   function applyTheme(theme) {
-    if (theme === 'dark') {
+    const isDark = theme === 'dark';
+    if (isDark) {
       root.classList.add('dark');
       iconSun.classList.add('hidden');
       iconMoon.classList.remove('hidden');
-      label.textContent = 'Dark';
+      label.textContent = 'Light Mode';
+      btn.setAttribute('aria-label', 'Switch to light mode');
     } else {
       root.classList.remove('dark');
       iconMoon.classList.add('hidden');
       iconSun.classList.remove('hidden');
-      label.textContent = 'Light';
+      label.textContent = 'Dark Mode';
+      btn.setAttribute('aria-label', 'Switch to dark mode');
     }
+    root.classList.add('theme-transition');
+    setTimeout(() => root.classList.remove('theme-transition'), 300);
   }
-
-  // initialize
-  let theme = getStoredTheme();
-  if (!theme) theme = prefersDark() ? 'dark' : 'light';
-  applyTheme(theme);
-
-  // toggle handler
-  btn.addEventListener('click', function () {
-    const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+  function toggleTheme() {
+    const currentTheme = getStoredTheme();
+    const systemPrefersDark = prefersDark();
+    let newTheme;
+    if (currentTheme) {
+      newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    } else {
+      newTheme = systemPrefersDark ? 'light' : 'dark';
+    }
     applyTheme(newTheme);
     storeTheme(newTheme);
-  });
+  }
+  function initializeTheme() {
+    let theme = getStoredTheme();
+    if (!theme) theme = prefersDark() ? 'dark' : 'light';
+    applyTheme(theme);
+  }
+  btn.addEventListener('click', toggleTheme);
+  if (window.matchMedia) {
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+      if (!getStoredTheme()) {
+        applyTheme(e.matches ? 'dark' : 'light');
+      }
+    });
+  }
+  document.addEventListener('DOMContentLoaded', initializeTheme);
+  initializeTheme();
 })();
+
+// Sembunyikan tombol AJAX yang tidak diperlukan jika ada
+document.addEventListener('DOMContentLoaded', function() {
+  const ajaxButton = document.querySelector('button[onclick="showModal()"]');
+  if (ajaxButton) {
+    ajaxButton.style.display = 'none';
+  }
+});
 </script>
 {% endblock content %}

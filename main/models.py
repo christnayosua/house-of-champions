@@ -1,7 +1,7 @@
 import uuid
 from django.db import models
 
-# Penambahan import untuk implementasi menghubungkan model news dengan user
+# Penambahan import untuk implementasi menghubungkan model products dengan user
 from django.contrib.auth.models import User
 
 # Create your models here.
@@ -20,7 +20,7 @@ class Products(models.Model):
         ('derby', 'Derby')
     ]
     
-    # Penambahan variabel baru untuk menghubungkan satu news dengan satu user melalui relationship
+    # Penambahan variabel baru untuk menghubungkan satu products dengan satu user melalui relationship
     # Hubungan many-to-one
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
