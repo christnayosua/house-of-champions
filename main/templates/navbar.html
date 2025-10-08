@@ -21,10 +21,7 @@
         <!-- Desktop Navigation -->
         <div class="hidden md:flex items-center space-x-8">
           <a href="/" class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-medium transition-colors">Home</a>            
-          <a class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-medium transition-colors">Show Product</a>                 
-          <a href="{% url 'main:create_products' %}" class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-medium transition-colors">Create Product</a>
-          <a class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-medium transition-colors">Product Us</a>
-          <a class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-medium transition-colors">Contact Us</a>
+          <button id="create-product-btn" class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-medium transition-colors">Create Product</button>
         </div>
 
         <!-- Right: user + theme -->
@@ -39,13 +36,13 @@
           <div class="hidden md:flex items-center space-x-4">
             {% if user.is_authenticated %}
               <div class="text-right">
-                <div class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ name|default:user.username }}</div>
-                <div class="text-xs text-gray-500 dark:text-gray-400">{{ npm|default:"Student" }} - {{ class|default:"Class" }}</div>
+                <div class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ user.username }}</div>
+                <div class="text-xs text-gray-500 dark:text-gray-400">{{ user.email|default:"Member" }}</div>
               </div>
-              <a href="{% url 'main:logout' %}" class="text-red-600 hover:text-red-700 font-medium transition-colors">Logout</a>
+              <button id="logout-btn" class="text-red-600 hover:text-red-700 font-medium transition-colors">Logout</button>
             {% else %}
-              <a href="{% url 'main:login' %}" class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-medium transition-colors">Login</a>
-              <a href="{% url 'main:register' %}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded font-medium transition-colors">Register</a>
+              <button id="login-btn" class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-medium transition-colors">Login</button>
+              <button id="register-btn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded font-medium transition-colors">Register</button>
             {% endif %}
           </div>
 
@@ -69,21 +66,18 @@
     <div id="mobile-menu" class="hidden md:hidden bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
       <div class="px-6 py-4 space-y-4">
         <a href="/" class="block text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-medium py-2">Home</a>
-        <a class="block text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-medium py-2">Show Product</a>
-        <a href="{% url 'main:create_products' %}" class="block text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-medium py-2">Create Product</a>
-        <a class="block text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-medium py-2">Product Us</a>
-        <a class="block text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-medium py-2">Contact Us</a>
+        <button id="mobile-create-product-btn" class="block w-full text-left text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-medium py-2">Create Product</button>
 
         <div class="border-t border-gray-100 dark:border-gray-800 pt-4">
           {% if user.is_authenticated %}
             <div class="mb-3">
-              <div class="font-medium text-gray-900 dark:text-gray-100">{{ name|default:user.username }}</div>
-              <div class="text-sm text-gray-500 dark:text-gray-400">{{ npm|default:"Student" }} - {{ class|default:"Class" }}</div>
+              <div class="font-medium text-gray-900 dark:text-gray-100">{{ user.username }}</div>
+              <div class="text-sm text-gray-500 dark:text-gray-400">{{ user.email|default:"Member" }}</div>
             </div>
-            <a href="{% url 'main:logout' %}" class="block text-red-600 hover:text-red-700 font-medium py-2">Logout</a>
+            <button id="mobile-logout-btn" class="block w-full text-left text-red-600 hover:text-red-700 font-medium py-2">Logout</button>
           {% else %}
-            <a href="{% url 'main:login' %}" class="block text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-medium py-2">Login</a>
-            <a href="{% url 'main:register' %}" class="block bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded text-center mt-2">Register</a>
+            <button id="mobile-login-btn" class="block w-full text-left text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-medium py-2">Login</button>
+            <button id="mobile-register-btn" class="block w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded text-center mt-2">Register</button>
           {% endif %}
         </div>
       </div>
@@ -91,10 +85,9 @@
   </div>
 </nav>
 
-<!-- Include script (put near end of body) -->
 <script>
   (function () {
-    // Mobile menu
+    // Mobile menu toggle
     const mobileBtn = document.getElementById('mobile-menu-button');
     const mobileMenu = document.getElementById('mobile-menu');
     mobileBtn?.addEventListener('click', () => {
@@ -102,7 +95,7 @@
       mobileBtn.setAttribute('aria-expanded', (!opened).toString());
     });
 
-    // Theme toggle (nav)
+    // Theme toggle functionality
     const html = document.documentElement;
     const navToggle = document.getElementById('nav-theme-toggle');
     const iconSun = document.getElementById('nav-icon-sun');
@@ -137,7 +130,7 @@
       setIcons(dark);
     }
 
-    // init
+    // Initialize theme
     applyTheme(isDark());
 
     navToggle?.addEventListener('click', () => {
@@ -146,11 +139,60 @@
       localStorage.setItem('theme', next ? 'dark' : 'light');
     });
 
-    // If user hasn't set a preference, respond to system changes
+    // Respond to system theme changes
     try {
       window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
         if (!storedTheme()) applyTheme(e.matches);
       });
     } catch (e) { /* older browsers */ }
+
+    // Event handlers for AJAX actions
+    function setupEventHandlers() {
+      // Create product buttons
+      document.getElementById('create-product-btn')?.addEventListener('click', () => {
+        if (window.productApp) window.productApp.openCreateModal();
+      });
+      
+      document.getElementById('mobile-create-product-btn')?.addEventListener('click', () => {
+        mobileMenu.classList.add('hidden');
+        if (window.productApp) window.productApp.openCreateModal();
+      });
+
+      // Authentication buttons
+      document.getElementById('login-btn')?.addEventListener('click', () => {
+        if (window.productApp) window.productApp.openLoginModal();
+      });
+      
+      document.getElementById('register-btn')?.addEventListener('click', () => {
+        if (window.productApp) window.productApp.openRegisterModal();
+      });
+      
+      document.getElementById('logout-btn')?.addEventListener('click', () => {
+        if (window.productApp) window.productApp.handleLogout();
+      });
+
+      // Mobile authentication buttons
+      document.getElementById('mobile-login-btn')?.addEventListener('click', () => {
+        mobileMenu.classList.add('hidden');
+        if (window.productApp) window.productApp.openLoginModal();
+      });
+      
+      document.getElementById('mobile-register-btn')?.addEventListener('click', () => {
+        mobileMenu.classList.add('hidden');
+        if (window.productApp) window.productApp.openRegisterModal();
+      });
+      
+      document.getElementById('mobile-logout-btn')?.addEventListener('click', () => {
+        mobileMenu.classList.add('hidden');
+        if (window.productApp) window.productApp.handleLogout();
+      });
+    }
+
+    // Initialize event handlers when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', setupEventHandlers);
+    } else {
+      setupEventHandlers();
+    }
   })();
 </script>
