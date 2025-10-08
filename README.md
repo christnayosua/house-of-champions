@@ -410,4 +410,73 @@ Dalam mengambil dan menerapkan style CSS yang dibuat *developer* untuk aplikasi 
 [3] w3schools. (n.d.). <em>CSS  Box Model</em>. Retrieved from <a href="https://www.w3schools.com/css/css_boxmodel.asp">https://www.w3schools.com/css/css_boxmodel.asp</a><br>
 [4] Codepolitan. (2018, July 10). <em>CSS Grid vs Flexbox</em>. Retrieved from <a href="https://www.codepolitan.com/blog/css-grid-vs-flexbox-5b4336849183d/">https://www.codepolitan.com/blog/css-grid-vs-flexbox-5b4336849183d/</a><br>
 [5] Tim Dosen dan Asdos PBP 2025. (n.d.) <em>Tutorial 4: Desain Web Menggunakan HTML dan CSS3 &amp; Metode Update dan Delete pada Data</em>. Retrieved from <a href="https://pbp-fasilkom-ui.github.io/ganjil-2026/docs/tutorial-4">https://pbp-fasilkom-ui.github.io/ganjil-2026/docs/tutorial-4</a></p>
+<h2 id="tugas-individu-6">Tugas Individu 6</h2>
+<p><em><strong>by Christna Yosua Rotinsulu - 2406495691</strong></em></p>
+<h3>Synchronous Request vs Asynchronous Request [1] 💥</h3>
+<hr>
+<p>Synchronous dan asynchronous <em>request</em> adalah dua model pemograman yang berbeda dalam hal menangani operasi dalam sebuah aplikasi, terutama yang membutuhkan waktu seperti <em>request</em> jaringan.</p>
+<p><strong>Synchronous request</strong> adalah <em>request</em> yang mencegah DOM atau browser mengeksekusi kode tambahan sampai server memberikan respons. Apabila <em>request</em> tersebut diterima, maka hanya bagian kode berikutnya yang akan dieksekusi, sebaliknya, peramban web/DOM akan menunggu respons tersebut.</p>
+<p>Di sisi lain, <strong>asynchronous request</strong> adalah <em>request</em> yang tidak akan mencegah DOM atau peramban untuk mengeksekusi kode tambahan sampai server memberikan respons sehingga sisa kode akan langsung dieksekusi.</p>
+<p>Dari definisi tersebut, saya dapat menjelaskan 3 hal yang menjadi pembeda antara kedua model pemograman tersebut sebagai berikut:</p>
+<ol>
+<li><strong>Synchronous</strong> akan membuat peramban web ter-refresh seluruhnya setiap kali melakukan request, sedangkan <strong>asynchronous</strong> akan membuat peramban web memperbarui halaman yang dimaskud pada bagian tertentu saja tanpa perlu refresh seluruh halaman.</li>
+<li><strong>Synchronous</strong> menyebabkan <em>user experience</em> menjadi terputus karena harus menuggu loading halaman yang baru di-<em>update</em>, sedangkan <strong>asynchronous</strong> tetap mempertahankan komunikasi antara <em>user</em> dengan aplikasi walaupun proses <em>request</em> sedang berjalan di belakang layar.</li>
+<li>Berdasarkan poin 1 dan 2, <strong>synchronous</strong> menggunakan pola komunikasi linear dan <em>blocking</em>, sedangkan <strong>asynchronous</strong> menggunakan pola komunikasi non-<em>blocking</em> dan parallel.</li>
+</ol>
+<h3>Alur Kerja AJAX di Django [2] ⚙️</h3>
+<hr>
+<p>Cara AJAX memberikan response terhadap request yang diberikan <em>user</em> melalui aplikasi web dapat saya jelaskan melalui poin-poin berikut:</p>
+<ol>
+<li><strong>Trigger dari Sisi Client</strong>: ketika <em>client</em> men-<em>trigger</em> sebuah event JavaScript, seperti click, input, dsb, maka hal terebut akan memicu AJAX call.</li>
+<li><strong>AJAX  Request</strong>: AJAX call yang dipicu tadi akan membuat JavaScript mengirim HTTP <em>request</em> ke bagian <em>endpoint</em> Django.</li>
+<li><strong>Django Processing Request</strong>: <em>request</em> yang tersebut akan memicu URL <em>routing</em> untuk mengarahkan ke <em>view</em> yang sesuai permintaan <em>user</em>. Di <em>view</em> tersebut, <em>logic</em> dan interaksi yang di-<em>fetch</em> akan diproses dengan models/database sesuai kebutuhan. Lalu, setelah selesai diproses, Django akan mengembalikan <em>response</em> dalam format JSON/XML.</li>
+<li><strong>Update di Sisi Client</strong>: <em>response</em> yang dikirim Django akan diterima oleh JavaScript dan memperbarui DOM secara dinamis sehingga tidak mengganggu interaksi <em>user</em> saat itu.</li>
+<li><strong>Update UI</strong>: peramban web atau aplikasi web akan melakukan pembaruan halaman di bagian tertentu tanpa perlu melakukan reload di keseluruhan halaman.</li>
+</ol>
+<h3>AJAX vs Render Biasa: Mana yang Lebih Baik? [3] 👮</h3>
+<hr>
+<p>Setelah membahas cara kerja AJAX dalam menangani <em>request</em>, saya dapat mendeskripsikan keuntungan AJAX dalam aplikasi web melalui poin-poin berikut:</p>
+<ol>
+<li><strong>User Experience Lebih Interaktif</strong>: AJAX memberikan kesempatan kepada <em>user</em> untuk terus melakukan interaksi yang cepat dan responsif dengan aplikasi web sehingga interaksi akan terus meningkat seiring berjalannya waktu.</li>
+<li><strong>Bandwidth Berkurang</strong>: sebab hanya beberapa data yang perlu ditransfer berdasarkan kebutuhan sesuai <em>request</em> yang diberikan sehingga bandwidth atau kapasitas maksimum transfer data menjadi semakin berkurang.</li>
+<li><strong>Mirip Desktop</strong>: interaksi real-time dan fluid (terus mengalir) menjadikan aplikasi web menjadi mirip dengan desktop.</li>
+<li><strong>Preservasi State</strong>: AJAX mampu mempertahankan kondisi form data, scroll position, dan UI state yang saat ini <em>user</em> lakukan sehingga <em>user</em> menjadi lebih mudah dalam mengakses aplikasi, seperti tidak perlu lagi mengisi form dari awal atau scroll dari bagian <em>header</em>.</li>
+<li><strong>Processing secara Parallel</strong>: AJAX mampu menerima berbagai <em>request</em> dan memproses hal tersebut secara bersamaan karena sifatnya yang <strong>asynchronous</strong>. Hal ini akan meningkatkan kecepatan eksekusi kode, menangani masalah kompleks, pengurangan biaya dalam jangka panjang, dsb.</li>
+<li><strong>Feedback Instan</strong>: AJAX mampu dalam melakukan validasi form dan notifikasi langsung sehingga tidak perlu diproses dengan waktu yang lama di belakang layar. Hal ini tentu akan membantu <em>user</em> dalam mengakses aplikasi web.</li>
+</ol>
+<p>Berdasarkan kelebihan-kelebihan hal tersebut, saya dapat membandingkannya dengan render biasa melalui poin-poin berikut:</p>
+<ol>
+<li>Render biasa akan membuat halaman selalu reload seluruhnya selama <em>request</em> terus dikirim sehingga akan menurunkan <em>user experience</em> dalam aplikasi tersebut atau terfragmentasi.</li>
+<li>Sebab render biasa perlu men-<em>transfer</em> semua data, beban bandwidth akan menjadi semakin tinggi sehingga kecepatan akses aplikasi menjadi menurun.</li>
+<li>Render biasa akan membuat <em>user</em> menunggu lebih lama sebab menunggu <em>response</em> dari aplikasi web sampai disetujui dan dikembalikan.</li>
+</ol>
+<h3>Apakah AJAX Aman? [4] 🤔</h3>
+<hr>
+<p>Tentu penggunaan AJAX mempunyai celah-celah keamanan, oleh karena itu, <em>developer</em> perlu memperhatikan beberapa aspek dalam mengamankan data-data yang ada di aplikasi. Berikut adalah beberapa contoh yang dapat saya jelaskan untuk menjamin keamanan aplikasi web dalam menggunakan AJAX melalui poin-poin berikut:</p>
+<ol>
+<li>Selalu menyertakan token CSRF dalam AJAX <em>request</em></li>
+<li>Wajib menggunakan <strong>HTTPS</strong> sehingga komunikasi login/register/pembelian dapat terenkripsi dan sulit dibaca secara langsung</li>
+<li>Melakukan validasi ketat di sisi server untuk semua input yang dimasukkan oleh <em>user</em></li>
+<li>Memberikan batas percobaan login untuk menghindari <em>brute force attacks</em> sehingga <em>user</em> ‘palsu’ tidak dapat sembarangan login ke dalam aplikasi web (sertakan opsi <em>forget password</em> sehingga <em>user</em> ‘asli’ dapat memperbarui password akun mereka)</li>
+<li>Mengatur session timeout yang aman</li>
+<li>Melakukan restriksi <em>cross-origin request</em> (opsional)</li>
+<li>Sanitasi output yang dihasilkan dan menggunakan <em>content security policy</em> sehingga data yang ditampilkan lebih aman dan terhindar dari kode berbahaya, seperti serangan XSS</li>
+<li>Menggunakan header keamanan seperti HSTS atau <em>HTTP Strict Transport Security</em> sehingga aplikasi web hanya dapat berjalan menggunakan koneksi HTTPS yang lebih aman.</li>
+</ol>
+<h3>Bagaimana Peran AJAX dalam User Experience [5] 👤</h3>
+<hr>
+<p>Penggunaan AJAX secara signifikan meningkatkan pengalaman pengguna melalui beberapa aspek yang dapat saya jelaskan melalui poin-poin berikut:</p>
+<ol>
+<li><strong>Responsivitas Tinggi</strong>: aplikasi web menjadi lebih cepat dan halus sebab AJAX membuat halaman tidak perlu memuat ulang sepenuhnya setiap kali pengguna melakukan interaksi (mengirimkan <em>request</em>)</li>
+<li><strong>Interaksi Real-Time seperti Desktop</strong>: AJAX membuat transfer data dan proses data di belakang layar tidak mengganggu aktivitas pengguna selama proses tersebut sehingga tercipta sensasi seperti menggunakan aplikasi native</li>
+<li><strong>Progressive Feedback</strong>: aplikasi dapat memberikan notifikasi pembaruan melalui indikator loading atau pembaruan status sehingga <em>user</em> dapat memahami bahwa sistem saat ini sedang memproses permintaan mereka atau memperbarui tampilan</li>
+<li><strong>Single-page Feel</strong>: navigasi antar konten menjadi lebih mulus dan tanpa jeda ketika menggunakan AJAX sehingga <em>user</em> dapat terus melakukan interaksi tanpa perlu menunggu waktu pemrosesan yang lama</li>
+<li><strong>Preservasi Context</strong>: AJAX memungkinkan <em>user</em> untuk kembali ke state sebelumnya, seperti form data, posisi halaman, dsb, sehingga <em>user</em> mudah dalam melakukan akses aplikasi, seperti tidak perlu mengisi form dari awal atau scroll ke halaman terakhir.</li>
+</ol>
+<h2 id="referensi-🔎-3">Referensi 🔎</h2>
+<p>[1] Geeksforgeeks. (2025, July 23). <em>Difference between synchronous and asynchronous requests in jQuery Ajax</em>. Retrieved from <a href="https://www.geeksforgeeks.org/jquery/difference-between-synchronous-and-asynchronous-requests-in-jquery-ajax/">https://www.geeksforgeeks.org/jquery/difference-between-synchronous-and-asynchronous-requests-in-jquery-ajax/</a><br>
+[2] Geeksforgeeks. (2025, July 23). <em>Handling Ajax request in Django</em>. Retrieved from <a href="https://www.geeksforgeeks.org/python/handling-ajax-request-in-django/">https://www.geeksforgeeks.org/python/handling-ajax-request-in-django/</a><br>
+[3] Jagoan Hosting. (2022, May 19). <em>AJAX: Pengertian, Cara Kerja, Fungsi dan Kurang Lebih</em>. Retrieved from <a href="https://www.jagoanhosting.com/blog/ajax-adalah/">https://www.jagoanhosting.com/blog/ajax-adalah/</a><br>
+[4] Django Documentation. (n.d.). <em>How to use Django’s CSRF protection</em>. Retrieved from <a href="https://docs.djangoproject.com/id/5.2/howto/csrf/">https://docs.djangoproject.com/id/5.2/howto/csrf/</a><br>
+[5] Harvianti, A. (2025, May 22). <em>Apa Itu AJAX? Definisi, Fungsi, Cara Kerja, dan Kelebihan</em>. Retrieved from <a href="https://www.sekawanmedia.co.id/blog/apa-itu-ajax/">https://www.sekawanmedia.co.id/blog/apa-itu-ajax/</a></p>
 
