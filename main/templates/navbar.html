@@ -22,7 +22,7 @@
         <div class="hidden md:flex items-center space-x-8">
           <a href="/" class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-medium transition-colors">Home</a>            
           <a class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-medium transition-colors">Show Product</a>                 
-          <a href="{% url 'main:create_products' %}" class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-medium transition-colors">Create Product</a>
+          <a href="{% url 'main:get_create_form' %}" class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-medium transition-colors">Create Product</a>
           <a class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-medium transition-colors">Product Us</a>
           <a class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-medium transition-colors">Contact Us</a>
         </div>
@@ -42,9 +42,9 @@
                 <div class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ name|default:user.username }}</div>
                 <div class="text-xs text-gray-500 dark:text-gray-400">{{ npm|default:"Student" }} - {{ class|default:"Class" }}</div>
               </div>
-              <a href="{% url 'main:logout' %}" class="text-red-600 hover:text-red-700 font-medium transition-colors">Logout</a>
+              <a href="{% url 'main:logout_user' %}" class="text-red-600 hover:text-red-700 font-medium transition-colors">Logout</a>
             {% else %}
-              <a href="{% url 'main:login' %}" class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-medium transition-colors">Login</a>
+              <a href="{% url 'main:login_user' %}" class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-medium transition-colors">Login</a>
               <a href="{% url 'main:register' %}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded font-medium transition-colors">Register</a>
             {% endif %}
           </div>
@@ -70,7 +70,7 @@
       <div class="px-6 py-4 space-y-4">
         <a href="/" class="block text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-medium py-2">Home</a>
         <a class="block text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-medium py-2">Show Product</a>
-        <a href="{% url 'main:create_products' %}" class="block text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-medium py-2">Create Product</a>
+        <a href="{% url 'main:get_create_form' %}" class="block text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-medium py-2">Create Product</a>
         <a class="block text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-medium py-2">Product Us</a>
         <a class="block text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-medium py-2">Contact Us</a>
 
@@ -80,7 +80,7 @@
               <div class="font-medium text-gray-900 dark:text-gray-100">{{ name|default:user.username }}</div>
               <div class="text-sm text-gray-500 dark:text-gray-400">{{ npm|default:"Student" }} - {{ class|default:"Class" }}</div>
             </div>
-            <a href="{% url 'main:logout' %}" class="block text-red-600 hover:text-red-700 font-medium py-2">Logout</a>
+            <a href="{% url 'main:logout_user' %}" class="block text-red-600 hover:text-red-700 font-medium py-2">Logout</a>
           {% else %}
             <a href="{% url 'main:login' %}" class="block text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-medium py-2">Login</a>
             <a href="{% url 'main:register' %}" class="block bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded text-center mt-2">Register</a>
