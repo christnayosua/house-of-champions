@@ -1,145 +1,81 @@
 <article
-  class="group bg-white rounded-2xl border border-gray-200 hover:shadow-2xl transform transition-all duration-500 ease-out overflow-hidden cursor-pointer relative"
+  class="group bg-black rounded-2xl border border-gray-200 hover:shadow-lg transform transition-all duration-300 ease-out overflow-hidden cursor-pointer"
   aria-labelledby="product-{{ products.id }}-title"
   tabindex="0"
 >
-  <div class="relative will-change-transform transition-all duration-500 ease-out group-hover:scale-[1.05]">
+  <div class="relative will-change-transform transition-all duration-300 ease-out group-hover:scale-[1.03]">
 
-    <!-- Customisasi untuk area thumbnail yang akan menampilkan visualisasi dari product yang terdaftar -->
-    <div class="aspect-[16/9] relative overflow-hidden rounded-t-2xl bg-gradient-to-br from-gray-900 to-gray-700">
-      {% if products.thumbnail1 or products.thumbnail2 or products.thumbnail3 %}
-        <!-- Carousel Container -->
-        <div class="carousel-container w-full h-full relative">
-          <!-- Thumbnail 1 -->
-          {% if products.thumbnail1 %}
-            <div class="carousel-slide absolute inset-0 w-full h-full opacity-100 transition-opacity duration-700">
-              <img
-                src="{{ products.thumbnail1 }}"
-                alt="{{ products.title }} thumbnail 1"
-                class="w-full h-full object-cover transform transition-transform duration-700 ease-out group-hover:scale-110 group-hover:rotate-1"
-                loading="lazy"
-              />
-            </div>
-          {% endif %}
-          
-          <!-- Thumbnail 2 -->
-          {% if products.thumbnail2 %}
-            <div class="carousel-slide absolute inset-0 w-full h-full opacity-0 transition-opacity duration-700">
-              <img
-                src="{{ products.thumbnail2 }}"
-                alt="{{ products.title }} thumbnail 2"
-                class="w-full h-full object-cover transform transition-transform duration-700 ease-out group-hover:scale-110 group-hover:rotate-1"
-                loading="lazy"
-              />
-            </div>
-          {% endif %}
-          
-          <!-- Thumbnail 3 -->
-          {% if products.thumbnail3 %}
-            <div class="carousel-slide absolute inset-0 w-full h-full opacity-0 transition-opacity duration-700">
-              <img
-                src="{{ products.thumbnail3 }}"
-                alt="{{ products.title }} thumbnail 3"
-                class="w-full h-full object-cover transform transition-transform duration-700 ease-out group-hover:scale-110 group-hover:rotate-1"
-                loading="lazy"
-              />
-            </div>
-          {% endif %}
-          
-          <!-- Carousel Indicators -->
-          <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-30">
-            {% if products.thumbnail1 %}
-              <button class="carousel-indicator w-2 h-2 rounded-full bg-white/80 transition-all duration-300" data-slide="0"></button>
-            {% endif %}
-            {% if products.thumbnail2 %}
-              <button class="carousel-indicator w-2 h-2 rounded-full bg-white/40 transition-all duration-300" data-slide="1"></button>
-            {% endif %}
-            {% if products.thumbnail3 %}
-              <button class="carousel-indicator w-2 h-2 rounded-full bg-white/40 transition-all duration-300" data-slide="2"></button>
-            {% endif %}
-          </div>
-        </div>
+    <!-- Thumbnail area -->
+    <div class="aspect-[16/9] relative overflow-hidden rounded-t-2xl bg-gray-100">
+      {% if products.thumbnail %}
+        <img
+          src="{{ products.thumbnail }}"
+          alt="{{ products.title }} thumbnail"
+          class="w-full h-full object-cover transform transition-transform duration-500 ease-out group-hover:scale-110"
+          loading="lazy"
+        />
       {% else %}
-        <div class="w-full h-full flex items-center justify-center text-gray-400 bg-gradient-to-br from-gray-800 to-gray-600">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-          </svg>
-        </div>
+        <div class="w-full h-full flex items-center justify-center text-gray-400">No image</div>
       {% endif %}
 
-      <!-- OVERLAY ELEMENTS - Tetap terlihat di atas carousel -->
-      
-      <!-- Membuat gradient untuk tambahan style CSS -->
-      <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-70 group-hover:opacity-60 transition-opacity duration-500 z-20"></div>
-
-      <!-- Menampilkan deskripsi singkat dari produk yang dijual -->
-      <div class="absolute left-0 right-0 bottom-0 p-4 backdrop-blur-md bg-gradient-to-t from-black/80 to-transparent z-30">
-        <p class="text-sm text-white leading-tight line-clamp-2 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+      <!-- bottom caption overlay (visible, max 100 chars) -->
+      <div class="absolute left-0 right-0 bottom-0 p-3 backdrop-blur-sm bg-black/40">
+        <p class="text-xs sm:text-sm text-white leading-tight line-clamp-3">
           {{ products.description|truncatechars:50 }}
         </p>
       </div>
 
-     <!-- Menampilkan label brand -->
-      <div class="absolute top-3 left-3 transform group-hover:scale-105 transition-transform duration-300 z-40">
-        {% if products.brand %}
-          <div class="inline-flex items-center justify-center p-1.5 rounded-full bg-black/70 backdrop-blur-md border border-white/30 shadow-lg brand-container">
-            <img
-              src="{{ products.brand }}"
-              alt="{{ products.title }} brand"
-              class="h-7 w-7 object-contain rounded-full brand-image"
-              loading="lazy"
-            />
-          </div>
-        {% else %}
-          <!-- Fallback jika brand tidak tersedia -->
-          <div class="inline-flex items-center justify-center p-1.5 rounded-full bg-white/90 backdrop-blur-md border border-white/30 shadow-lg">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-            </svg>
-          </div>
-        {% endif %}
-      </div>
-
-      <!-- Menampilkan label kategori (dipindah ke sebelah kanan brand) -->
-      <div class="absolute top-4 left-16 transform group-hover:scale-105 transition-transform duration-300 z-40">
-        <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-black/50 backdrop-blur-md text-white border border-white/30 shadow-lg">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+      <!-- Category badge -->
+      <div class="absolute top-3 left-3">
+        <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-white/10 backdrop-blur-sm text-white border border-white/10">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 opacity-90" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
             <path d="M2 11a1 1 0 011-1h14a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM5 7a3 3 0 100-6 3 3 0 000 6z" />
           </svg>
           {{ products.get_category_display }}
         </span>
       </div>
 
-      <!-- Menampilkan label rating -->
-      <div class="absolute bottom-12 left-4 transform group-hover:scale-105 transition-transform duration-300 z-40">
-        <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-black/20 backdrop-blur-md text-white border border-white/30 shadow-lg">
-          ⭐ {{ products.get_clean_rating }}
-        </span>
-      </div>
-
-      <!-- Menampilkan label is Featured -->
-      <div class="absolute top-4 right-4 flex flex-col items-end gap-2 z-40">
+      <!-- Right-top badges: Featured / Hot / Price USD / Price IDR / Stock -->
+      <div class="absolute top-3 right-3 flex items-center gap-2">
         {% if products.is_featured %}
-          <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-gradient-to-r from-yellow-400 to-yellow-600 text-white shadow-lg transform group-hover:scale-105 transition-transform duration-300">            
-            ⭐ Featured
+          <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-yellow-50 text-yellow-800 shadow-sm">            
+            🔥Featured
           </span>
         {% endif %}
 
         {% if products.is_products_hot %}
-        <!-- Cek apakah produk tersebut termasuk ke dalam kategori hot -->
-          <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-gradient-to-r from-red-500 to-red-700 text-white shadow-lg animate-pulse">
+          <!-- Hot label with subtle pulse -->
+          <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-red-50 text-red-800 shadow-sm animate-pulse">
             🔥 Hot
           </span>
         {% endif %}
 
-        <!-- Menampilkan stok barang tersebut -->
+        <!-- Price USD (if exists) -->
+        {% if products.price %}
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-gradient-to-r from-emerald-400 to-emerald-600 text-white shadow-md">
+            ${{ products.price|floatformat:2 }}
+          </span>
+        {% endif %}
+
+        <!-- Price IDR (requires either products.price_idr or usd_to_idr_rate variable + multiply filter) -->
+        {% if products.price_idr %}
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md">
+            {{ products.price }}
+          </span>
+        {% elif usd_to_idr_rate and products.price %}
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md">
+            {{ products.price }}
+          </span>
+        {% endif %}
+
+        <!-- Stock badge -->
         {% if products.stock is not None %}
           {% if products.stock %}
-            <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-gradient-to-r from-green-500 to-green-700 text-white shadow-lg">
+            <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-green-50 text-green-800 shadow-sm">
               In stock · {{ products.stock }} left
             </span>
           {% else %}
-            <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-gradient-to-r from-gray-700 to-gray-900 text-white shadow-lg">
+            <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-gray-700 text-white shadow-sm">
               Out of stock
             </span>
           {% endif %}
@@ -148,241 +84,43 @@
     </div>
   </div>
 
-  <!-- Menampilkan content dari product sesuai input dari toko -->
-  <div class="p-5 relative z-10 bg-white">
+  <!-- Content -->
+  <div class="p-5">
     <div class="flex items-center text-sm text-gray-500 mb-3">
       <time datetime="{{ products.created_at|date:'c' }}" class="sr-only">Published on {{ products.created_at|date:"M j, Y" }}</time>
-      <span class="text-xs text-gray-500">{{ products.created_at|date:"M j, Y" }}</span>
+      <span class="text-xs text-gray-400">{{ products.created_at|date:"M j, Y" }}</span>
       <span class="mx-2">•</span>
       <span class="text-xs">{{ products.visitors }} views</span>
     </div>
 
-    <!-- Menampilkan judul dari toko -->
-    <h3 id="product-{{ products.id }}-title" class="text-xl font-bold text-gray-900 mb-2 line-clamp-2 leading-tight group-hover:text-emerald-700 transition-colors duration-300">
+    <h3 id="product-{{ products.id }}-title" class="text-lg font-semibold text-gray-900 mb-2 line-clamp-2 leading-tight">
       <a href="{% url 'main:show_products' products.id %}" class="hover:text-emerald-600 transition-colors">{{ products.title }}</a>
     </h3>
 
-    <!-- Menampilkan content dari produk -->
     <p class="text-gray-600 text-sm leading-relaxed line-clamp-3 mb-4">
       {{ products.content|truncatewords:22 }}
     </p>
 
-    <!-- Menampilkan label harga -->
-    <div class="mt-6 pt-4 border-t border-gray-100">
-      <div class="flex justify-between items-center">
-        <div class="price-tags">
-          <!-- Format ke dalam USD dollar -->
-          {% if products.price %}
-            <span class="inline-flex items-center px-3 py-2 rounded-lg text-lg font-bold bg-gradient-to-r from-emerald-500 to-emerald-700 text-white shadow-md mr-2">
-              {{ products.get_price_in_dollar }}
-            </span>
-          {% endif %}
-
-          <!-- Format ke dalam RP rupiah -->
-          {% if products.get_price_in_rupiah %}
-            <span class="inline-flex items-center px-3 py-2 rounded-lg text-lg font-bold bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md">
-              {{ products.get_price_in_rupiah }}
-            </span>
-          {% elif usd_to_idr_rate and products.price %}
-            <span class="inline-flex items-center px-3 py-2 rounded-lg text-lg font-bold bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md">
-              {{ products.price }} IDR
-            </span>
-          {% endif %}
-        </div>
-      </div>
-    </div>
-
-    <!-- Menambahkan button khusus, yaitu edit dan delete apabila produk tersebut ada di repo toko -->
+    <!-- Action Buttons -->
     {% if user.is_authenticated and products.user == user %}
-      <div class="flex items-center justify-between pt-4 mt-4 border-t border-gray-100">
-        <a href="{% url 'main:show_products' products.id %}" class="text-emerald-600 hover:text-emerald-700 font-medium text-sm transition-colors transform group-hover:translate-x-1 duration-300">View Details</a>
+      <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+        <a href="{% url 'main:show_products' products.id %}" class="text-emerald-600 hover:text-emerald-700 font-medium text-sm transition-colors">Read more</a>
         <div class="flex space-x-3 items-center">
-          <a href="{% url 'main:edit_products' products.id %}" class="text-gray-600 hover:text-gray-800 text-sm transition-colors flex items-center gap-1">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-            </svg>
-            Edit
-          </a>
-          <a href="{% url 'main:delete_products' products.id %}" class="text-red-600 hover:text-red-700 text-sm transition-colors flex items-center gap-1">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-            </svg>
-            Delete
-          </a>
+          <a href="{% url 'main:edit_products' products.id %}" class="text-gray-600 hover:text-gray-800 text-sm transition-colors">Edit</a>
+          <a href="{% url 'main:delete_products' products.id %}" class="text-red-600 hover:text-red-700 text-sm transition-colors">Delete</a>
         </div>
       </div>
     {% else %}
-      <div class="pt-4 mt-4 border-t border-gray-100">
-        <a href="{% url 'main:show_products' products.id %}" class="inline-flex items-center gap-2 text-emerald-600 hover:text-emerald-700 font-medium text-sm transition-colors transform group-hover:translate-x-1 duration-300">
-          View Details
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-          </svg>
+      <div class="pt-4 border-t border-gray-100">
+        <a href="{% url 'main:show_products' products.id %}" class="inline-flex items-center gap-2 text-emerald-600 hover:text-emerald-700 font-medium text-sm transition-colors">
+          Read more →
         </a>
       </div>
     {% endif %}
   </div>
 
-  <!-- Menambahkan effect hover pseudoclass -->
-  <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl pointer-events-none"></div>
-
-  <!-- Internal CSS tambahan -->
   <style>
-    .brand-container {
-      transition: all 0.3s ease;
-    }
-    
-    .brand-container:hover {
-      transform: scale(1.1) rotate(5deg);
-      background: white;
-    }
-    
-    .brand-image {
-      filter: brightness(1.1);
-      transition: filter 0.3s ease;
-    }
-
-    article.group:focus-within { 
-      outline: 3px solid rgba(16,185,129,0.2); 
-      outline-offset: 4px; 
-      transform: scale(1.02);
-    }
-    
-    .line-clamp-3 { 
-      display: -webkit-box; 
-      -webkit-box-orient: vertical; 
-      overflow: hidden; 
-    }
-    .line-clamp-2 { 
-      display: -webkit-box; 
-      -webkit-box-orient: vertical; 
-      overflow: hidden; 
-    }
-    
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-5px); }
-    }
-    
-    .group:hover {
-      animation: float 3s ease-in-out infinite;
-    }
-
-    /* Carousel Styles */
-    .carousel-slide {
-      transition: opacity 0.7s ease-in-out;
-      z-index: 1; /* Gambar di bawah overlay */
-    }
-    
-    .carousel-slide.active {
-      opacity: 1;
-      z-index: 1;
-    }
-    
-    .carousel-indicator.active {
-      width: 8px;
-      background-color: white;
-    }
-    
-    /* Overlay elements selalu di atas carousel */
-    .overlay-content {
-      z-index: 40;
-      pointer-events: none; /* Agar tidak mengganggu interaksi carousel */
-    }
-    
-    .overlay-content > * {
-      pointer-events: auto; /* Konten dalam overlay tetap bisa diinteraksi */
-    }
+    article.group:focus-within { outline: 3px solid rgba(16,185,129,0.12); outline-offset: 4px; }
+    /* small utility for clamping up to 3 lines in modern browsers */
   </style>
-
-  <!-- JavaScript untuk Carousel Otomatis -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const productArticles = document.querySelectorAll('article.group');
-      
-      productArticles.forEach(article => {
-        const carouselContainer = article.querySelector('.carousel-container');
-        if (!carouselContainer) return;
-        
-        const slides = carouselContainer.querySelectorAll('.carousel-slide');
-        const indicators = carouselContainer.querySelectorAll('.carousel-indicator');
-        
-        if (slides.length <= 1) return;
-        
-        let currentSlide = 0;
-        
-        // Fungsi untuk mengubah slide
-        function showSlide(index) {
-          // Reset semua slide
-          slides.forEach(slide => {
-            slide.classList.remove('active');
-            slide.style.opacity = '0';
-          });
-          indicators.forEach(indicator => {
-            indicator.classList.remove('active');
-            indicator.style.width = '2px';
-            indicator.style.backgroundColor = 'rgba(255, 255, 255, 0.4)';
-          });
-          
-          // Aktifkan slide yang dipilih
-          slides[index].classList.add('active');
-          slides[index].style.opacity = '1';
-          indicators[index].classList.add('active');
-          indicators[index].style.width = '16px';
-          indicators[index].style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
-          
-          currentSlide = index;
-        }
-        
-        // Event listener untuk indicators
-        indicators.forEach((indicator, index) => {
-          indicator.addEventListener('click', (e) => {
-            e.stopPropagation(); // Mencegah event bubbling
-            showSlide(index);
-            resetTimer();
-          });
-        });
-        
-        // Fungsi untuk slide berikutnya
-        function nextSlide() {
-          let nextIndex = (currentSlide + 1) % slides.length;
-          showSlide(nextIndex);
-        }
-        
-        // Timer untuk auto slide
-        let slideTimer;
-        
-        function startTimer() {
-          slideTimer = setInterval(nextSlide, 4000); // Ganti slide setiap 4 detik
-        }
-        
-        function resetTimer() {
-          clearInterval(slideTimer);
-          startTimer();
-        }
-        
-        // Inisialisasi
-        showSlide(0);
-        startTimer();
-        
-        // Hentikan timer saat hover
-        carouselContainer.addEventListener('mouseenter', () => {
-          clearInterval(slideTimer);
-        });
-        
-        // Lanjutkan timer saat mouse leave
-        carouselContainer.addEventListener('mouseleave', () => {
-          startTimer();
-        });
-        
-        // Pastikan overlay content tetap di atas
-        const overlayElements = article.querySelectorAll('.absolute');
-        overlayElements.forEach(el => {
-          if (!el.classList.contains('carousel-slide') && !el.classList.contains('carousel-indicator')) {
-            el.style.zIndex = '40';
-          }
-        });
-      });
-    });
-  </script>
 </article>

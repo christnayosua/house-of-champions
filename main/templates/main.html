@@ -1,6 +1,14 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{#
+  Home template with decorative background + CSS-only light/dark toggle (no JS)
+  - Uses a hidden checkbox to switch theme via CSS selectors
+  - Because this is CSS-only, the preference will NOT persist across pages or reloads
+  - Tailwind classes are still used; key colors/backgrounds are overridden via CSS variables when toggle is checked
+  - Place this template where you used the previous one (it includes navbar via {% include 'navbar.html' %})
+#}
+
 {% block meta %}
 <title>House Of Champions</title>
 {% endblock meta %}
@@ -11,688 +19,141 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
 
 <style>
+  :root {
+    --bg: #f9fafb; /* light page background */
+    --card: #ffffff;
+    --muted: #6b7280;
+    --text: #111827;
+    --border: #e5e7eb;
+    --accent: #16a34a; /* green-600 */
+    --decor-filter: saturate(0.95) brightness(1);
+    --decor-opacity: 0.5;
+  }
+
+  /* When the hidden checkbox is checked -> dark theme variables */
+  #theme-toggle:checked ~ .site {
+    --bg: #0b1220; /* dark background */
+    --card: #0f1724; /* card */
+    --muted: #9ca3af;
+    --text: #f9fafb;
+    --border: #1f2937;
+    --accent: #22c55e; /* slightly brighter green for dark */
+    --decor-filter: saturate(0.6) brightness(0.55) contrast(0.9);
+    --decor-opacity: 0.32;
+  }
+
+  /* Decorative background layer */
   .decor-bg-home {
-    position: fixed; inset: 0 0 auto 0; height: 36vh; z-index: -1;
-    background-image: url('https://i.pinimg.com/1200x/44/24/62/44246235fc68567de2d96e63b642d6c6.jpg');
-    background-size: cover; background-position: right top; opacity: .40;
-    filter: saturate(.95) brightness(.95);
-    transition: opacity .2s ease, transform .2s ease;
-    transform: translateY(-6%);
-  }
-  @media (max-width: 768px) { .decor-bg-home { background-position: center top; height: 24vh; } }
-
-  .theme-toggle { transition: transform .14s ease; }
-  .theme-toggle:active { transform: scale(.97); }
-
-  .theme-transition * {
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-  }
-
-  /* Enhanced Loading Spinner */
-  .loading-spinner {
-    border: 3px solid #f3f4f6;
-    border-top: 3px solid #10b981;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    animation: spin 1s linear infinite;
-    margin: 0 auto;
-  }
-  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-
-  /* Toast Styles */
-  .toast {
     position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 1000;
-    padding: 16px 20px;
-    border-radius: 8px;
-    color: white;
-    font-weight: 500;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    transform: translateX(400px);
-    transition: transform 0.3s ease;
+    inset: 0 0 auto 0;
+    height: 42vh;
+    pointer-events: none;
+    z-index: -1;
+    background-image: url('https://i.pinimg.com/1200x/44/24/62/44246235fc68567de2d96e63b642d6c6.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: right top;
+    filter: var(--decor-filter);
+    opacity: var(--decor-opacity);
+    transform: translateY(-8%);
+    transition: filter .25s ease, opacity .25s ease, transform .25s ease;
   }
-  
-  .toast.show {
-    transform: translateX(0);
-  }
-  
-  .toast.success { background-color: #10b981; }
-  .toast.error { background-color: #ef4444; }
-  .toast.info { background-color: #3b82f6; }
-  .toast.warning { background-color: #f59e0b; }
+  @media (max-width: 768px) { .decor-bg-home { background-position: center top; height: 28vh; } }
+
+  /* Apply variables to common areas to override Tailwind colors where needed */
+  .site { background-color: var(--bg); color: var(--text); }
+  .site .card, .site .bg-card { background-color: var(--card) !important; }
+  .site .muted { color: var(--muted) !important; }
+  .site .accent { color: var(--accent) !important; }
+  .site .accent-bg { background-color: var(--accent) !important; }
+  .site .border-custom { border-color: var(--border) !important; }
+
+  /* Floating toggle (no JS) */
+  .theme-float { position: fixed; right: 1rem; bottom: 1.25rem; z-index: 60; display: inline-flex; gap: .5rem; align-items:center; background: rgba(255,255,255,0.85); backdrop-filter: blur(6px); padding:.35rem .5rem; border-radius:9999px; border:1px solid rgba(15,23,42,0.06); }
+  .site #theme-toggle { position:absolute; left:-9999px; }
+  .theme-btn { display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:8px; cursor:pointer; border:1px solid transparent; }
+  .site #theme-toggle:not(:checked) + .theme-float .theme-btn-light { background:rgba(0,0,0,0.04); }
+  .site #theme-toggle:checked + .theme-float .theme-btn-dark { background:rgba(255,255,255,0.06); }
+
+  /* Simple focus for accessibility */
+  .theme-float .theme-btn:focus { outline: 2px solid rgba(99,102,241,0.25); outline-offset:2px; }
+
+  /* Card defaults used in this template */
+  .product-card { background-color: var(--card) !important; border: 1px solid var(--border) !important; }
 </style>
 {% endblock extra_head %}
 
 {% block content %}
-<!-- Background -->
+<!-- Hidden checkbox toggles theme via CSS only -->
+<input type="checkbox" id="theme-toggle" aria-hidden="true">
+
+<!-- Decorative background -->
 <div class="decor-bg-home" aria-hidden="true"></div>
 
-<!-- Main Container -->
-<div id="site-root" class="min-h-screen font-inter antialiased bg-gray-50 dark:bg-slate-900 transition-colors duration-200 theme-transition">
-
+<div class="site">
   {% include 'navbar.html' %}
 
-  <!-- Theme Toggle -->
-  <div class="fixed right-4 bottom-6 z-50">
-    <button id="btn-theme" class="theme-toggle inline-flex items-center gap-2 px-3 py-2 rounded-full shadow-lg bg-white/90 dark:bg-slate-800/90 border border-gray-200 dark:border-slate-700"
-            aria-label="Toggle theme" title="Toggle theme">
-      <svg id="icon-sun" class="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-        <path d="M12 3v2M12 19v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M3 12h2M19 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.5" />
-      </svg>
-      <svg id="icon-moon" class="w-5 h-5 hidden" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-        <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-      <span id="theme-label" class="text-sm font-medium text-slate-700 dark:text-slate-200">Theme</span>
-    </button>
-  </div>
+  <div class="w-full pt-20 min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
-  <main class="pt-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-    <!-- Header Section -->
-    <section class="text-center mb-12">
-      <h1 class="text-4xl sm:text-5xl font-bold text-slate-900 dark:text-white mb-4">
-        House Of <span class="text-emerald-500">Champions</span>
-      </h1>
-      <p class="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto mb-8">
-        Discover premium football gear and exclusive merchandise
-      </p>
+      <!-- Hero -->
+      <header class="mb-8 grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
+        <div>
+          <h1 class="display-font text-4xl sm:text-5xl font-extrabold leading-tight" style="color:var(--text)">Discover the Latest<br><span class="accent" style="color:var(--accent)">House of Champions</span></h1>
+          <p class="mt-4 text-lg muted" style="color:var(--muted)">Browse curated football products, stories, and community picks. Add your own products and join the conversation.</p>
 
-      <!-- Action Buttons -->
-      <div class="flex flex-wrap gap-4 justify-center mb-8">
-        <button id="btn-create-modal" 
-                class="px-6 py-3 bg-emerald-500 text-white rounded-lg font-semibold shadow hover:shadow-lg transition-all">
-          ➕ Add Product
-        </button>
-        <button id="btn-refresh" 
-                class="px-6 py-3 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 rounded-lg font-semibold shadow hover:shadow-lg transition-all">
-          🔄 Refresh
-        </button>
-      </div>
-    </section>
-
-    <!-- Filters -->
-    <section class="mb-8 text-center">
-      <div class="inline-flex gap-2 bg-white/80 dark:bg-slate-800/60 p-2 rounded-lg shadow">
-        <button data-filter="all" class="filter-btn px-4 py-2 rounded-md transition-all bg-emerald-500 text-white">
-          All Products
-        </button>
-        <button data-filter="my" class="filter-btn px-4 py-2 rounded-md transition-all bg-transparent text-slate-700 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-700">
-          My Products
-        </button>
-      </div>
-    </section>
-
-    <!-- Status Indicators -->
-    <div id="status-container" class="mb-8">
-      <div id="loading-state" class="hidden text-center py-12">
-        <div class="loading-spinner mb-4"></div>
-        <p class="text-slate-600 dark:text-slate-300">Loading products...</p>
-      </div>
-      
-      <div id="error-state" class="hidden text-center py-12">
-        <div class="text-6xl mb-4">❌</div>
-        <h3 class="text-xl font-semibold mb-2">Failed to load products</h3>
-        <p id="error-message" class="text-slate-600 dark:text-slate-300 mb-4"></p>
-        <button id="retry-btn" class="px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-all">
-          Try Again
-        </button>
-      </div>
-
-      <div id="empty-state" class="hidden text-center py-16 bg-white dark:bg-slate-800 rounded-2xl shadow">
-        <div class="w-48 h-48 mx-auto mb-6">
-          <img src="https://i.pinimg.com/originals/ab/c9/6f/abc96f284c5fd1a927380fe94b07a816.gif" 
-               alt="No products" 
-               class="w-full h-full object-contain">
+          <div class="mt-6 flex flex-wrap gap-3">
+            <a class="inline-flex items-center px-5 py-3 rounded-md accent-bg text-white font-medium transition" style="background:var(--accent)">Create Product</a>
+            <a class="inline-flex items-center px-5 py-3 rounded-md border border-custom muted" style="border-color:var(--border); color:var(--text); background:var(--card)">Explore Products</a>
+          </div>
         </div>
-        <h3 class="text-2xl font-bold mb-4 text-slate-900 dark:text-white">Ready to Showcase? 🏆</h3>
-        <p class="text-slate-600 dark:text-slate-300 mb-2">Your product collection is empty</p>
-        <p class="text-slate-500 dark:text-slate-400 mb-6">Start building your champion legacy by adding your first product!</p>
-        <button id="btn-first-product" class="px-6 py-3 bg-emerald-500 text-white rounded-lg font-semibold shadow hover:shadow-lg transition-all">
-          🚀 Add Your First Product
-        </button>
+
+        <div class="hidden lg:flex items-center justify-end">
+          <div class="w-72 h-48 rounded-xl overflow-hidden shadow-lg bg-card border border-custom">      
+            <img src="https://i.pinimg.com/736x/35/b6/a4/35b6a4be55427628567b9102645870c0.jpg" alt="Tsubatsa">      
+          </div>
+        </div>
+      </header>
+
+      <!-- Filters -->
+      <div class="mb-8 border rounded-lg p-4" style="background:var(--card); border-color:var(--border)">
+        <div class="flex flex-wrap gap-3">
+          <a href="?filter=all" class="px-4 py-2 rounded-md font-medium transition-colors {% if request.GET.filter == 'all' or not request.GET.filter %}accent-bg text-white{% else %}bg-white text-gray-700 border{% endif %}" style="background: {% if request.GET.filter == 'all' or not request.GET.filter %}var(--accent){% else %}var(--card){% endif %}; color: {% if request.GET.filter == 'all' or not request.GET.filter %}#fff{% else %}var(--text){% endif %}; border-color: var(--border);">All Products</a>
+          <a href="?filter=my" class="px-4 py-2 rounded-md font-medium transition-colors {% if request.GET.filter == 'my' %}accent-bg text-white{% else %}bg-white text-gray-700 border{% endif %}" style="background: {% if request.GET.filter == 'my' %}var(--accent){% else %}var(--card){% endif %}; color: {% if request.GET.filter == 'my' %}#fff{% else %}var(--text){% endif %}; border-color: var(--border);">My Products</a>
+          <a href="?filter=hot" class="px-4 py-2 rounded-md font-medium transition-colors {% if request.GET.filter == 'hot' %}accent-bg text-white{% else %}bg-white text-gray-700 border{% endif %}" style="background: {% if request.GET.filter == 'hot' %}var(--accent){% else %}var(--card){% endif %}; color: {% if request.GET.filter == 'hot' %}#fff{% else %}var(--text){% endif %}; border-color: var(--border);">Hot</a>
+        </div>
+
+        {% if user.is_authenticated %}
+          <div class="text-sm muted mt-4">Last login: {{ last_login }}</div>
+        {% endif %}
       </div>
-    </div>
 
-    <!-- Products Container -->
-    <div id="products-container">
-      <!-- Products will be loaded here via AJAX -->
-    </div>
-  </main>
-</div>
+      <!-- Products Grid or Empty State -->
+      {% if not products_list %}
+        <div class="card rounded-lg p-12 text-center" style="background:var(--card); border:1px solid var(--border)">
+          <div class="w-32 h-32 mx-auto mb-4">
+            <video autoplay muted loop src="{% static 'video/no-products.mp4' %}" class="w-full h-full object-contain"></video>
+          </div>
+          <h3 class="text-xl font-semibold mb-2" style="color:var(--text)">No Products found</h3>
+          <p class="muted mb-6">Be the first to share football products with the community.</p>
+          <a href="{% url 'main:create_products' %}" class="inline-flex items-center px-4 py-2" style="background:var(--accent); color:#fff; border-radius:8px;">Create Product</a>
+        </div>
+      {% else %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {% for products in products_list %}
+            {% include 'card_products.html' with products=products %}
+          {% endfor %}
+        </div>
+      {% endif %}
 
-<!-- Toast Container -->
-<div id="toast" class="toast hidden">
-  <div class="flex items-center">
-    <span id="toast-icon" class="mr-2"></span>
-    <div>
-      <div id="toast-title" class="font-semibold"></div>
-      <div id="toast-message" class="text-sm opacity-90"></div>
-    </div>
-    <button onclick="hideToast()" class="ml-4 text-white hover:text-gray-200">×</button>
-  </div>
-</div>
-
-<!-- Modal Container -->
-<div id="modal" class="fixed inset-0 z-50 hidden">
-  <div class="absolute inset-0 bg-black/50" id="modal-backdrop"></div>
-  <div class="relative z-10 flex items-center justify-center min-h-screen p-4">
-    <div id="modal-content" class="bg-white dark:bg-slate-800 rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-auto">
-      <!-- Modal content will be loaded here via AJAX -->
     </div>
   </div>
+
+  <!-- Floating theme toggle (CSS-only) -->
+  <label class="theme-float" for="theme-toggle" role="button" aria-label="Toggle theme">
+    <button type="button" class="theme-btn theme-btn-light" title="Light mode" aria-hidden="true">☀️</button>
+    <button type="button" class="theme-btn theme-btn-dark" title="Dark mode" aria-hidden="true">🌙</button>
+  </label>
 </div>
 
-<script>
-// ==================== CORE APPLICATION ====================
-class ProductApp {
-  constructor() {
-    this.csrfToken = this.getCSRFToken();
-    this.currentFilter = 'all';
-    this.init();
-  }
-
-  init() {
-    this.bindEvents();
-    this.loadProducts(); // Load products on initial page load
-  }
-
-  bindEvents() {
-    // Action buttons
-    document.getElementById('btn-create-modal')?.addEventListener('click', () => this.openCreateModal());
-    document.getElementById('btn-refresh')?.addEventListener('click', () => this.loadProducts());
-    document.getElementById('btn-first-product')?.addEventListener('click', () => this.openCreateModal());
-    document.getElementById('retry-btn')?.addEventListener('click', () => this.loadProducts());
-
-    // Filter buttons
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => this.handleFilter(e.target.dataset.filter));
-    });
-
-    // Global event listeners
-    document.addEventListener('click', (e) => this.handleGlobalClick(e));
-    document.getElementById('modal-backdrop')?.addEventListener('click', () => this.hideModal());
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') this.hideModal();
-    });
-  }
-
-  // ==================== PRODUCT MANAGEMENT ====================
-  async loadProducts() {
-    this.showLoading();
-    
-    try {
-      const url = `{% url 'main:get_products_html' %}?filter=${this.currentFilter}`;
-      const response = await fetch(url, {
-        headers: { 'X-Requested-With': 'XMLHttpRequest' }
-      });
-
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      
-      const data = await response.json();
-      
-      if (data.success) {
-        document.getElementById('products-container').innerHTML = data.html;
-        this.hideStatus();
-        
-        // Show empty state if no products
-        if (data.count === 0) {
-          this.showEmptyState();
-        }
-        
-        this.showToast('Products refreshed successfully! 🎉', 'success');
-      } else {
-        throw new Error(data.message || 'Failed to load products');
-      }
-    } catch (error) {
-      this.showError(error.message);
-    }
-  }
-
-  async openCreateModal() {
-    try {
-      const response = await fetch("{% url 'main:get_create_form' %}", {
-        headers: { 'X-Requested-With': 'XMLHttpRequest' }
-      });
-      
-      const data = await response.json();
-      if (data.success) {
-        this.showModal(data.html);
-      }
-    } catch (error) {
-      this.showToast('Failed to load form', 'error');
-    }
-  }
-
-  async handleFilter(filter) {
-    this.currentFilter = filter;
-    this.updateFilterButtons();
-    await this.loadProducts();
-  }
-
-  // ==================== FORM HANDLING ====================
-  async handleFormSubmit(form) {
-    const formData = new FormData(form);
-    const jsonData = {};
-    
-    // Convert FormData to JSON object
-    for (let [key, value] of formData.entries()) {
-      // Handle checkbox values
-      if (form.elements[key]?.type === 'checkbox') {
-        jsonData[key] = form.elements[key].checked;
-      } else {
-        jsonData[key] = value;
-      }
-    }
-
-    try {
-      const response = await fetch(form.action, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': this.csrfToken,
-          'X-Requested-With': 'XMLHttpRequest'
-        },
-        body: JSON.stringify(jsonData)
-      });
-
-      const data = await response.json();
-      
-      if (data.success) {
-        this.hideModal();
-        this.showToast(data.message || 'Operation completed successfully! 🎉', 'success');
-        await this.loadProducts(); // Refresh the product list
-      } else {
-        this.showToast(data.message || 'Please check the form for errors.', 'error');
-      }
-    } catch (error) {
-      this.showToast('A network error occurred. Please try again.', 'error');
-    }
-  }
-
-  async handleEdit(productId) {
-    try {
-      const url = `/products/${productId}/edit/`
-      const response = await fetch(url, {
-        headers: { 'X-Requested-With': 'XMLHttpRequest' }
-      });
-      
-      const data = await response.json();
-      if (data.success) {
-        this.showModal(data.html);
-      }
-    } catch (error) {
-      this.showToast('Failed to load edit form', 'error');
-    }
-  }
-
-  async handleDeleteClick(productId) {
-    try {
-      const url = `/products/${productId}/edit/`
-      const response = await fetch(url, {
-        headers: { 'X-Requested-With': 'XMLHttpRequest' }
-      });
-      
-      const data = await response.json();
-      if (data.success) {
-        this.showModal(data.html);
-      }
-    } catch (error) {
-      this.showToast('Failed to load delete confirmation', 'error');
-    }
-  }
-
-  async confirmDelete(productId) {
-    try {
-      const url = `/products/${productId}/edit/`
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': this.csrfToken,
-          'X-Requested-With': 'XMLHttpRequest'
-        }
-      });
-
-      const data = await response.json();
-      
-      if (data.success) {
-        this.hideModal();
-        this.showToast(data.message || 'Product deleted successfully!', 'success');
-        await this.loadProducts(); // Refresh the product list
-      } else {
-        this.showToast(data.message || 'Error deleting product', 'error');
-      }
-    } catch (error) {
-      this.showToast('Network error occurred while deleting.', 'error');
-    }
-  }
-
-  // ==================== AUTHENTICATION HANDLERS ====================
-  async openLoginModal() {
-    try {
-      const response = await fetch("{% url 'main:get_login_form' %}", {
-        headers: { 'X-Requested-With': 'XMLHttpRequest' }
-      });
-      
-      const data = await response.json();
-      if (data.success) {
-        this.showModal(data.html);
-      }
-    } catch (error) {
-      this.showToast('Failed to load login form', 'error');
-    }
-  }
-
-  async openRegisterModal() {
-    try {
-      const response = await fetch("{% url 'main:get_register_form' %}", {
-        headers: { 'X-Requested-With': 'XMLHttpRequest' }
-      });
-      
-      const data = await response.json();
-      if (data.success) {
-        this.showModal(data.html);
-      }
-    } catch (error) {
-      this.showToast('Failed to load registration form', 'error');
-    }
-  }
-
-  async handleAuthFormSubmit(form, isLogin = true) {
-    const formData = new FormData(form);
-    const jsonData = Object.fromEntries(formData.entries());
-    
-    try {
-      const url = isLogin ? "{% url 'main:login_user' %}" : "{% url 'main:register' %}";
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': this.csrfToken,
-          'X-Requested-With': 'XMLHttpRequest'
-        },
-        body: JSON.stringify(jsonData)
-      });
-
-      const data = await response.json();
-      
-      if (data.success) {
-        this.hideModal();
-        this.showToast(data.message || (isLogin ? 'Login successful! 🎉' : 'Registration successful! 🎉'), 'success');
-        // Redirect after successful auth
-        if (data.redirect_url) {
-          setTimeout(() => {
-            window.location.href = data.redirect_url;
-          }, 1500);
-        } else {
-          window.location.reload();
-        }
-      } else {
-        this.showToast(data.message || `Authentication failed. Please try again.`, 'error');
-      }
-    } catch (error) {
-      this.showToast('A network error occurred. Please try again.', 'error');
-    }
-  }
-
-  async handleLogout() {
-    try {
-      const response = await fetch("{% url 'main:logout_user' %}", {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': this.csrfToken,
-          'X-Requested-With': 'XMLHttpRequest'
-        }
-      });
-
-      const data = await response.json();
-      
-      if (data.success) {
-        this.showToast(data.message || 'Logged out successfully!', 'success');
-        // Redirect to login page after logout
-        if (data.redirect_url) {
-          setTimeout(() => {
-            window.location.href = data.redirect_url;
-          }, 1500);
-        } else {
-          window.location.reload();
-        }
-      } else {
-        this.showToast(data.message || 'Logout failed.', 'error');
-      }
-    } catch (error) {
-      this.showToast('Network error during logout.', 'error');
-    }
-  }
-
-  // ==================== UI CONTROLS ====================
-  showModal(html) {
-    document.getElementById('modal-content').innerHTML = html;
-    document.getElementById('modal').classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-  }
-
-  hideModal() {
-    document.getElementById('modal').classList.add('hidden');
-    document.body.style.overflow = 'auto';
-  }
-
-  showToast(message, type = 'info', title = '') {
-    const toast = document.getElementById('toast');
-    const toastTitle = document.getElementById('toast-title');
-    const toastMessage = document.getElementById('toast-message');
-    const toastIcon = document.getElementById('toast-icon');
-    
-    // Set toast content and style
-    const icons = {
-      success: '✅',
-      error: '❌',
-      warning: '⚠️',
-      info: 'ℹ️'
-    };
-    
-    toast.className = `toast ${type}`;
-    toastIcon.textContent = icons[type] || icons.info;
-    toastTitle.textContent = title || type.charAt(0).toUpperCase() + type.slice(1);
-    toastMessage.textContent = message;
-    
-    toast.classList.remove('hidden');
-    setTimeout(() => toast.classList.add('show'), 10);
-    
-    // Auto hide after 5 seconds
-    setTimeout(() => {
-      this.hideToast();
-    }, 5000);
-  }
-
-  hideToast() {
-    const toast = document.getElementById('toast');
-    toast.classList.remove('show');
-    setTimeout(() => toast.classList.add('hidden'), 300);
-  }
-
-  showLoading() {
-    this.hideStatus();
-    document.getElementById('loading-state').classList.remove('hidden');
-  }
-
-  showError(message) {
-    this.hideStatus();
-    document.getElementById('error-state').classList.remove('hidden');
-    document.getElementById('error-message').textContent = message;
-  }
-
-  showEmptyState() {
-    this.hideStatus();
-    document.getElementById('empty-state').classList.remove('hidden');
-  }
-
-  hideStatus() {
-    document.getElementById('loading-state').classList.add('hidden');
-    document.getElementById('error-state').classList.add('hidden');
-    document.getElementById('empty-state').classList.add('hidden');
-  }
-
-  updateFilterButtons() {
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-      if (btn.dataset.filter === this.currentFilter) {
-        btn.className = 'filter-btn px-4 py-2 rounded-md transition-all bg-emerald-500 text-white';
-      } else {
-        btn.className = 'filter-btn px-4 py-2 rounded-md transition-all bg-transparent text-slate-700 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-700';
-      }
-    });
-  }
-
-  // ==================== EVENT HANDLING ====================
-  handleGlobalClick(e) {
-    const target = e.target;
-    
-    // Edit product button
-    if (target.closest('.edit-product-btn')) {
-      e.preventDefault();
-      const productId = target.closest('.edit-product-btn').dataset.id;
-      this.handleEdit(productId);
-    }
-    
-    // Delete product button - opens confirmation modal
-    if (target.closest('.delete-product-btn')) {
-      e.preventDefault();
-      const productId = target.closest('.delete-product-btn').dataset.id;
-      this.handleDeleteClick(productId);
-    }
-    
-    // Delete confirmation button in modal
-    if (target.closest('.confirm-delete-btn')) {
-      e.preventDefault();
-      const productId = target.closest('.confirm-delete-btn').dataset.id;
-      this.confirmDelete(productId);
-    }
-    
-    // Form submission for products
-    if (target.type === 'submit' && target.closest('#productsForm')) {
-      e.preventDefault();
-      this.handleFormSubmit(target.closest('#productsForm'));
-    }
-    
-    // Login form submission
-    if (target.type === 'submit' && target.closest('#loginForm')) {
-      e.preventDefault();
-      this.handleAuthFormSubmit(target.closest('#loginForm'), true);
-    }
-    
-    // Register form submission
-    if (target.type === 'submit' && target.closest('#registerForm')) {
-      e.preventDefault();
-      this.handleAuthFormSubmit(target.closest('#registerForm'), false);
-    }
-    
-    // Cancel buttons
-    if (target.closest('.cancel-btn')) {
-      e.preventDefault();
-      this.hideModal();
-    }
-  }
-
-  // ==================== UTILITIES ====================
-  getCSRFToken() {
-    return document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
-  }
-}
-
-// ==================== GLOBAL FUNCTIONS ====================
-function hideToast() {
-  const toast = document.getElementById('toast');
-  toast.classList.remove('show');
-  setTimeout(() => toast.classList.add('hidden'), 300);
-}
-
-// ==================== THEME MANAGEMENT ====================
-(function () {
-  const root = document.documentElement;
-  const btn = document.getElementById('btn-theme');
-  const iconSun = document.getElementById('icon-sun');
-  const iconMoon = document.getElementById('icon-moon');
-  const label = document.getElementById('theme-label');
-
-  function getStoredTheme() {
-    try { 
-      return localStorage.getItem('site-theme'); 
-    } catch (e) { 
-      return null; 
-    }
-  }
-  
-  function storeTheme(t) {
-    try { 
-      localStorage.setItem('site-theme', t); 
-    } catch (e) {
-      console.warn('Could not store theme preference:', e);
-    }
-  }
-  
-  function prefersDark() {
-    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-  }
-  
-  function applyTheme(theme) {
-    const isDark = theme === 'dark';
-    if (isDark) {
-      root.classList.add('dark');
-      iconSun.classList.add('hidden');
-      iconMoon.classList.remove('hidden');
-      label.textContent = 'Light Mode';
-      btn.setAttribute('aria-label', 'Switch to light mode');
-    } else {
-      root.classList.remove('dark');
-      iconMoon.classList.add('hidden');
-      iconSun.classList.remove('hidden');
-      label.textContent = 'Dark Mode';
-      btn.setAttribute('aria-label', 'Switch to dark mode');
-    }
-  }
-  
-  function toggleTheme() {
-    const currentTheme = getStoredTheme();
-    const systemPrefersDark = prefersDark();
-    let newTheme;
-    if (currentTheme) {
-      newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-    } else {
-      newTheme = systemPrefersDark ? 'light' : 'dark';
-    }
-    applyTheme(newTheme);
-    storeTheme(newTheme);
-  }
-  
-  function initializeTheme() {
-    let theme = getStoredTheme();
-    if (!theme) theme = prefersDark() ? 'dark' : 'light';
-    applyTheme(theme);
-  }
-  
-  btn.addEventListener('click', toggleTheme);
-  if (window.matchMedia) {
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-      if (!getStoredTheme()) {
-        applyTheme(e.matches ? 'dark' : 'light');
-      }
-    });
-  }
-  
-  initializeTheme();
-})();
-
-// ==================== INITIALIZATION ====================
-document.addEventListener('DOMContentLoaded', function() {
-  window.productApp = new ProductApp();
-});
-</script>
 {% endblock content %}

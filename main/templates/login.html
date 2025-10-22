@@ -5,7 +5,7 @@
 {% endblock meta %}
 
 {% block content %}
-<!-- Style CSS -->
+<!-- Pure-CSS theme toggle (no JavaScript) -->
 <style>
   :root{
     --bg-overlay-light: rgba(255,255,255,0.35);
@@ -18,7 +18,7 @@
     --muted-dark: #c7d2fe;  /* pale */
     --border-light: rgba(156,163,175,0.35);
     --border-dark: rgba(100,116,139,0.35);
-    --bg-image: url('https://i.pinimg.com/1200x/98/34/66/983466ddf30a88bf189b1efa13c335f7.jpg');
+    --bg-image: url('https://i.pinimg.com/1200x/03/ee/c9/03eec9b931191d5ce1ad3a6ec7f7a9db.jpg');
   }
 
   /* Layout */
@@ -70,7 +70,7 @@
     <label for="theme-checkbox" class="theme-toggle cursor-pointer">
       <!-- Sun Icon -->
       <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 3v2M12 19v2M5 5l1.5 1.5M17.5 17.5L19 19M3 12h2M19 12h2M5 19l1.5-1.5M17.5 6.5L19 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      <span class="text-sm font-medium">🌙 Theme</span>
+      <span class="text-sm font-medium">Toggle Theme</span>
     </label>
   </div>
 

@@ -1,50 +1,59 @@
 from django.urls import path
-from main.views import (
-    show_main, show_xml, show_json, show_json_by_id, show_xml_by_id,
-    get_products_html, get_create_form, get_edit_form, get_delete_confirm,
-    add_products_entry_ajax, edit_products, delete_products,
-    get_login_form, get_register_form, login_user, register, logout_user
-)
+from main.views import show_main, create_products, show_products, show_xml, show_json, show_json_by_id, show_xml_by_id
+
+# Penambahan import fungsi register
+from main.views import register
+
+# Penambahan import fungsi login_user
+from main.views import login_user
+
+# Penambahan import fungsi logout_user
+from main.views import logout_user
+
+# Penambahan import fungsi edit_products
+from main.views import edit_products    
+
+# Penambahan import fungsi delete_products
+from main.views import delete_products
+
+# Dummy import
+from main.views import product_us
+from main.views import contact_us
 
 app_name = 'main'
 
 urlpatterns = [
-    # Main page
     path('', show_main, name='show_main'),
-    
-    # =========================================================================
-    # AJAX PATHS FOR PRODUCTS
-    # =========================================================================
-    # Path to get product list HTML (for AJAX refresh)
-    path('get-products-html/', get_products_html, name='get_products_html'),
-    
-    # Paths to get modal forms
-    path('get-create-form/', get_create_form, name='get_create_form'),
-    path('get-edit-form/<uuid:id>/', get_edit_form, name='get_edit_form'),
-    path('get-delete-confirm/<uuid:id>/', get_delete_confirm, name='get_delete_confirm'),
-    
-    # Paths for product CRUD operations (AJAX handlers)
-    path('create-products-ajax/', add_products_entry_ajax, name='add_products_entry_ajax'),
-    path('edit-products/<uuid:id>/', edit_products, name='edit_products'),
-    path('delete-products/<uuid:id>/', delete_products, name='delete_products'),
-    
-    # =========================================================================
-    # AJAX PATHS FOR AUTHENTICATION
-    # =========================================================================
-    # Paths to get authentication modal forms
-    path('get-login-form/', get_login_form, name='get_login_form'),
-    path('get-register-form/', get_register_form, name='get_register_form'),
-    
-    # Paths for authentication actions (AJAX handlers)
-    path('login/', login_user, name='login_user'),
-    path('register/', register, name='register'),
-    path('logout/', logout_user, name='logout_user'),
-    
-    # =========================================================================
-    # API ENDPOINTS (XML/JSON)
-    # =========================================================================
+
+    # Menambahkan path untuk create dan show products
+
+    path('create-products/', create_products, name='create_products'),
+    path('products/<str:id>/', show_products, name='show_products'),
+
+    # Menambahkan path agar dapat mengakses data dalam bentuk XML dan JSON
     path('xml/', show_xml, name='show_xml'),
     path('json/', show_json, name='show_json'),
-    path('xml/<uuid:products_id>/', show_xml_by_id, name='show_xml_by_id'),
-    path('json/<uuid:products_id>/', show_json_by_id, name='show_json_by_id'),
+
+    # Menambahkan path agar dapat mengakses data dalam bentuk XML dan JSON berdasarkan ID
+    path('xml/<str:products_id>/', show_xml_by_id, name='show_xml_by_id'),
+    path('json/<str:products_id>/', show_json_by_id, name='show_json_by_id'),
+
+    # Menambahkan path url untuk mengakses fungsi register
+    path('register/', register, name='register'),
+
+    # Menambahkan path url untuk mengakses fungsi login_user
+    path('login/', login_user, name='login'),
+
+    # Menambahkan path url untuk mengakses fungsi logout_user
+    path('logout/', logout_user, name='logout'),
+
+    # Penambahan path url untuk mengakses fungsi edit_products
+    path('products/<uuid:id>/edit', edit_products, name='edit_products'),
+
+    # Penambahan path url untuk mengakses fungsi delete_products
+    path('products/<uuid:id>/delete', delete_products, name='delete_products'),
+
+    # Dummy path url
+    path('product_us/', product_us, name='product_us'),
+    path('contact_us/', contact_us, name='contact_us'),
 ]
