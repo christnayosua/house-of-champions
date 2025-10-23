@@ -1,0 +1,6 @@
+{
+    "discord.detailsDebugging": "Debugging Something",
+    "discord.detailsEditing": "Editing Something",
+    "discord.lowerDetailsDebugging": "Debugging: {empty}",
+    "discord.lowerDetailsEditing": "Workspace: Something"
+}

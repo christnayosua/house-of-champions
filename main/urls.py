@@ -1,59 +1,30 @@
 from django.urls import path
-from main.views import show_main, create_products, show_products, show_xml, show_json, show_json_by_id, show_xml_by_id
-
-# Penambahan import fungsi register
-from main.views import register
-
-# Penambahan import fungsi login_user
-from main.views import login_user
-
-# Penambahan import fungsi logout_user
-from main.views import logout_user
-
-# Penambahan import fungsi edit_products
-from main.views import edit_products    
-
-# Penambahan import fungsi delete_products
-from main.views import delete_products
-
-# Dummy import
-from main.views import product_us
-from main.views import contact_us
+from . import views
 
 app_name = 'main'
 
 urlpatterns = [
-    path('', show_main, name='show_main'),
+    # ==================== AUTHENTICATION URLS ====================
+    path('register/', views.register, name='register'),
+    path('login/', views.login_user, name='login'),
+    path('logout/', views.logout_user, name='logout'),
 
-    # Menambahkan path untuk create dan show products
+    # ==================== MAIN VIEWS URLS ====================
+    path('', views.show_main, name='show_main'),
+    path('products/create/', views.create_products, name='create_products'),
+    path('products/<uuid:id>/', views.show_products, name='show_products'),
 
-    path('create-products/', create_products, name='create_products'),
-    path('products/<str:id>/', show_products, name='show_products'),
+    # ==================== PRODUCT CRUD URLS ====================
+    path('products/<uuid:id>/edit/', views.edit_products, name='edit_products'),
+    path('products/<uuid:id>/delete/', views.delete_products, name='delete_products'),
 
-    # Menambahkan path agar dapat mengakses data dalam bentuk XML dan JSON
-    path('xml/', show_xml, name='show_xml'),
-    path('json/', show_json, name='show_json'),
+    # ==================== AJAX SPECIFIC URLS ====================
+    # Increment views (AJAX POST)
+    path('ajax/products/<uuid:id>/increment-views/', views.increment_views_ajax, name='increment_views_ajax'),
 
-    # Menambahkan path agar dapat mengakses data dalam bentuk XML dan JSON berdasarkan ID
-    path('xml/<str:products_id>/', show_xml_by_id, name='show_xml_by_id'),
-    path('json/<str:products_id>/', show_json_by_id, name='show_json_by_id'),
-
-    # Menambahkan path url untuk mengakses fungsi register
-    path('register/', register, name='register'),
-
-    # Menambahkan path url untuk mengakses fungsi login_user
-    path('login/', login_user, name='login'),
-
-    # Menambahkan path url untuk mengakses fungsi logout_user
-    path('logout/', logout_user, name='logout'),
-
-    # Penambahan path url untuk mengakses fungsi edit_products
-    path('products/<uuid:id>/edit', edit_products, name='edit_products'),
-
-    # Penambahan path url untuk mengakses fungsi delete_products
-    path('products/<uuid:id>/delete', delete_products, name='delete_products'),
-
-    # Dummy path url
-    path('product_us/', product_us, name='product_us'),
-    path('contact_us/', contact_us, name='contact_us'),
+    # ==================== API URLS (JSON/XML) ====================
+    path('api/products/xml/', views.show_xml, name='show_xml'),
+    path('api/products/json/', views.show_json, name='show_json'),
+    path('api/products/<uuid:products_id>/xml/', views.show_xml_by_id, name='show_xml_by_id'),
+    path('api/products/<uuid:products_id>/json/', views.show_json_by_id, name='show_json_by_id'),
 ]
