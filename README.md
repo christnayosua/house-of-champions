@@ -404,6 +404,7 @@ Dalam mengambil dan menerapkan style CSS yang dibuat *developer* untuk aplikasi 
 <li><strong>Menambahkan konfigurasi static files pada aplikasi</strong> dengan menambahkan <em>middleware</em> WhiteNoise pada berkas <code>settings.py</code> agar Django dapat mengelola berkas statis secara otomatis dalam mode produksi tanpa perlu konfigurasi yang kompleks. Lalu, menambahkan konfigurasi variabel <code>STATIC_ROOT</code>, <code>STATICFILES_DIRS</code>, dan <code>STATIC_URL</code>.<br>
 10.<strong>Costum styling halaman login, register, navbar, home, dan product details</strong> menggunakan Tailwind.</li>
 </ol>
+
 <h2 id="referensi-🔎-2">Referensi 🔎</h2>
 <p>[1] MDN Web Docs. (n.d.). <em>Basic CSS selectors</em>. Retrieved from <a href="https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Styling_basics/Basic_selectors">https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Styling_basics/Basic_selectors</a><br>
 [2] w3schools. (n.d.). <em>HTML  Responsive Web Design</em>. Retrieved from <a href="https://www.w3schools.com/html/html_responsive.asp">https://www.w3schools.com/html/html_responsive.asp</a><br>
@@ -479,4 +480,3 @@ Dalam mengambil dan menerapkan style CSS yang dibuat *developer* untuk aplikasi 
 [3] Jagoan Hosting. (2022, May 19). <em>AJAX: Pengertian, Cara Kerja, Fungsi dan Kurang Lebih</em>. Retrieved from <a href="https://www.jagoanhosting.com/blog/ajax-adalah/">https://www.jagoanhosting.com/blog/ajax-adalah/</a><br>
 [4] Django Documentation. (n.d.). <em>How to use Django’s CSRF protection</em>. Retrieved from <a href="https://docs.djangoproject.com/id/5.2/howto/csrf/">https://docs.djangoproject.com/id/5.2/howto/csrf/</a><br>
 [5] Harvianti, A. (2025, May 22). <em>Apa Itu AJAX? Definisi, Fungsi, Cara Kerja, dan Kelebihan</em>. Retrieved from <a href="https://www.sekawanmedia.co.id/blog/apa-itu-ajax/">https://www.sekawanmedia.co.id/blog/apa-itu-ajax/</a></p>
-
