@@ -252,7 +252,7 @@ def show_main(request):
 
     # Sorting
     valid_sort = ['name', '-name', 'price', '-price', 'rating', '-rating', 
-                  'created_at', '-created_at', 'visitors', '-visitors']
+                  'created_at', '-created_at', 'visitors', '-visitors', '-stock']
     if sort_by in valid_sort:
         qs = qs.order_by(sort_by)
     else:
