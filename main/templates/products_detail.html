@@ -2,210 +2,386 @@
 {% load static %}
 
 {#
-  Product detail template with improved design + explicit light/dark mode support + background image
-  - Requires Tailwind CSS with `darkMode: 'class'` in tailwind.config.js
-  - Stores theme preference in localStorage
-  - Uses Google Fonts (Poppins + Inter).
-  - Background image applied via a decorative fixed layer with adjustable saturation & position
-  - JS now toggles both `dark` and `light` classes on <html> so styles can target them explicitly
+  Product detail template - Improved design with dark theme
+  Features:
+  - Dark theme optimized
+  - Responsive layout
+  - Product statistics
+  - Related products
+  - Action buttons with proper permissions
+  - Enhanced visual hierarchy
 #}
 
 {% block meta %}
-<title>{{ products.title }} - House Of Champions</title>
+<title>{{ products.name }} - House Of Champions</title>
+<meta name="description" content="{{ products.description|truncatewords:20 }}">
 {% endblock meta %}
 
 {% block extra_head %}
-<!-- Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
-
 <style>
-  :root { --ui-font: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; --display-font: 'Poppins', var(--ui-font); }
-  body { font-family: var(--ui-font); }
-  .display-font { font-family: var(--display-font); }
-
-  /* Decorative full-bleed background image layer */
-  .decor-bg {
-    position: fixed; /* sits behind content */
-    inset: 0 0 auto 0; /* cover full width, control height separately */
-    height: 40vh; /* only cover top portion visually */
-    pointer-events: none; /* don't intercept clicks */
-    z-index: -1;
-    background-image: url('https://i.pinimg.com/1200x/44/24/62/44246235fc68567de2d96e63b642d6c6.jpg');
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: right top; /* adjust the position here */
-    filter: saturate(0.85) brightness(0.98); /* default: slightly reduced saturation */
-    opacity: 0.45; /* makes image subtle so content remains readable */
-    transform: translateY(-10%); /* lift image slightly */
-    transition: opacity 300ms ease, filter 300ms ease, transform 300ms ease;
+  /* Custom styles for product detail page */
+  .product-gallery {
+    position: relative;
+    overflow: hidden;
+    border-radius: 16px;
   }
-
-  /* Light-mode specific tweaks (explicit .light class on html) */
-  .light .decor-bg {
-    filter: saturate(0.95) brightness(1.0) contrast(0.98);
-    opacity: 0.5;
+  
+  .product-image {
+    transition: transform 0.3s ease;
   }
-
-  /* Dark-mode tweaks for the background so it blends in dark themes */
-  .dark .decor-bg {
-    filter: saturate(0.6) brightness(0.55) contrast(0.9);
-    opacity: 0.32;
+  
+  .product-image:hover {
+    transform: scale(1.02);
   }
-
-  /* Small screens: adjust cropping so focal point stays visible */
-  @media (max-width: 768px) {
-    .decor-bg { background-position: center top; height: 30vh; opacity: 0.25; }
-    .light .decor-bg { opacity: 0.28; }
+  
+  .stat-card {
+    background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+    border: 1px solid #374151;
+    transition: all 0.3s ease;
+  }
+  
+  .stat-card:hover {
+    border-color: #10b981;
+    transform: translateY(-2px);
+  }
+  
+  .price-tag {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  }
+  
+  .related-product-card {
+    transition: all 0.3s ease;
+    border: 1px solid #374151;
+  }
+  
+  .related-product-card:hover {
+    border-color: #10b981;
+    transform: translateY(-4px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Custom scrollbar for description */
+  .description-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: #4b5563 #1f2937;
+  }
+  
+  .description-scroll::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .description-scroll::-webkit-scrollbar-track {
+    background: #1f2937;
+    border-radius: 3px;
+  }
+  
+  .description-scroll::-webkit-scrollbar-thumb {
+    background: #4b5563;
+    border-radius: 3px;
+  }
+  
+  .description-scroll::-webkit-scrollbar-thumb:hover {
+    background: #6b7280;
   }
 </style>
 {% endblock extra_head %}
 
 {% block content %}
-<!-- Decorative background layer -->
-<div class="decor-bg" aria-hidden="true"></div>
+<div class="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+    <!-- Breadcrumb Navigation -->
+    <nav class="flex items-center space-x-2 text-sm text-gray-400 mb-8">
+      <a href="{% url 'main:show_main' %}" class="hover:text-green-400 transition-colors">Products</a>
+      <span class="text-gray-600">/</span>
+      <a href="{% url 'main:show_main' %}?category={{ products.category }}" class="hover:text-green-400 transition-colors capitalize">{{ products.get_category_display }}</a>
+      <span class="text-gray-600">/</span>
+      <span class="text-green-400 truncate">{{ products.name }}</span>
+    </nav>
 
-<div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <!-- Main Product Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+      
+      <!-- Product Images -->
+      <div class="space-y-4">
+        <!-- Main Image -->
+        <div class="product-gallery bg-gray-800 rounded-2xl p-4 border border-gray-700">
+          <div class="aspect-w-16 aspect-h-12 rounded-xl overflow-hidden">
+            {% if products.thumbnail1 %}
+              <img src="{{ products.thumbnail1 }}" 
+                   alt="{{ products.name }}" 
+                   class="product-image w-full h-96 object-cover rounded-lg">
+            {% else %}
+              <div class="w-full h-96 flex items-center justify-center bg-gray-700 rounded-lg">
+                <div class="text-center text-gray-400">
+                  <svg class="w-16 h-16 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                  </svg>
+                  <p class="text-sm">No image available</p>
+                </div>
+              </div>
+            {% endif %}
+          </div>
+        </div>
 
-    <!-- Top bar: Back + Theme Toggle -->
-    <div class="flex items-center justify-between mb-6">
-      <a href="{% url 'main:show_main' %}" class="inline-flex items-center gap-2 text-gray-700 dark:text-gray-200 hover:underline">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 011.414 1.414L6.414 9H17a1 1 0 110 2H6.414l3.293 3.293a1 1 0 010 1.414z" clip-rule="evenodd"/></svg>
-        Back to Products
-      </a>
+        <!-- Product Stats -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="stat-card rounded-xl p-4 text-center">
+            <div class="text-2xl font-bold text-green-400 mb-1">{{ products.visitors }}</div>
+            <div class="text-xs text-gray-400">Views</div>
+          </div>
+          <div class="stat-card rounded-xl p-4 text-center">
+            <div class="text-2xl font-bold text-yellow-400 mb-1">{{ products.get_clean_rating }}</div>
+            <div class="text-xs text-gray-400">Rating</div>
+          </div>
+          <div class="stat-card rounded-xl p-4 text-center">
+            <div class="text-2xl font-bold text-blue-400 mb-1">{{ products.stock }}</div>
+            <div class="text-xs text-gray-400">In Stock</div>
+          </div>
+          <div class="stat-card rounded-xl p-4 text-center">
+            <div class="text-2xl font-bold text-purple-400 mb-1">
+              {% if products.is_featured %}Yes{% else %}No{% endif %}
+            </div>
+            <div class="text-xs text-gray-400">Featured</div>
+          </div>
+        </div>
+      </div>
 
-      <div class="flex items-center gap-3">
-        <div class="text-sm text-gray-500 dark:text-gray-400 mr-2">Theme</div>
-        <button id="theme-toggle" aria-label="Toggle theme" class="inline-flex items-center justify-center p-2 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition-all">
-          <svg id="icon-sun" class="h-5 w-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m8.66-9H21M3 12h1m15.36 6.36l-.7-.7M6.34 6.34l-.7-.7m12.02 12.02l-.7-.7M6.34 17.66l-.7-.7M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-          <svg id="icon-moon" class="h-5 w-5 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 116.707 2.707 7 7 0 0017.293 13.293z"></path></svg>
-        </button>
+      <!-- Product Information -->
+      <div class="space-y-6">
+        <!-- Header with Badges -->
+        <div class="flex items-start justify-between">
+          <div class="flex-1">
+            <div class="flex items-center gap-3 mb-3">
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-600 text-white">
+                {{ products.get_category_display }}
+              </span>
+              {% if products.is_featured %}
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-500 text-white">
+                  <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                  </svg>
+                  Featured
+                </span>
+              {% endif %}
+              {% if products.is_products_hot %}
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-500 text-white">
+                  <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"/>
+                  </svg>
+                  Hot
+                </span>
+              {% endif %}
+            </div>
+            
+            <h1 class="text-3xl lg:text-4xl font-bold text-white mb-2">{{ products.name }}</h1>
+            <p class="text-xl text-green-400 font-semibold mb-4">{{ products.formatted_price }}</p>
+          </div>
+        </div>
+
+        <!-- Brand & Seller Info -->
+        <div class="flex items-center justify-between p-4 bg-gray-800 rounded-xl border border-gray-700">
+          <div class="flex items-center space-x-3">
+            <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center">
+              <span class="text-white font-bold text-sm">{{ products.brandName|first|upper }}</span>
+            </div>
+            <div>
+              <div class="text-white font-semibold">{{ products.brandName }}</div>
+              <div class="text-sm text-gray-400">Brand</div>
+            </div>
+          </div>
+          <div class="text-right">
+            <div class="text-white font-semibold">
+              {% if products.user %}
+                {{ products.user.username }}
+              {% else %}
+                Anonymous
+              {% endif %}
+            </div>
+            <div class="text-sm text-gray-400">Seller</div>
+          </div>
+        </div>
+
+        <!-- Product Description -->
+        <div class="bg-gray-800 rounded-xl border border-gray-700 p-6">
+          <h3 class="text-lg font-semibold text-white mb-4 flex items-center">
+            <svg class="w-5 h-5 mr-2 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            Product Description
+          </h3>
+          <div class="description-scroll max-h-60 overflow-y-auto pr-2">
+            <div class="text-gray-300 leading-relaxed whitespace-pre-line text-base">
+              {{ products.description|linebreaksbr }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row gap-4 pt-4">
+          {% if user.is_authenticated and products.user == user %}
+            <!-- Owner Actions -->
+            <a href="{% url 'main:edit_products' products.id %}" 
+               class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 text-center flex items-center justify-center">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+              </svg>
+              Edit Product
+            </a>
+            <form method="POST" action="{% url 'main:delete_products' products.id %}" class="flex-1" onsubmit="return confirm('Are you sure you want to delete this product?');">
+              {% csrf_token %}
+              <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 flex items-center justify-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+                Delete Product
+              </button>
+            </form>
+          {% else %}
+            <!-- Visitor Actions -->
+            <button class="flex-1 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 flex items-center justify-center">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+              </svg>
+              Add to Cart
+            </button>
+            <button class="flex-1 bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 flex items-center justify-center">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+              </svg>
+              Add to Wishlist
+            </button>
+          {% endif %}
+        </div>
+
+        <!-- Additional Info -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-400">
+          <div class="flex items-center">
+            <svg class="w-4 h-4 mr-2 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            Added {{ products.created_at|date:"M d, Y" }}
+          </div>
+          <div class="flex items-center">
+            <svg class="w-4 h-4 mr-2 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+            </svg>
+            {{ products.visitors }} people viewed
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- Main card -->
-    <article class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm dark:shadow-lg transition-colors">
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 p-6 sm:p-8">
+    <!-- Related Products Section -->
+    <section class="mb-12">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold text-white flex items-center">
+          <svg class="w-6 h-6 mr-2 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+          </svg>
+          Related Products
+        </h2>
+        <a href="{% url 'main:show_main' %}?category={{ products.category }}" class="text-green-400 hover:text-green-300 transition-colors text-sm font-medium">
+          View all in {{ products.get_category_display }}
+        </a>
+      </div>
 
-        <!-- Left: Images -->
-        <div class="lg:col-span-1">
-          <div class="rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-700">
-            {% if products.thumbnail %}
-              <img src="{{ products.thumbnail }}" alt="{{ products.title }}" class="w-full h-72 object-cover">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Placeholder for related products - would be populated via JavaScript or backend -->
+        {% for i in "1234" %}
+          <div class="related-product-card bg-gray-800 rounded-xl p-4 text-center">
+            <div class="w-full h-40 bg-gray-700 rounded-lg mb-4 flex items-center justify-center">
+              <svg class="w-12 h-12 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              </svg>
+            </div>
+            <div class="text-gray-400 text-sm mb-2">Related Product {{ i }}</div>
+            <div class="text-green-400 font-semibold">${{ forloop.counter|add:99 }}</div>
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <!-- Product Metadata -->
+    <div class="bg-gray-800 rounded-xl border border-gray-700 p-6">
+      <h3 class="text-lg font-semibold text-white mb-4">Product Details</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
+        <div>
+          <div class="text-gray-400 mb-1">Product ID</div>
+          <div class="text-white font-mono">{{ products.id }}</div>
+        </div>
+        <div>
+          <div class="text-gray-400 mb-1">Category</div>
+          <div class="text-white capitalize">{{ products.get_category_display }}</div>
+        </div>
+        <div>
+          <div class="text-gray-400 mb-1">Stock Status</div>
+          <div class="text-white">
+            {% if products.stock > 0 %}
+              <span class="text-green-400">In Stock ({{ products.stock }})</span>
             {% else %}
-              <div class="w-full h-72 flex items-center justify-center text-gray-400">No image</div>
+              <span class="text-red-400">Out of Stock</span>
             {% endif %}
           </div>
-          <!-- Thumbnails placeholder -->
-          <div class="mt-4 flex gap-3">
-            <div class="w-20 h-20 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 flex items-center justify-center text-sm text-gray-400">1</div>
-            <div class="w-20 h-20 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 flex items-center justify-center text-sm text-gray-400">2</div>
-            <div class="w-20 h-20 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 flex items-center justify-center text-sm text-gray-400">3</div>
-          </div>
         </div>
-
-        <!-- Middle: Product info -->
-        <div class="lg:col-span-2 flex flex-col">
-          <header class="mb-4">
-            <div class="flex items-center gap-3 mb-3">
-              <span class="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-green-600 text-white">{{ products.get_category_display }}</span>
-              {% if products.is_featured %}
-                <span class="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-yellow-100 text-yellow-800">Featured</span>
-              {% endif %}
-              {% if products.is_products_hot %}
-                <span class="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-red-100 text-red-800">Hot</span>
-              {% endif %}
-            </div>
-
-            <h1 class="display-font text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white leading-tight">{{ products.title }}</h1>
-
-            <div class="mt-3 flex items-center gap-4 text-sm text-gray-500 dark:text-gray-300">
-              <time datetime="{{ products.created_at|date:'c' }}">{{ products.created_at|date:"M j, Y g:i A" }}</time>
-              <span>{{ products.products_views }} views</span>
-            </div>
-          </header>
-
-          <div class="prose dark:prose-invert max-w-none mb-6">
-            <div class="text-gray-700 dark:text-gray-200 leading-relaxed whitespace-pre-line text-base sm:text-lg">{{ products.description }}</div>
-          </div>
-
-          <div class="mt-auto pt-4 border-t border-gray-100 dark:border-gray-700">
-            <div class="flex items-center justify-between">
-              <div>
-                <div class="font-medium text-gray-900 dark:text-gray-100">Shop: {% if products.user %}{{ products.user.username }}{% else %}Anonymous{% endif %}</div>
-                <p class="text-sm text-gray-500 dark:text-gray-400">Seller</p>
-              </div>
-
-              <!-- Action buttons -->
-              <div class="flex items-center gap-3">
-                <button class="px-4 py-2 rounded-lg bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition">Contact Seller</button>
-                <button class="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:shadow transition">Add to Wishlist</button>
-              </div>
-            </div>
-          </div>
+        <div>
+          <div class="text-gray-400 mb-1">Price in USD</div>
+          <div class="text-white">{{ products.get_price_in_dollar }}</div>
         </div>
-
       </div>
-    </article>
+    </div>
   </div>
 </div>
-
 {% endblock content %}
 
 {% block extra_scripts %}
 <script>
-(function(){
-  const html = document.documentElement;
-  const toggle = document.getElementById('theme-toggle');
-  const sun = document.getElementById('icon-sun');
-  const moon = document.getElementById('icon-moon');
-
-  function storedTheme() {
-    return localStorage.getItem('theme');
-  }
-
-  function systemPrefersDark() {
-    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-  }
-
-  function isDark() {
-    const stored = storedTheme();
-    if (stored) return stored === 'dark';
-    return systemPrefersDark();
-  }
-
-  function applyTheme(dark) {
-    if (dark) {
-      html.classList.add('dark');
-      html.classList.remove('light');
-      moon.classList.add('hidden');
-      sun.classList.remove('hidden');
-    } else {
-      html.classList.remove('dark');
-      html.classList.add('light');
-      sun.classList.add('hidden');
-      moon.classList.remove('hidden');
-    }
-  }
-
-  // Initialize theme on load
-  applyTheme(isDark());
-
-  // Toggle handler
-  toggle.addEventListener('click', function(){
-    const nextIsDark = !html.classList.contains('dark');
-    applyTheme(nextIsDark);
-    localStorage.setItem('theme', nextIsDark ? 'dark' : 'light');
+// Additional interactivity for the product page
+document.addEventListener('DOMContentLoaded', function() {
+  // Add loading state to buttons
+  const buttons = document.querySelectorAll('button, a[href*="edit"], a[href*="delete"]');
+  buttons.forEach(button => {
+    button.addEventListener('click', function(e) {
+      if (this.type === 'submit' || this.getAttribute('href')?.includes('delete')) {
+        // For delete actions, confirmation is already handled
+        return;
+      }
+      
+      // Add loading state
+      const originalText = this.innerHTML;
+      this.innerHTML = `
+        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+        </svg>
+        Loading...
+      `;
+      this.disabled = true;
+      
+      // For demonstration, restore after 2 seconds
+      setTimeout(() => {
+        this.innerHTML = originalText;
+        this.disabled = false;
+      }, 2000);
+    });
   });
-
-  // Optional: listen to system changes if user hasn't set preference
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-    if (!storedTheme()) {
-      applyTheme(e.matches);
-    }
-  });
-})();
+  
+  // Image zoom functionality (basic)
+  const productImage = document.querySelector('.product-image');
+  if (productImage) {
+    productImage.addEventListener('click', function() {
+      this.classList.toggle('cursor-zoom-in');
+      this.style.transform = this.style.transform === 'scale(1.5)' ? 'scale(1)' : 'scale(1.5)';
+      this.style.transition = 'transform 0.3s ease';
+    });
+  }
+  
+  // Smooth scroll for description
+  const descriptionScroll = document.querySelector('.description-scroll');
+  if (descriptionScroll && descriptionScroll.scrollHeight > descriptionScroll.clientHeight) {
+    descriptionScroll.classList.add('pr-2'); // Add padding for scrollbar
+  }
+});
 </script>
 {% endblock extra_scripts %}
