@@ -497,7 +497,7 @@ def edit_products(request, id):
 
     # Handle GET request untuk AJAX
     if _is_ajax(request) and request.method == 'GET':
-        html = render(request, 'create_product.html', {
+        html = render(request, 'create_products.html', {
             'form': form, 
             'title': 'Edit Produk', 
             'action_url': reverse('main:edit_products', kwargs={'id': product.id}), 

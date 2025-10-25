@@ -16,37 +16,69 @@
       </a>
     </div>
     
-    <!-- Form -->
+    <!-- Form Container -->
     <div class="bg-white rounded-lg border border-gray-200 p-6 sm:p-8 form-style">
       <div class="mb-8">
         <h1 class="text-2xl font-bold text-gray-900 mb-2">Edit Products</h1>
         <p class="text-gray-600">Update your football products and details</p>
       </div>
       
-      <form method="POST" class="space-y-6">
+      <!-- 
+        FORM ELEMENTS:
+        - Form ini akan mengirim data via POST ke view edit_products
+        - CSRF token disertakan untuk keamanan
+        - Form mendukung file upload (enctype="multipart/form-data")
+      -->
+      <form method="POST" enctype="multipart/form-data" class="space-y-6" id="edit-product-form">
         {% csrf_token %}
+        
+        <!-- 
+          DYNAMIC FORM RENDERING:
+          - Loop melalui semua field dalam form ProductsForm
+          - Setiap field dirender dengan label, input, help text, dan error messages
+          - Support untuk berbagai tipe field (text, number, select, file, dll.)
+        -->
         {% for field in form %}
-          <div>
+          <div class="form-field">
             <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
               {{ field.label }}
+              {% if field.field.required %}
+                <span class="text-red-500">*</span>
+              {% endif %}
             </label>
+            
             <div class="w-full">
               {{ field }}
             </div>
+            
+            <!-- Help text untuk memberikan panduan pengisian field -->
             {% if field.help_text %}
               <p class="mt-1 text-sm text-gray-500">{{ field.help_text }}</p>
             {% endif %}
+            
+            <!-- Error messages untuk validasi client/server side -->
             {% for error in field.errors %}
               <p class="mt-1 text-sm text-red-600">{{ error }}</p>
             {% endfor %}
           </div>
         {% endfor %}
         
+        <!-- 
+          ACTION BUTTONS:
+          - Cancel: Kembali ke halaman utama
+          - Submit: Mengirim form data untuk update produk
+          - Layout responsive untuk mobile dan desktop
+        -->
         <div class="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200">
-          <a href="{% url 'main:show_main' %}" class="order-2 sm:order-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-md font-medium hover:bg-gray-50 transition-colors text-center">
+          <!-- Cancel Button -->
+          <a href="{% url 'main:show_main' %}" 
+             class="order-2 sm:order-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-md font-medium hover:bg-gray-50 transition-colors text-center">
             Cancel
           </a>
-          <button type="submit" class="order-1 sm:order-2 flex-1 bg-green-600 text-white px-6 py-3 rounded-md font-medium hover:bg-green-700 transition-colors">
+          
+          <!-- Submit Button -->
+          <button type="submit" 
+                  class="order-1 sm:order-2 flex-1 bg-green-600 text-white px-6 py-3 rounded-md font-medium hover:bg-green-700 transition-colors">
             Update Products
           </button>
         </div>
@@ -54,4 +86,41 @@
     </div>
   </div>
 </div>
+
+<!-- 
+  AJAX SUPPORT SCRIPT:
+  - Menangani form submission via AJAX jika diperlukan
+  - Compatible dengan view yang mendukung AJAX dan non-AJAX requests
+-->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.getElementById('edit-product-form');
+  
+  form.addEventListener('submit', function(e) {
+    // Optional: Tambahkan AJAX handling di sini jika diperlukan
+    // Untuk sekarang, biarkan form submit secara normal
+  });
+  
+  // Styling untuk form fields
+  const inputs = form.querySelectorAll('input, select, textarea');
+  inputs.forEach(input => {
+    input.classList.add('w-full', 'px-3', 'py-2', 'border', 'border-gray-300', 'rounded-md', 'shadow-sm', 'focus:outline-none', 'focus:ring-green-500', 'focus:border-green-500');
+  });
+});
+</script>
+
+<!-- 
+  ERROR HANDLING DISPLAY:
+  - Menampilkan pesan error global jika ada
+-->
+{% if form.non_field_errors %}
+<div class="mt-4 p-4 bg-red-50 border border-red-200 rounded-md">
+  <ul class="text-sm text-red-600">
+    {% for error in form.non_field_errors %}
+      <li>{{ error }}</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+
 {% endblock %}
