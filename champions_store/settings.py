@@ -21,6 +21,13 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Menambahkan variable yang dibutuhkan untuk corsheaders
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SAMESITE = 'None'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -35,7 +42,9 @@ PRODUCTION = os.getenv('PRODUCTION', 'False').lower() == 'true'
 DEBUG = True
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", 
-                 "christna-yosua-houseofchampions.pbp.cs.ui.ac.id"]
+                 "christna-yosua-houseofchampions.pbp.cs.ui.ac.id",
+                 # Menambahkan host untuk emulator android
+                 "10.0.2.2"]
 
 # Penambahan CSRF_TRUSTED_ORIGINS
 CSRF_TRUSTED_ORIGINS = [
@@ -51,6 +60,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'main',
+    # Menambah installed app untuk authentication
+    'authentication',
 ]
 
 MIDDLEWARE = [
@@ -63,6 +74,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    # Penambahan middleware untuk corsheader
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'champions_store.urls'

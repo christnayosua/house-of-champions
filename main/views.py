@@ -15,6 +15,198 @@ from django.core.paginator import Paginator
 from main.forms import ProductsForm
 from main.models import Products
 
+# import request untuk asinkronisasi flutter
+import requests
+
+# import modul yang dibutuhkan untuk membuat product melalui flutter
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.html import strip_tags
+import json
+from django.http import JsonResponse
+
+# views untuk membuat products baru melalui flutter
+@csrf_exempt
+def create_product_flutter(request):
+    if request.method == 'POST':
+        try:
+            # Parse JSON data dari request body
+            data = json.loads(request.body)
+            
+            # Validasi field required
+            required_fields = ['name', 'price', 'description', 'category']
+            for field in required_fields:
+                if field not in data:
+                    return JsonResponse({
+                        "status": "error",
+                        "message": f"Field '{field}' is required"
+                    }, status=400)
+            
+            # Strip HTML tags untuk mencegah XSS
+            name = strip_tags(data.get("name", "").strip())
+            description = strip_tags(data.get("description", "").strip())
+            
+            # Validasi data
+            if not name:
+                return JsonResponse({
+                    "status": "error",
+                    "message": "Product name cannot be empty"
+                }, status=400)
+            
+            if not description:
+                return JsonResponse({
+                    "status": "error", 
+                    "message": "Product description cannot be empty"
+                }, status=400)
+            
+            # Validasi price harus integer positif
+            try:
+                price = int(data.get("price", 0))
+                if price < 0:
+                    return JsonResponse({
+                        "status": "error",
+                        "message": "Price must be a positive number"
+                    }, status=400)
+            except (ValueError, TypeError):
+                return JsonResponse({
+                    "status": "error",
+                    "message": "Price must be a valid number"
+                }, status=400)
+            
+            # Validasi category harus sesuai pilihan yang tersedia
+            valid_categories = [choice[0] for choice in Products.CATEGORY_CHOICES]
+            category = data.get("category", "").lower()
+            if category not in valid_categories:
+                return JsonResponse({
+                    "status": "error",
+                    "message": f"Invalid category. Must be one of: {', '.join(valid_categories)}",
+                    "available_categories": valid_categories
+                }, status=400)
+            
+            # Validasi stock harus integer non-negatif
+            try:
+                stock = int(data.get("stock", 0))
+                if stock < 0:
+                    return JsonResponse({
+                        "status": "error",
+                        "message": "Stock must be a non-negative number"
+                    }, status=400)
+            except (ValueError, TypeError):
+                return JsonResponse({
+                    "status": "error",
+                    "message": "Stock must be a valid number"
+                }, status=400)
+            
+            # Validasi rating harus float antara 0-5
+            try:
+                rating = float(data.get("rating", 0.0))
+                if rating < 0 or rating > 5:
+                    return JsonResponse({
+                        "status": "error",
+                        "message": "Rating must be between 0 and 5"
+                    }, status=400)
+            except (ValueError, TypeError):
+                return JsonResponse({
+                    "status": "error",
+                    "message": "Rating must be a valid number"
+                }, status=400)
+            
+            # Get optional fields dengan nilai default
+            thumbnail1 = data.get("thumbnail1", "").strip()
+            thumbnail2 = data.get("thumbnail2", "").strip()
+            thumbnail3 = data.get("thumbnail3", "").strip()
+            is_featured = bool(data.get("is_featured", False))
+            brand = data.get("brand", "").strip()
+            brand_name = strip_tags(data.get("brandName", "brand").strip())
+            
+            # Get user dari request
+            user = request.user
+            
+            # Cek apakah user terautentikasi
+            if not user.is_authenticated:
+                return JsonResponse({
+                    "status": "error",
+                    "message": "User must be authenticated to create products"
+                }, status=401)
+            
+            # Buat produk baru
+            new_product = Products(
+                user=user,
+                name=name,
+                price=price,
+                description=description,
+                category=category,
+                thumbnail1=thumbnail1 if thumbnail1 else None,
+                thumbnail2=thumbnail2 if thumbnail2 else None,
+                thumbnail3=thumbnail3 if thumbnail3 else None,
+                is_featured=is_featured,
+                stock=stock,
+                rating=rating,
+                brand=brand if brand else None,
+                brandName=brand_name,
+                # created_at otomatis di-set ke waktu sekarang
+                # visitors default 0
+            )
+            
+            # Simpan produk ke database
+            new_product.save()
+            
+            # Return response sukses dengan data produk yang dibuat
+            return JsonResponse({
+                "status": "success",
+                "message": "Product created successfully",
+                "product_id": str(new_product.id),
+                "product_data": {
+                    "name": new_product.name,
+                    "price": new_product.price,
+                    "formatted_price": new_product.formatted_price,
+                    "category": new_product.category,
+                    "stock": new_product.stock,
+                    "rating": new_product.rating,
+                    "brandName": new_product.brandName,
+                    "is_featured": new_product.is_featured,
+                    "created_at": new_product.created_at.isoformat()
+                }
+            }, status=201)
+            
+        except json.JSONDecodeError:
+            return JsonResponse({
+                "status": "error",
+                "message": "Invalid JSON format in request body"
+            }, status=400)
+            
+        except Exception as e:
+            # Handle unexpected errors
+            return JsonResponse({
+                "status": "error",
+                "message": f"An error occurred while creating product: {str(e)}"
+            }, status=500)
+    
+    else:
+        # Handle method selain POST
+        return JsonResponse({
+            "status": "error",
+            "message": "Only POST method is allowed"
+        }, status=405)
+
+# Views untuk menambahkan endpoint proxy untuk mengatasi masalah CORS pada gambar
+def proxy_image(request):
+    image_url = request.GET.get('url')
+    if not image_url:
+        return HttpResponse('No URL provided', status=400)
+    
+    try:
+        # Fetch image from external source
+        response = requests.get(image_url, timeout=10)
+        response.raise_for_status()
+        
+        # Return the image with proper content type
+        return HttpResponse(
+            response.content,
+            content_type=response.headers.get('Content-Type', 'image/jpeg')
+        )
+    except requests.RequestException as e:
+        return HttpResponse(f'Error fetching image: {str(e)}', status=500)
+
 # ---------------------------------------------------------------
 # Helper functions untuk handle AJAX request
 # ---------------------------------------------------------------

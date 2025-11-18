@@ -137,4 +137,10 @@ urlpatterns = [
     # Response:
     #   - Success: {status: 'success', views: X, is_products_hot: bool}
     #   - Error: {status: 'error', message: 'Product not found'}
+
+    # Path untuk proxy image
+    path('proxy-image/', views.proxy_image, name='proxy_image'),
+
+    # Path untuk membuat products melalui flutter
+    path('create-flutter/', views.create_product_flutter, name='create_product_flutter'),
 ]
