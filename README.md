@@ -572,12 +572,12 @@ Dalam proyek kali ini, saya menggunakan package **http** dan **CookieRequest** u
 
 Instance `CookieRequest` perlu dibgaikan ke semua komponen yang ada di dalam aplikasi dan umumnya dibagikan dengan `Provider` untuk memastikan bahwa **status autentikasi** secara konsisten terjadi di seluruh bagian aplikasi. Melalui pembagian instance yang sama tersebut, komponen di setiap bagian yang sedang melakukan `request`, seperti mengambil data item produk baru, akan menggunakan **session** yang sama. Di sisi lain, apabila tidak membagikan instance yang sama, maka Django akan menganggap komponen tersebut **tidak terautentikasi**. 
 
-<h3>Konvigurasi Konektivitas Flutter-Django</h3>
+<h3>Konvigurasi Konektivitas Flutter-Django ⚙️</h3>
 <hr>
 
 Dengan melakukan konvigurasi konektivitas, Flutter dapat berkomunikasi dengan server Django yang berjalan di lokal. Oleh sebab itu, pada proyek ini, saya menambahkan konvigurasi `ALLOWED_HOSTS` pada `settings.py` Django, yaitu `10.0.2.2` di mana alamat tersebut adalah **alias khusus** dari emulator Android untuk `localhost` di komputer saya. Di sisi lain, agar Flutter dan Django dianggap sebagai origin berbeda, saya perlu mengaktifkan package `django-cors-headers` yang akan memberikan middleware **CORS (Cross-Origin Resource Sharing)** sehingga brower atau aplikasi Flutter tidak akan memblokir respons yang diberikan oleh Django. Selain itu, agar cookie dapat dikirim dalam konteks cross-site yang aman, saya perlu melakukan **pengaturan Cookie (SameSite & Secure)**, yaitu mengatur `CSRF_COOKIE_SAMSITE` dan `SESSION_COOKIE_SAMSISTE` menjadi `'None'` dan `CSRF_COOKIE_SECURE` dan `SESSION_COOKIE_SECURE` menjadi `True`. Agar applikasi Flutter dapat membuat koneksi jaringan, saya menambahkan **izin akses internet di bagian Android**, yaitu menambahkan baris `<uses-permission android:name="android.permission.INTERNET" />` di berkas `android/app/src/main/AndroidManifest.xml`.
 
-<h3>Mekanisme Pengiriman dan Penampilan Data</h3>
+<h3>Mekanisme Pengiriman dan Penampilan Data 🚚</h3>
 <hr>
 
 Mekanisme pengiriman dan penampilan data, dapat saya jelaskan melalui diagram berikut:
@@ -601,7 +601,7 @@ Berdasarkan diagram tersebut, mekanisme pengiriman dan penampilan data dapat say
 4. **Parsing Django ke Model**: Respons JSON dari Django yang diterima akan di-*decode* dan dikonversi menjadi list objek Dart menggunakan method `fromJson` yang ada pada model yang dibuat. 
 5. **Menampilkan di UI Flutter**: Setelah objek tersebut dibuat, maka widget `FutureBuilder` akan membangun UI, seperti `ListView.builder`, saat data future berhasil di-fetch dan di-parse.
 
-<h3>Mekanisme Autentikasi Aplikasi</h3>
+<h3>Mekanisme Autentikasi Aplikasi 👤</h3>
 <hr>
 
 Mekanisme autentikasi pada aplikasi Flutter dapat saya jelaskan melalui diagram berikut:
@@ -619,7 +619,132 @@ flowchart TD
 
 Ketika *user* melakukan login dengan memasukkan username dan password pada form login, maka Flutter akan mengirimkan *username* dan *password* ke endpoint Django untuk diverifikasi apakah terdaftar di database. Ketika *user* terautentikasi, maka Django akan membuat session baru dan mengirimkan **id session** tersebut ke aplikasi *client* untuk disimpan sebagai **CookieRequest**. Lalu, Flutter akan mengarahkan halaman ke menu utama atau `homepage`. *User* dapat melakukan interaksi melalui fitur-fitur yang ada dan setiap interaksi akan mengirimkan `request` data dengan cookie yang tersimpan. Hal ini juga berlaku untuk proses **registrasi** akun baru di mana Flutter akan mengirimkan data *username* dan *password* ke endpoint Django untuk dibuatkan akun baru. **Lalu, bagaimana dengan fitur Logout?** Sama seperti tugas aplikasi web berbasis Django, aplikasi Flutter akan mengirimkan `request` baru ke endpoint logout di Django untuk melakukan `logout`. Lalu, Django akan menerima dan memberikan response ke aplikasi Flutter serta menghapus `session` yang tadi sudah disimpan. Selain itu, Flutter juga akan menghapus cookie yang disimpan, berisi id session, menggunakan instance `CookieRequest`. Hal ini perlu dilakukan agar terhindar dari pencurian data di mana melalui session id **attacker** dapat mengetahui interaksi yang sedang terjadi dan itu sangat berbahaya, terutama yang berkaitan dengan data sensitif dan proses transaksi.
 
-<h3>Implementasi Checklist Step-by-Step</h3>
+<h3>Implementasi Checklist Step-by-Step 🎯</h3>
 <hr>
 
-Dalam mengerjakan proyek saya kali ini, berikut adalah checklist yang saya lakukan dalam mengembangkan aplikasi mobile saya, mulai dari implementasi tutorial dan modifikasi kode sesuai kebutuhan.
+Dalam mengerjakan proyek saya kali ini, berikut adalah checklist yang saya lakukan dalam mengembangkan aplikasi mobile saya, mulai dari implementasi tutorial dan modifikasi kode sesuai kebutuhan. Berikut adalah checklist yang saya lakukan pada tugas individu kali ini:
+
+## **1. Setup Autentikasi Django untuk Flutter 👤**
+
+### **Backend Django Configuration ⚙️:**
+<hr> 
+
+-   **Membuat App Authentication**: App khusus untuk handle login, register, logout    
+-   **Install CORS Headers**: Library untuk izinkan cross-origin requests    
+-   **Security Settings**: Konfigurasi cookie settings untuk development    
+-   **Android Emulator Support**: Tambah 10.0.2.2 di ALLOWED_HOSTS    
+-   **API Endpoints**: Buat views dan URLs untuk login, register, logout   
+
+## **2. Integrasi Autentikasi Flutter 📲**
+
+### **Frontend Flutter Setup 🪟:**
+<hr>
+
+-   **Package Installation**: `provider` dan `pbp_django_auth` untuk state management dan HTTP requests    
+-   **Provider Pattern**: Bagikan CookieRequest instance ke seluruh app    
+-   **Login & Register Screens**: Form dengan validation dan API integration    
+-   **Session Persistence**: CookieRequest otomatis handle session cookies    
+    
+
+## **3. Pembuatan Model Kustom ✂️**
+
+### **Data Modeling 🥻:**
+<hr>
+
+-   **Quicktype Tool**: Generate Dart models dari JSON response Django    
+-   **Type Safety**: Model memastikan data consistency    
+-   **Serialization**: fromJson/toJson methods untuk convert antara Dart objects dan JSON   
+
+## **4. Fetch Data dari Django ke Flutter 🚚**
+
+### **Image Proxy Solution 🐊:**
+<hr>
+
+-   **CORS Issue**: Gambar dari external URLs diblokir    
+-   **Django Proxy**: Buat endpoint khusus yang fetch gambar dari external URLs    
+-   **Flutter Display**: Gunakan proxy URL untuk load gambar
+    
+
+### **Data Display Architecture:**
+<hr>
+
+1.  **ProductsEntryListPage**: Fetch data JSON dari Django endpoint    
+2.  **ProductsEntryCard**: Tampilkan preview setiap news item    
+3.  **ProductsDetailPage**: Tampilkan detail lengkap berita    
+4.  **Navigation**: Routing antara list dan detail pages
+    
+
+### **State Management:**
+<hr>
+
+-   FutureBuilder untuk handle async data fetching    
+-   Loading states dan error handling    
+-   Pull-to-refresh functionality
+    
+
+## **5. Integrasi Form Flutter dengan Django 🌐**
+
+### **Create Data Flow 📈:**
+<hr>
+
+1.  **Flutter Form**: Input validation di client side    
+2.  **HTTP POST**: Kirim data ke Django endpoint    
+3.  **Django Processing**: Validasi server-side dan simpan ke database    
+4.  **Response Handling**: Success/error feedback ke user
+    
+### **Security Considerations 👮:**
+<hr>
+
+-   CSRF exemption untuk development    
+-   HTML tag stripping untuk prevent XSS    
+-   User authentication context
+    
+
+## **6. Implementasi Logout 👋**
+
+### **Logout Mechanism 📤:**
+<hr>
+
+-   **Django View**: Clear session server-side    
+-   **Flutter Cleanup**: Hapus local state dan navigasi ke login    
+-   **User Feedback**: Snackbar konfirmasi logout
+    
+
+## **7. Navigation Structure**
+
+### **App Flow:**
+
+```mermaid
+flowchart TD
+    A[Login Page] -->|Login Success| C[Main Menu]
+    A -->|Tap Register| B[Register Page]
+    B -->|Register Success| A
+    
+    C -->|Tap News List| D[News List]
+    C -->|Tap Add News| E[Add News Form]
+    C -->|Tap Logout| A
+    
+    D -->|Select News Item| F[News Detail]
+    F -->|Back| D
+    
+    E -->|Submit Success| C
+    E -->|Cancel| C
+    
+    style A fill:#e1f5fe
+    style B fill:#f3e5f5
+    style C fill:#c8e6c9
+    style D fill:#fff3e0
+    style E fill:#ffecb3
+    style F fill:#e8f5e8
+```
+
+### **Key Features 🔑:**
+<hr>
+-   Conditional navigation berdasarkan auth status    
+-   Protected routes untuk authenticated users    
+-   Seamless navigation dengan MaterialPageRoute
+    
+## Source 📚
+1. Tim Dosen dan Asdos PBP Fasilkom 2025. (2025). *Tutorial 8: Flutter Networking, Authentication, and Integration*. Retrieved from https://pbp-fasilkom-ui.github.io/ganjil-2026/docs/tutorial-8#tutorial-integrasi-autentikasi-django-flutter
+2. Youseff, M. . (2024,  November 20). *Implementing Secure Authentication and Authorization in Flutter*. Retrieved from https://ms3byoussef.medium.com/implementing-secure-authentication-and-authorization-in-flutter-d824ae8fd813
+3. AlkaloidWells. (2024, November 1). *Django + Flutter to mobile and desktop*. Retrieved from https://forum.djangoproject.com/t/django-flutter-to-mobile-and-desktop/36699
