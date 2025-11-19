@@ -24,8 +24,8 @@ from django.utils.html import strip_tags
 import json
 from django.http import JsonResponse
 
-# views untuk membuat products baru melalui flutter
 @csrf_exempt
+@login_required
 def create_product_flutter(request):
     if request.method == 'POST':
         try:
@@ -35,36 +35,31 @@ def create_product_flutter(request):
             # Validasi field required
             required_fields = ['name', 'price', 'description', 'category']
             for field in required_fields:
-                if field not in data:
+                if field not in data or not data[field]:
                     return JsonResponse({
                         "status": "error",
-                        "message": f"Field '{field}' is required"
+                        "message": f"Field '{field}' is required and cannot be empty"
                     }, status=400)
             
-            # Strip HTML tags untuk mencegah XSS
+            # Strip HTML tags untuk security
             name = strip_tags(data.get("name", "").strip())
             description = strip_tags(data.get("description", "").strip())
+            category = data.get("category", "").strip().lower()
             
-            # Validasi data
-            if not name:
+            # Validasi panjang nama
+            if len(name) < 3:
                 return JsonResponse({
                     "status": "error",
-                    "message": "Product name cannot be empty"
+                    "message": "Product name must be at least 3 characters long"
                 }, status=400)
             
-            if not description:
-                return JsonResponse({
-                    "status": "error", 
-                    "message": "Product description cannot be empty"
-                }, status=400)
-            
-            # Validasi price harus integer positif
+            # Validasi price
             try:
                 price = int(data.get("price", 0))
-                if price < 0:
+                if price <= 0:
                     return JsonResponse({
                         "status": "error",
-                        "message": "Price must be a positive number"
+                        "message": "Price must be greater than 0"
                     }, status=400)
             except (ValueError, TypeError):
                 return JsonResponse({
@@ -72,9 +67,8 @@ def create_product_flutter(request):
                     "message": "Price must be a valid number"
                 }, status=400)
             
-            # Validasi category harus sesuai pilihan yang tersedia
+            # Validasi category
             valid_categories = [choice[0] for choice in Products.CATEGORY_CHOICES]
-            category = data.get("category", "").lower()
             if category not in valid_categories:
                 return JsonResponse({
                     "status": "error",
@@ -82,7 +76,7 @@ def create_product_flutter(request):
                     "available_categories": valid_categories
                 }, status=400)
             
-            # Validasi stock harus integer non-negatif
+            # Validasi stock
             try:
                 stock = int(data.get("stock", 0))
                 if stock < 0:
@@ -96,7 +90,7 @@ def create_product_flutter(request):
                     "message": "Stock must be a valid number"
                 }, status=400)
             
-            # Validasi rating harus float antara 0-5
+            # Validasi rating
             try:
                 rating = float(data.get("rating", 0.0))
                 if rating < 0 or rating > 5:
@@ -110,27 +104,17 @@ def create_product_flutter(request):
                     "message": "Rating must be a valid number"
                 }, status=400)
             
-            # Get optional fields dengan nilai default
+            # Get optional fields
             thumbnail1 = data.get("thumbnail1", "").strip()
             thumbnail2 = data.get("thumbnail2", "").strip()
             thumbnail3 = data.get("thumbnail3", "").strip()
             is_featured = bool(data.get("is_featured", False))
             brand = data.get("brand", "").strip()
-            brand_name = strip_tags(data.get("brandName", "brand").strip())
+            brand_name = strip_tags(data.get("brandName", "").strip())
             
-            # Get user dari request
-            user = request.user
-            
-            # Cek apakah user terautentikasi
-            if not user.is_authenticated:
-                return JsonResponse({
-                    "status": "error",
-                    "message": "User must be authenticated to create products"
-                }, status=401)
-            
-            # Buat produk baru
+            # Create product
             new_product = Products(
-                user=user,
+                user=request.user,
                 name=name,
                 price=price,
                 description=description,
@@ -143,28 +127,31 @@ def create_product_flutter(request):
                 rating=rating,
                 brand=brand if brand else None,
                 brandName=brand_name,
-                # created_at otomatis di-set ke waktu sekarang
-                # visitors default 0
             )
             
-            # Simpan produk ke database
             new_product.save()
             
-            # Return response sukses dengan data produk yang dibuat
             return JsonResponse({
                 "status": "success",
                 "message": "Product created successfully",
                 "product_id": str(new_product.id),
                 "product_data": {
+                    "id": new_product.id,
                     "name": new_product.name,
                     "price": new_product.price,
                     "formatted_price": new_product.formatted_price,
+                    "description": new_product.description,
                     "category": new_product.category,
                     "stock": new_product.stock,
                     "rating": new_product.rating,
+                    "brand": new_product.brand,
                     "brandName": new_product.brandName,
                     "is_featured": new_product.is_featured,
-                    "created_at": new_product.created_at.isoformat()
+                    "thumbnail1": new_product.thumbnail1,
+                    "thumbnail2": new_product.thumbnail2,
+                    "thumbnail3": new_product.thumbnail3,
+                    "created_at": new_product.created_at.isoformat(),
+                    "visitors": new_product.visitors
                 }
             }, status=201)
             
@@ -173,19 +160,89 @@ def create_product_flutter(request):
                 "status": "error",
                 "message": "Invalid JSON format in request body"
             }, status=400)
-            
         except Exception as e:
-            # Handle unexpected errors
             return JsonResponse({
                 "status": "error",
                 "message": f"An error occurred while creating product: {str(e)}"
             }, status=500)
     
     else:
-        # Handle method selain POST
         return JsonResponse({
             "status": "error",
             "message": "Only POST method is allowed"
+        }, status=405)
+
+# Penambahan fungsi method yang dibutuhkan
+# mendapatkan semua products milik user yang login 
+@csrf_exempt
+@login_required
+def get_user_products_json(request):
+    if request.method == 'GET':
+        try:
+            # Filter products by logged-in user
+            user_products = Products.objects.filter(user=request.user)
+            
+            # Serialize to JSON
+            data = serializers.serialize('json', user_products)
+            
+            return HttpResponse(data, content_type='application/json')
+            
+        except Exception as e:
+            return JsonResponse({
+                "status": "error",
+                "message": f"An error occurred while fetching products: {str(e)}"
+            }, status=500)
+    else:
+        return JsonResponse({
+            "status": "error",
+            "message": "Only GET method is allowed"
+        }, status=405)
+
+@csrf_exempt
+@login_required
+def get_user_products_detail(request):    
+    if request.method == 'GET':
+        try:
+            user_products = Products.objects.filter(user=request.user)
+            
+            products_list = []
+            for product in user_products:
+                products_list.append({
+                    "id": product.id,
+                    "name": product.name,
+                    "price": product.price,
+                    "formatted_price": product.formatted_price,
+                    "description": product.description,
+                    "category": product.category,
+                    "stock": product.stock,
+                    "rating": product.rating,
+                    "brand": product.brand,
+                    "brandName": product.brandName,
+                    "is_featured": product.is_featured,
+                    "thumbnail1": product.thumbnail1,
+                    "thumbnail2": product.thumbnail2, 
+                    "thumbnail3": product.thumbnail3,
+                    "visitors": product.visitors,
+                    "created_at": product.created_at.isoformat() if product.created_at else None,
+                    "user": product.user.username
+                })
+            
+            return JsonResponse({
+                "status": "success",
+                "message": f"Found {len(products_list)} products",
+                "products": products_list,
+                "user": request.user.username
+            }, status=200)
+            
+        except Exception as e:
+            return JsonResponse({
+                "status": "error", 
+                "message": f"An error occurred: {str(e)}"
+            }, status=500)
+    else:
+        return JsonResponse({
+            "status": "error",
+            "message": "Only GET method is allowed"
         }, status=405)
 
 # Views untuk menambahkan endpoint proxy untuk mengatasi masalah CORS pada gambar

@@ -142,5 +142,9 @@ urlpatterns = [
     path('proxy-image/', views.proxy_image, name='proxy_image'),
 
     # Path untuk membuat products melalui flutter
-    path('create-flutter/', views.create_product_flutter, name='create_product_flutter'),
+    path('create-product-flutter/', views.create_product_flutter, name='create_product_flutter'),
+
+    # Path untuk akses fungsi mendapatkan produk berdasarkan user yang login
+    path('user-products-json/', views.get_user_products_json, name='user_products_json'),
+    path('user-products-detail/', views.get_user_products_detail, name='user_products_detail'),
 ]
