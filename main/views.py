@@ -182,10 +182,35 @@ def get_user_products_json(request):
             # Filter products by logged-in user
             user_products = Products.objects.filter(user=request.user)
             
-            # Serialize to JSON
-            data = serializers.serialize('json', user_products)
+            # Build products list with proper structure
+            products_list = []
+            for product in user_products:
+                products_list.append({
+                    "id": str(product.id),
+                    "name": product.name,
+                    "price": product.price,
+                    "formatted_price": product.formatted_price,
+                    "description": product.description,
+                    "category": product.category,
+                    "stock": product.stock,
+                    "rating": product.rating,
+                    "brand": product.brand,
+                    "brandName": product.brandName,
+                    "is_featured": product.is_featured,
+                    "thumbnail1": product.thumbnail1,
+                    "thumbnail2": product.thumbnail2, 
+                    "thumbnail3": product.thumbnail3,
+                    "visitors": product.visitors,
+                    "created_at": product.created_at.isoformat() if product.created_at else None,
+                    "user": request.user.id  # Kirim ID sebagai integer
+                })
             
-            return HttpResponse(data, content_type='application/json')
+            return JsonResponse({
+                "status": "success",
+                "message": f"Found {len(products_list)} products",
+                "products": products_list,
+                "user": request.user.username
+            }, status=200)
             
         except Exception as e:
             return JsonResponse({
